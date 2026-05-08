@@ -2,7 +2,7 @@
 // Handles API calls, blacklist sync, token management, and message routing
 
 const SEARCHWISE_CONFIG = {
-    API_BASE: 'http://127.0.0.1:8899/api/v1',
+    API_BASE: null,
     DEFAULT_BLACKLIST: [
         'pinterest.com',
         'pinterest.jp',
@@ -86,6 +86,10 @@ async function refreshCombinedBlacklist() {
 // ========== API Helper ==========
 
 async function apiFetch(endpoint, options = {}) {
+    if (!SEARCHWISE_CONFIG.API_BASE) {
+        throw new Error('Cloud service is not configured in this build');
+    }
+
     const token = await getToken();
     const headers = {
         'Content-Type': 'application/json',
@@ -261,6 +265,10 @@ async function handleFetchBlacklist() {
 }
 
 async function handleAiSummary(data) {
+    if (!SEARCHWISE_CONFIG.API_BASE) {
+        throw new Error('Cloud service is not configured in this build');
+    }
+
     const result = await apiFetch('/summary', {
         method: 'POST',
         body: JSON.stringify({
@@ -348,6 +356,14 @@ chrome.runtime.onConnect.addListener((port) => {
         port.onMessage.addListener(async (msg) => {
             if (msg.type === 'AI_SUMMARY_STREAM') {
                 try {
+                    if (!SEARCHWISE_CONFIG.API_BASE) {
+                        port.postMessage({
+                            type: 'error',
+                            message: 'Cloud service is not configured in this build',
+                        });
+                        return;
+                    }
+
                     const token = await getToken();
                     const response = await fetch(`${SEARCHWISE_CONFIG.API_BASE}/summary`, {
                         method: 'POST',

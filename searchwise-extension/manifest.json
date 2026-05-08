@@ -20,10 +20,7 @@
         "https://www.so.com/*",
         "https://so.com/*",
         "https://yandex.com/*",
-        "https://yandex.ru/*",
-        "http://localhost:8899/*",
-        "http://127.0.0.1:8899/*",
-        "http://127.0.0.1:8000/*"
+        "https://yandex.ru/*"
     ],
     "background": {
         "service_worker": "background/service-worker.js"
@@ -189,23 +186,5 @@
         "48": "assets/icons/icon48.png",
         "128": "assets/icons/icon128.png"
     },
-    "options_page": "options/options.html",
-    "web_accessible_resources": [
-        {
-            "resources": ["sidebar/sidebar.html"],
-            "matches": [
-                "https://www.google.com/*",
-                "https://www.google.com.hk/*",
-                "https://www.bing.com/*",
-                "https://cn.bing.com/*",
-                "https://www.baidu.com/*",
-                "https://duckduckgo.com/*",
-                "https://www.sogou.com/*",
-                "https://www.so.com/*",
-                "https://so.com/*",
-                "https://yandex.com/*",
-                "https://yandex.ru/*"
-            ]
-        }
-    ]
+    "options_page": "options/options.html"
 }

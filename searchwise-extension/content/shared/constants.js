@@ -1,6 +1,6 @@
 // SearchWise - Constants
 const SW = {
-    API_BASE: 'http://127.0.0.1:8899/api/v1',
+    API_BASE: null,
 
     // Message types for chrome.runtime.sendMessage
     MSG: {

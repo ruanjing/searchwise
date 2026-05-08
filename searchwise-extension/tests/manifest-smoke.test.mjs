@@ -21,6 +21,7 @@ assert.ok(hasMatch('sogou.com'));
 assert.ok(hasMatch('so.com'));
 assert.ok(hasMatch('yandex.com'));
 assert.ok(hasMatch('yandex.ru'));
-assert.ok(manifest.host_permissions.includes('http://127.0.0.1:8899/*'));
+assert.ok(!manifest.host_permissions.some(permission => permission.includes('localhost')));
+assert.ok(!manifest.host_permissions.some(permission => permission.includes('127.0.0.1')));
 
 console.log('manifest smoke tests passed');
