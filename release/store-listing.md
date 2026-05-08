@@ -12,7 +12,7 @@ Clean search results by hiding low-quality content farms and highlighting useful
 
 SearchWise is a local-first browser extension that helps you make search results easier to scan.
 
-It works on major search engines including Google, Bing, Baidu, DuckDuckGo, Sogou, 360 Search, and Yandex. SearchWise can hide low-quality content farms, repeated mirrors, and noisy results, while keeping useful sources easier to find.
+It works on supported search result pages and helps hide low-quality content farms, repeated mirrors, and noisy results, while keeping useful sources easier to find.
 
 Core features:
 
@@ -28,7 +28,7 @@ SearchWise does not sell user data, does not inject third-party ads into search 
 
 SearchWise 是一个本地优先的浏览器扩展，用来净化搜索结果、隐藏低质量内容农场，并高亮搜索关键词。
 
-它支持 Google、Bing、百度、DuckDuckGo、搜狗、360 搜索和 Yandex。免费版无需账号即可使用，屏蔽规则和自定义域名保存在浏览器本地。
+它会在受支持的搜索结果页中运行，帮助你减少重复搬运、内容农场和噪音结果。免费版无需账号即可使用，屏蔽规则和自定义域名保存在浏览器本地。
 
 核心功能：
 
@@ -94,7 +94,7 @@ SearchWise is a local-first extension. The current store build does not require 
 To test:
 
 1. Install the extension.
-2. Open a supported search engine.
+2. Open any supported search result page.
 3. Search for a technical query such as `laravel sanctum`.
 4. The extension will highlight query keywords and hide results from built-in low-quality domains when matched.
 5. Open the extension options page to add a custom blocked domain.
