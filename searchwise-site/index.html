@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SearchWise - 搜索结果净化工具</title>
+    <meta name="description" content="SearchWise 是一个本地优先的浏览器扩展，帮你屏蔽低质量搜索结果，高亮关键词，并可选使用 AI 摘要。">
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" href="./index.html" aria-label="SearchWise 首页">
+            <span class="brand-mark">S</span>
+            <span>SearchWise</span>
+        </a>
+        <nav class="nav">
+            <a href="#features">功能</a>
+            <a href="#pricing">价格</a>
+            <a href="./install.html">安装</a>
+            <a href="./privacy.html">隐私</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-copy">
+                <p class="eyebrow">本地优先的搜索净化扩展</p>
+                <h1>让搜索结果少一点垃圾，多一点可用答案</h1>
+                <p class="hero-text">SearchWise 会在 Google、Bing、百度、DuckDuckGo、搜狗、360 搜索和 Yandex 上隐藏低质量内容农场，保留官方文档、GitHub、技术社区等更值得看的来源。</p>
+                <div class="hero-actions">
+                    <a class="button primary" href="./install.html">安装免费版</a>
+                    <a class="button secondary" href="#pricing">查看价格</a>
+                </div>
+            </div>
+            <div class="product-shot" aria-label="SearchWise 搜索净化界面预览">
+                <div class="search-bar">
+                    <span class="search-dot"></span>
+                    <span>laravel sanctum</span>
+                </div>
+                <div class="result-list">
+                    <article class="result good">
+                        <div class="source">Laravel.com</div>
+                        <h2>Laravel Sanctum - 官方文档</h2>
+                        <p>官方文档、版本清晰、可直接用于排查认证问题。</p>
+                    </article>
+                    <article class="result hidden">
+                        <div class="source">低质量搬运站</div>
+                        <h2>已被 SearchWise 隐藏</h2>
+                        <p>重复搬运、广告较多、来源不清晰。</p>
+                    </article>
+                    <article class="result good">
+                        <div class="source">GitHub</div>
+                        <h2>laravel/sanctum</h2>
+                        <p>源码仓库、Issue、版本变更记录。</p>
+                    </article>
+                </div>
+                <aside class="brief">
+                    <span>Source Brief</span>
+                    <p>优先看官方文档和 GitHub。内容农场已隐藏，可在设置里恢复。</p>
+                </aside>
+            </div>
+        </section>
+
+        <section id="features" class="section">
+            <div class="section-heading">
+                <p class="eyebrow">先解决一个真痛点</p>
+                <h2>免费版也能独立工作</h2>
+            </div>
+            <div class="feature-grid">
+                <article class="feature">
+                    <h3>本地屏蔽规则</h3>
+                    <p>内置常见内容农场和低质量结果规则，无需账号、无需服务器，也能直接净化搜索页。</p>
+                </article>
+                <article class="feature">
+                    <h3>自定义域名屏蔽</h3>
+                    <p>免费用户可添加 20 个自定义屏蔽域名，适合先验证用户是否真的需要这个工具。</p>
+                </article>
+                <article class="feature">
+                    <h3>关键词高亮</h3>
+                    <p>在搜索结果标题和摘要中高亮关键词，减少来回扫页面的时间。</p>
+                </article>
+                <article class="feature">
+                    <h3>AI 摘要可选</h3>
+                    <p>AI 摘要放在 Pro 云服务里，避免免费用户无限消耗你的 API 成本。</p>
+                </article>
+            </div>
+        </section>
+
+        <section id="pricing" class="section pricing-section">
+            <div class="section-heading">
+                <p class="eyebrow">低成本试水价格</p>
+                <h2>先做能收小钱的版本</h2>
+            </div>
+            <div class="pricing-grid">
+                <article class="price-plan">
+                    <h3>Free</h3>
+                    <p class="price">¥0</p>
+                    <ul>
+                        <li>本地搜索净化</li>
+                        <li>20 个自定义屏蔽域名</li>
+                        <li>关键词高亮</li>
+                        <li>无需账号</li>
+                    </ul>
+                    <a class="button secondary full" href="./install.html">开始使用</a>
+                </article>
+                <article class="price-plan featured">
+                    <h3>Pro</h3>
+                    <p class="price">¥19.9<span>/月</span></p>
+                    <ul>
+                        <li>无限自定义屏蔽域名</li>
+                        <li>云端同步规则</li>
+                        <li>每月 500 次 AI 摘要</li>
+                        <li>搜索引擎改版优先修复</li>
+                    </ul>
+                    <a class="button primary full" href="mailto:hello@example.com?subject=SearchWise%20Pro">预约 Pro</a>
+                </article>
+            </div>
+        </section>
+
+        <section class="section compact">
+            <h2>目标很简单：先验证有没有人愿意用</h2>
+            <p>官网、扩展、隐私政策都走轻量路线。等免费用户有真实反馈，再接支付、账号和云同步。</p>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <span>SearchWise</span>
+        <a href="./privacy.html">隐私政策</a>
+        <a href="./install.html">安装说明</a>
+    </footer>
+</body>
+</html>

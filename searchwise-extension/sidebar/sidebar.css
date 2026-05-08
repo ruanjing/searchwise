@@ -1,0 +1,10 @@
+/* SearchWise - Sidebar Styles (injected into search pages) */
+
+/* Keyword highlight styles for main page */
+mark.searchwise-highlight {
+    background: #4ecca3;
+    color: #1a1a2e;
+    padding: 1px 3px;
+    border-radius: 2px;
+    font-weight: 600;
+}

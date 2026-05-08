@@ -1,0 +1,32 @@
+.claude/
+.playwright-mcp/
+**/.git-backup/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+auth.json
+
+# Dependencies
+node_modules/
+vendor/
+
+# Build output and caches
+dist/
+build/
+public/build/
+public/hot
+.phpunit.result.cache
+.phpunit.cache/
+
+# Logs and local OS files
+*.log
+.DS_Store
+Thumbs.db
+
+# IDEs
+.idea/
+.vscode/
+.fleet/
+.zed/

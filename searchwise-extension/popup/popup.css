@@ -1,0 +1,265 @@
+/* SearchWise - Popup Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 360px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #1a1a2e;
+    color: #e0e0e0;
+}
+
+.sw-popup {
+    padding: 20px;
+}
+
+/* Header */
+.sw-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #2a2a4a;
+}
+
+.sw-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sw-logo-icon {
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, #4ecca3, #38a880);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.sw-logo-text {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.sw-plan-badge {
+    background: #16213e;
+    color: #a0a0c0;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.sw-plan-badge.pro {
+    background: linear-gradient(135deg, #4ecca3, #38a880);
+    color: #fff;
+}
+
+/* Auth Forms */
+#auth-section h3 {
+    font-size: 16px;
+    margin-bottom: 12px;
+    color: #fff;
+}
+
+#auth-section input {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    background: #16213e;
+    border: 1px solid #2a2a4a;
+    border-radius: 6px;
+    color: #e0e0e0;
+    font-size: 14px;
+    outline: none;
+}
+
+#auth-section input:focus {
+    border-color: #4ecca3;
+}
+
+.sw-btn {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 8px;
+    transition: opacity 0.2s;
+}
+
+.sw-btn:hover {
+    opacity: 0.9;
+}
+
+.sw-btn-primary {
+    background: linear-gradient(135deg, #4ecca3, #38a880);
+    color: #fff;
+}
+
+.sw-btn-secondary {
+    background: #16213e;
+    color: #a0a0c0;
+    border: 1px solid #2a2a4a;
+}
+
+.sw-btn-link {
+    background: none;
+    color: #4ecca3;
+    text-decoration: underline;
+    font-weight: 400;
+}
+
+.sw-btn-upgrade {
+    background: linear-gradient(135deg, #ffd700, #ffaa00);
+    color: #1a1a2e;
+    font-weight: 700;
+}
+
+.sw-divider {
+    text-align: center;
+    margin: 12px 0;
+    position: relative;
+}
+
+.sw-divider::before,
+.sw-divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 40%;
+    height: 1px;
+    background: #2a2a4a;
+}
+
+.sw-divider::before { left: 0; }
+.sw-divider::after { right: 0; }
+
+.sw-divider span {
+    background: #1a1a2e;
+    padding: 0 10px;
+    color: #666;
+    font-size: 12px;
+}
+
+.sw-error-text {
+    color: #ff6b6b;
+    font-size: 13px;
+    margin-top: 8px;
+    text-align: center;
+}
+
+/* User Section */
+.sw-user-info {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+
+.sw-user-name {
+    font-weight: 600;
+    color: #fff;
+}
+
+.sw-user-email {
+    font-size: 12px;
+    color: #666;
+}
+
+/* Toggles */
+.sw-toggles {
+    margin-bottom: 16px;
+}
+
+.sw-toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    font-size: 14px;
+}
+
+.sw-switch {
+    position: relative;
+    width: 40px;
+    height: 22px;
+}
+
+.sw-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.sw-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #2a2a4a;
+    border-radius: 22px;
+    transition: 0.3s;
+}
+
+.sw-slider::before {
+    content: '';
+    position: absolute;
+    height: 16px;
+    width: 16px;
+    left: 3px;
+    bottom: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+.sw-switch input:checked + .sw-slider {
+    background: #4ecca3;
+}
+
+.sw-switch input:checked + .sw-slider::before {
+    transform: translateX(18px);
+}
+
+/* Usage */
+.sw-usage {
+    background: #16213e;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 16px;
+}
+
+.sw-usage-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 13px;
+    color: #a0a0c0;
+}
+
+.sw-usage-row span:last-child {
+    color: #4ecca3;
+    font-weight: 600;
+}
+
+/* Actions */
+.sw-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}

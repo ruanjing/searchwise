@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=400, initial-scale=1.0">
+    <title>SearchWise</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="sw-popup">
+        <!-- Header -->
+        <div class="sw-header">
+            <div class="sw-logo">
+                <span class="sw-logo-icon">S</span>
+                <span class="sw-logo-text">SearchWise</span>
+            </div>
+            <span class="sw-plan-badge" id="plan-badge" data-i18n="freePlan">Free</span>
+        </div>
+
+        <!-- Login Form (shown when not logged in) -->
+        <div id="auth-section">
+            <div id="login-form">
+                <h3 data-i18n="login">Login</h3>
+                <input type="email" id="login-email" placeholder="Email" data-i18n-placeholder="email" autocomplete="email">
+                <input type="password" id="login-password" placeholder="Password" data-i18n-placeholder="password" autocomplete="current-password">
+                <button id="login-btn" class="sw-btn sw-btn-primary" data-i18n="login">Login</button>
+                <div class="sw-divider">
+                    <span data-i18n="or">or</span>
+                </div>
+                <button id="show-register-btn" class="sw-btn sw-btn-secondary" data-i18n="createAccount">Create Account</button>
+                <p id="auth-error" class="sw-error-text" style="display:none"></p>
+            </div>
+
+            <div id="register-form" style="display:none">
+                <h3 data-i18n="createAccount">Create Account</h3>
+                <input type="text" id="register-name" placeholder="Name" data-i18n-placeholder="name">
+                <input type="email" id="register-email" placeholder="Email" data-i18n-placeholder="email" autocomplete="email">
+                <input type="password" id="register-password" placeholder="Password" data-i18n-placeholder="password">
+                <input type="password" id="register-confirm" placeholder="Confirm Password" data-i18n-placeholder="confirmPassword">
+                <button id="register-btn" class="sw-btn sw-btn-primary" data-i18n="register">Register</button>
+                <button id="show-login-btn" class="sw-btn sw-btn-link" data-i18n="backToLogin">Back to Login</button>
+                <p id="register-error" class="sw-error-text" style="display:none"></p>
+            </div>
+        </div>
+
+        <!-- User Section (shown when logged in) -->
+        <div id="user-section" style="display:none">
+            <div class="sw-user-info">
+                <span class="sw-user-name" id="user-name"></span>
+                <span class="sw-user-email" id="user-email"></span>
+            </div>
+
+            <!-- Quick Toggles -->
+            <div class="sw-toggles">
+                <div class="sw-toggle-row">
+                    <span data-i18n="searchCleanup">Search Cleanup</span>
+                    <label class="sw-switch">
+                        <input type="checkbox" id="toggle-blacklist" checked>
+                        <span class="sw-slider"></span>
+                    </label>
+                </div>
+                <div class="sw-toggle-row">
+                    <span data-i18n="trustedAiBrief">Source Brief</span>
+                    <label class="sw-switch">
+                        <input type="checkbox" id="toggle-sidebar" checked>
+                        <span class="sw-slider"></span>
+                    </label>
+                </div>
+                <div class="sw-toggle-row">
+                    <span data-i18n="keywordHighlight">Keyword Highlight</span>
+                    <label class="sw-switch">
+                        <input type="checkbox" id="toggle-highlight" checked>
+                        <span class="sw-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Usage -->
+            <div class="sw-usage">
+                <div class="sw-usage-row">
+                    <span data-i18n="aiSummariesToday">AI Summaries Today</span>
+                    <span id="usage-summaries">0/3</span>
+                </div>
+                <div class="sw-usage-row">
+                    <span data-i18n="customBlocks">Custom Blocks</span>
+                    <span id="usage-domains">0/5</span>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="sw-actions">
+                <button id="upgrade-btn" class="sw-btn sw-btn-upgrade" style="display:none">
+                    <span data-i18n="upgradeMonthlyShort">Upgrade to Pro - $4.99/mo</span>
+                </button>
+                <button id="settings-btn" class="sw-btn sw-btn-secondary" data-i18n="settings">Settings</button>
+                <button id="logout-btn" class="sw-btn sw-btn-link" data-i18n="logout">Logout</button>
+            </div>
+        </div>
+    </div>
+    <script src="../content/shared/constants.js"></script>
+    <script src="../content/shared/i18n.js"></script>
+    <script src="popup.js"></script>
+</body>
+</html>

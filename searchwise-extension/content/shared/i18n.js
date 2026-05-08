@@ -1,0 +1,228 @@
+// SearchWise - i18n helpers
+const SWI18n = {
+    _language: 'auto',
+    _dict: {
+        en: {
+            appName: 'SearchWise',
+            appDescription: 'Clean search results by hiding content farms and highlighting trusted technical sources.',
+            settingsTitle: 'SearchWise Settings',
+            freePlan: 'Free',
+            proPlan: 'Pro',
+            login: 'Login',
+            email: 'Email',
+            password: 'Password',
+            or: 'or',
+            createAccount: 'Create Account',
+            name: 'Name',
+            confirmPassword: 'Confirm Password',
+            register: 'Register',
+            backToLogin: 'Back to Login',
+            searchCleanup: 'Search Cleanup',
+            trustedAiBrief: 'Source Brief',
+            keywordHighlight: 'Keyword Highlight',
+            aiSummariesToday: 'AI Briefs Today',
+            customBlocks: 'Custom Blocks',
+            localModeName: 'Local Mode',
+            localModeDesc: 'No account required',
+            aiCloudRequired: 'AI briefs need optional cloud service. Search cleanup still works locally.',
+            upgradeMonthlyShort: 'Upgrade to Pro - ¥19.9/mo',
+            settings: 'Settings',
+            logout: 'Logout',
+            cleanupRules: 'Cleanup Rules',
+            account: 'Account',
+            subscription: 'Subscription',
+            cleanupDescription: 'Hide CSDN-style mirrors, content farms, paywalls, and noisy results while searching technical topics.',
+            add: 'Add',
+            features: 'Features',
+            language: 'Language',
+            languageDesc: 'Choose the interface language',
+            languageAuto: 'Auto',
+            languageEnglish: 'English',
+            languageChinese: 'Simplified Chinese',
+            settingsDescription: 'Configure how SearchWise cleans developer search results.',
+            searchCleanupDesc: 'Hide low-signal technical results and content farms',
+            trustedAiBriefDesc: 'Summarize visible results with source-quality notes',
+            keywordHighlightDesc: 'Highlight search keywords in technical results',
+            accountDescription: 'Create an account to sync cleanup rules and unlock Pro features.',
+            plan: 'Plan',
+            currentPlan: 'Current Plan',
+            active: 'Active',
+            fiveCustomBlocks: '20 custom domain blocks',
+            builtInCleanupRules: 'Built-in developer cleanup rules',
+            threeAiSummaries: '3 AI briefs per day',
+            keywordHighlighting: 'Keyword highlighting',
+            unlimitedCustomBlocks: 'Unlimited custom domain blocks',
+            cloudSyncedRules: 'Cloud synced cleanup rules',
+            unlimitedAiSummaries: '500 AI briefs per month',
+            customTrustedRules: 'Official docs, GitHub, and Stack Overflow priority rules',
+            prioritySupport: 'Priority fixes when search engines change',
+            upgradeMonthly: 'Upgrade Monthly - ¥19.9/mo',
+            upgradeYearly: 'Upgrade Yearly - ¥99/yr',
+            manageSubscription: 'Manage Subscription',
+            cancelSubscription: 'Cancel Subscription',
+            fillAllFields: 'Please fill in all fields',
+            loggingIn: 'Logging in...',
+            creatingAccount: 'Creating account...',
+            loginFailed: 'Login failed',
+            registrationFailed: 'Registration failed',
+            passwordsDoNotMatch: 'Passwords do not match',
+            passwordMinLength: 'Password must be at least 8 characters',
+            adding: 'Adding...',
+            failedAddDomain: 'Failed to add domain: $1',
+            failedRemoveDomain: 'Failed to remove domain: $1',
+            failedCheckout: 'Failed to start checkout: $1',
+            failedBillingPortal: 'Failed to open billing portal: $1',
+            customDomainsLimit: '$1/$2 custom domains$3',
+            upgradeForUnlimited: ' (upgrade for unlimited)',
+            customLabel: 'custom',
+            defaultLabel: 'developer rule',
+            close: 'Close',
+            searching: 'Searching:',
+            analyzing: 'Analyzing technical sources...',
+            sources: 'Sources',
+            dailyLimitReached: 'Daily AI brief limit reached',
+            upgradeToPro: 'Upgrade to Pro',
+            noSummary: 'No brief available.',
+            cached: 'Cached',
+            summaries: 'briefs',
+            unlimited: 'Unlimited',
+            filteredJunk: 'Filtered $1 low-signal developer results.',
+            showAnyway: 'Show anyway',
+        },
+        zh_CN: {
+            appName: 'SearchWise',
+            appDescription: '\u4e13\u4e3a\u7a0b\u5e8f\u5458\u51c0\u5316\u641c\u7d22\u7ed3\u679c\uff0c\u5c4f\u853d\u5185\u5bb9\u519c\u573a\u5e76\u9ad8\u4eae\u53ef\u4fe1\u6280\u672f\u6765\u6e90\u3002',
+            settingsTitle: 'SearchWise \u8bbe\u7f6e',
+            freePlan: '\u514d\u8d39\u7248',
+            proPlan: 'Pro \u7248',
+            login: '\u767b\u5f55',
+            email: '\u90ae\u7bb1',
+            password: '\u5bc6\u7801',
+            or: '\u6216',
+            createAccount: '\u521b\u5efa\u8d26\u53f7',
+            name: '\u59d3\u540d',
+            confirmPassword: '\u786e\u8ba4\u5bc6\u7801',
+            register: '\u6ce8\u518c',
+            backToLogin: '\u8fd4\u56de\u767b\u5f55',
+            searchCleanup: '\u7a0b\u5e8f\u5458\u641c\u7d22\u51c0\u5316',
+            trustedAiBrief: '\u5f00\u53d1\u8005\u6458\u8981',
+            keywordHighlight: '\u5173\u952e\u8bcd\u9ad8\u4eae',
+            aiSummariesToday: '\u4eca\u65e5 AI \u6458\u8981',
+            customBlocks: '\u81ea\u5b9a\u4e49\u5c4f\u853d',
+            localModeName: '\u672c\u5730\u6a21\u5f0f',
+            localModeDesc: '\u65e0\u9700\u8d26\u53f7',
+            aiCloudRequired: 'AI \u6458\u8981\u9700\u8981\u53ef\u9009\u4e91\u670d\u52a1\uff0c\u641c\u7d22\u51c0\u5316\u4ecd\u53ef\u672c\u5730\u8fd0\u884c\u3002',
+            upgradeMonthlyShort: '\u5347\u7ea7 Pro - \u00a519.9/\u6708',
+            settings: '\u8bbe\u7f6e',
+            logout: '\u9000\u51fa\u767b\u5f55',
+            cleanupRules: '\u51c0\u5316\u89c4\u5219',
+            account: '\u8d26\u53f7',
+            subscription: '\u8ba2\u9605',
+            cleanupDescription: '\u641c\u7d22\u6280\u672f\u95ee\u9898\u65f6\uff0c\u9690\u85cf CSDN \u7c7b\u642c\u8fd0\u7ad9\u3001\u5185\u5bb9\u519c\u573a\u3001\u4ed8\u8d39\u5899\u548c\u566a\u97f3\u7ed3\u679c\u3002',
+            add: '\u6dfb\u52a0',
+            features: '\u529f\u80fd',
+            language: '\u8bed\u8a00',
+            languageDesc: '\u9009\u62e9\u754c\u9762\u663e\u793a\u8bed\u8a00',
+            languageAuto: '\u81ea\u52a8',
+            languageEnglish: 'English',
+            languageChinese: '\u7b80\u4f53\u4e2d\u6587',
+            settingsDescription: '\u914d\u7f6e SearchWise \u5982\u4f55\u51c0\u5316\u7a0b\u5e8f\u5458\u641c\u7d22\u7ed3\u679c\u3002',
+            searchCleanupDesc: '\u9690\u85cf\u4f4e\u4fe1\u53f7\u6280\u672f\u7ed3\u679c\u548c\u5185\u5bb9\u519c\u573a',
+            trustedAiBriefDesc: '\u603b\u7ed3\u53ef\u89c1\u7ed3\u679c\u5e76\u63d0\u793a\u6765\u6e90\u8d28\u91cf',
+            keywordHighlightDesc: '\u5728\u6280\u672f\u641c\u7d22\u7ed3\u679c\u4e2d\u9ad8\u4eae\u5173\u952e\u8bcd',
+            accountDescription: '\u521b\u5efa\u8d26\u53f7\u4ee5\u540c\u6b65\u51c0\u5316\u89c4\u5219\u5e76\u89e3\u9501 Pro \u529f\u80fd\u3002',
+            plan: '\u65b9\u6848',
+            currentPlan: '\u5f53\u524d\u65b9\u6848',
+            active: '\u5df2\u542f\u7528',
+            fiveCustomBlocks: '20 \u4e2a\u81ea\u5b9a\u4e49\u57df\u540d\u5c4f\u853d',
+            builtInCleanupRules: '\u5185\u7f6e\u7a0b\u5e8f\u5458\u641c\u7d22\u51c0\u5316\u89c4\u5219',
+            threeAiSummaries: '\u6bcf\u5929 3 \u6b21 AI \u6458\u8981',
+            keywordHighlighting: '\u5173\u952e\u8bcd\u9ad8\u4eae',
+            unlimitedCustomBlocks: '\u65e0\u9650\u81ea\u5b9a\u4e49\u57df\u540d\u5c4f\u853d',
+            cloudSyncedRules: '\u4e91\u7aef\u540c\u6b65\u51c0\u5316\u89c4\u5219',
+            unlimitedAiSummaries: '\u6bcf\u6708 500 \u6b21 AI \u6458\u8981',
+            customTrustedRules: '\u5b98\u65b9\u6587\u6863\u3001GitHub\u3001Stack Overflow \u4f18\u5148\u89c4\u5219',
+            prioritySupport: '\u641c\u7d22\u5f15\u64ce\u6539\u7248\u65f6\u4f18\u5148\u4fee\u590d',
+            upgradeMonthly: '\u6309\u6708\u5347\u7ea7 - \u00a519.9/\u6708',
+            upgradeYearly: '\u6309\u5e74\u5347\u7ea7 - \u00a599/\u5e74',
+            manageSubscription: '\u7ba1\u7406\u8ba2\u9605',
+            cancelSubscription: '\u53d6\u6d88\u8ba2\u9605',
+            fillAllFields: '\u8bf7\u586b\u5199\u6240\u6709\u5b57\u6bb5',
+            loggingIn: '\u6b63\u5728\u767b\u5f55...',
+            creatingAccount: '\u6b63\u5728\u521b\u5efa\u8d26\u53f7...',
+            loginFailed: '\u767b\u5f55\u5931\u8d25',
+            registrationFailed: '\u6ce8\u518c\u5931\u8d25',
+            passwordsDoNotMatch: '\u4e24\u6b21\u8f93\u5165\u7684\u5bc6\u7801\u4e0d\u4e00\u81f4',
+            passwordMinLength: '\u5bc6\u7801\u81f3\u5c11\u9700\u8981 8 \u4e2a\u5b57\u7b26',
+            adding: '\u6dfb\u52a0\u4e2d...',
+            failedAddDomain: '\u6dfb\u52a0\u57df\u540d\u5931\u8d25\uff1a$1',
+            failedRemoveDomain: '\u79fb\u9664\u57df\u540d\u5931\u8d25\uff1a$1',
+            failedCheckout: '\u542f\u52a8\u7ed3\u8d26\u5931\u8d25\uff1a$1',
+            failedBillingPortal: '\u6253\u5f00\u8d26\u5355\u95e8\u6237\u5931\u8d25\uff1a$1',
+            customDomainsLimit: '$1/$2 \u4e2a\u81ea\u5b9a\u4e49\u57df\u540d$3',
+            upgradeForUnlimited: '\uff08\u5347\u7ea7\u53ef\u65e0\u9650\u6dfb\u52a0\uff09',
+            customLabel: '\u81ea\u5b9a\u4e49',
+            defaultLabel: '\u7a0b\u5e8f\u5458\u89c4\u5219',
+            close: '\u5173\u95ed',
+            searching: '\u641c\u7d22\uff1a',
+            analyzing: '\u6b63\u5728\u5206\u6790\u6280\u672f\u6765\u6e90...',
+            sources: '\u6765\u6e90',
+            dailyLimitReached: '\u4eca\u65e5 AI \u6458\u8981\u6b21\u6570\u5df2\u7528\u5b8c',
+            upgradeToPro: '\u5347\u7ea7\u5230 Pro',
+            noSummary: '\u6682\u65e0\u6458\u8981\u3002',
+            cached: '\u7f13\u5b58',
+            summaries: '\u6b21\u6458\u8981',
+            unlimited: '\u65e0\u9650\u5236',
+            filteredJunk: '\u5df2\u8fc7\u6ee4 $1 \u6761\u4f4e\u4fe1\u53f7\u6280\u672f\u7ed3\u679c\u3002',
+            showAnyway: '\u4ecd\u7136\u663e\u793a',
+        },
+    },
+
+    async init() {
+        const data = await chrome.storage.sync.get({ language: 'auto' });
+        this._language = data.language || 'auto';
+        document.documentElement.lang = this.currentLanguage().replace('_', '-');
+    },
+
+    currentLanguage() {
+        if (this._language !== 'auto') return this._language;
+
+        const chromeLang = chrome?.i18n?.getUILanguage?.() || navigator.language || 'en';
+        return chromeLang.toLowerCase().startsWith('zh') ? 'zh_CN' : 'en';
+    },
+
+    t(key, substitutions = []) {
+        const language = this.currentLanguage();
+        const template = this._dict[language]?.[key] || this._dict.en[key];
+        if (template) {
+            return this._substitute(template, Array.isArray(substitutions) ? substitutions : [substitutions]);
+        }
+
+        if (chrome?.i18n?.getMessage) {
+            const value = chrome.i18n.getMessage(key, substitutions);
+            if (value) return value;
+        }
+
+        return key;
+    },
+
+    apply(root = document) {
+        root.querySelectorAll('[data-i18n]').forEach(el => {
+            el.textContent = this.t(el.dataset.i18n);
+        });
+
+        root.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            el.setAttribute('placeholder', this.t(el.dataset.i18nPlaceholder));
+        });
+
+        root.querySelectorAll('[data-i18n-title]').forEach(el => {
+            el.setAttribute('title', this.t(el.dataset.i18nTitle));
+        });
+    },
+
+    _substitute(template, substitutions) {
+        return substitutions.reduce((text, value, index) => {
+            return text.replaceAll(`$${index + 1}`, value);
+        }, template);
+    },
+};
