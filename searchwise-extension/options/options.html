@@ -16,13 +16,10 @@
             <nav>
                 <a href="#" class="sw-nav-item active" data-section="blacklist" data-i18n="cleanupRules">Cleanup Rules</a>
                 <a href="#" class="sw-nav-item" data-section="settings" data-i18n="settings">Settings</a>
-                <a href="#" class="sw-nav-item" data-section="account" data-i18n="account">Account</a>
-                <a href="#" class="sw-nav-item" data-section="subscription" data-i18n="subscription">Subscription</a>
             </nav>
         </div>
 
         <div class="sw-main-content">
-            <!-- Cleanup Rules Section -->
             <div id="section-blacklist" class="sw-section">
                 <h2 data-i18n="cleanupRules">Cleanup Rules</h2>
                 <p class="sw-description" data-i18n="cleanupDescription">Clean up low-quality, aggregator, paywall, and distracting search results.</p>
@@ -33,12 +30,9 @@
                 </div>
                 <p id="domain-limit-text" class="sw-limit-text"></p>
 
-                <div id="domain-list" class="sw-domain-list">
-                    <!-- Domains rendered here -->
-                </div>
+                <div id="domain-list" class="sw-domain-list"></div>
             </div>
 
-            <!-- Settings Section -->
             <div id="section-settings" class="sw-section" style="display:none">
                 <h2 data-i18n="settings">Settings</h2>
                 <p class="sw-description" data-i18n="settingsDescription">Configure how SearchWise works.</p>
@@ -54,7 +48,7 @@
                         <select id="opt-language" class="sw-select">
                             <option value="auto" data-i18n="languageAuto">Auto</option>
                             <option value="en" data-i18n="languageEnglish">English</option>
-                            <option value="zh_CN" data-i18n="languageChinese">简体中文</option>
+                            <option value="zh_CN" data-i18n="languageChinese">Simplified Chinese</option>
                         </select>
                     </div>
 
@@ -71,17 +65,6 @@
 
                     <div class="sw-setting-row">
                         <div>
-                            <div class="sw-setting-label" data-i18n="trustedAiBrief">Source Brief</div>
-                            <div class="sw-setting-desc" data-i18n="trustedAiBriefDesc">Summarize visible results with source-quality notes</div>
-                        </div>
-                        <label class="sw-switch">
-                            <input type="checkbox" id="opt-sidebar" checked>
-                            <span class="sw-slider"></span>
-                        </label>
-                    </div>
-
-                    <div class="sw-setting-row">
-                        <div>
                             <div class="sw-setting-label" data-i18n="keywordHighlight">Keyword Highlight</div>
                             <div class="sw-setting-desc" data-i18n="keywordHighlightDesc">Highlight search keywords in results</div>
                         </div>
@@ -89,110 +72,6 @@
                             <input type="checkbox" id="opt-highlight" checked>
                             <span class="sw-slider"></span>
                         </label>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Account Section -->
-            <div id="section-account" class="sw-section" style="display:none">
-                <h2 data-i18n="account">Account</h2>
-
-                <div id="account-not-logged-in">
-                    <p class="sw-description" data-i18n="accountDescription">Create an account to sync your settings and unlock Pro features.</p>
-
-                    <div class="sw-auth-forms">
-                        <div class="sw-form-card">
-                            <h3 data-i18n="login">Login</h3>
-                            <input type="email" id="opt-login-email" placeholder="Email" data-i18n-placeholder="email">
-                            <input type="password" id="opt-login-password" placeholder="Password" data-i18n-placeholder="password">
-                            <button id="opt-login-btn" class="sw-btn sw-btn-primary" data-i18n="login">Login</button>
-                            <p id="opt-login-error" class="sw-error-text" style="display:none"></p>
-                        </div>
-
-                        <div class="sw-form-card">
-                            <h3 data-i18n="createAccount">Create Account</h3>
-                            <input type="text" id="opt-register-name" placeholder="Name" data-i18n-placeholder="name">
-                            <input type="email" id="opt-register-email" placeholder="Email" data-i18n-placeholder="email">
-                            <input type="password" id="opt-register-password" placeholder="Password" data-i18n-placeholder="password">
-                            <input type="password" id="opt-register-confirm" placeholder="Confirm Password" data-i18n-placeholder="confirmPassword">
-                            <button id="opt-register-btn" class="sw-btn sw-btn-primary" data-i18n="register">Register</button>
-                            <p id="opt-register-error" class="sw-error-text" style="display:none"></p>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="account-logged-in" style="display:none">
-                    <div class="sw-account-info">
-                        <div class="sw-account-row">
-                            <span data-i18n="name">Name</span>
-                            <span id="opt-account-name"></span>
-                        </div>
-                        <div class="sw-account-row">
-                            <span data-i18n="email">Email</span>
-                            <span id="opt-account-email"></span>
-                        </div>
-                        <div class="sw-account-row">
-                            <span data-i18n="plan">Plan</span>
-                            <span id="opt-account-plan"></span>
-                        </div>
-                    </div>
-                    <button id="opt-logout-btn" class="sw-btn sw-btn-secondary" data-i18n="logout">Logout</button>
-                </div>
-            </div>
-
-            <!-- Subscription Section -->
-            <div id="section-subscription" class="sw-section" style="display:none">
-                <h2 data-i18n="subscription">Subscription</h2>
-
-                <div id="sub-free">
-                    <div class="sw-plan-card">
-                        <div class="sw-plan-header">
-                            <h3 data-i18n="freePlan">Free</h3>
-                            <span class="sw-plan-price">$0</span>
-                        </div>
-                        <ul class="sw-plan-features">
-                            <li data-i18n="fiveCustomBlocks">20 custom domain blocks</li>
-                            <li data-i18n="builtInCleanupRules">Built-in search cleanup rules</li>
-                            <li data-i18n="threeAiSummaries">3 AI summaries per day</li>
-                            <li data-i18n="keywordHighlighting">Keyword highlighting</li>
-                        </ul>
-                        <div class="sw-plan-current" data-i18n="currentPlan">Current Plan</div>
-                    </div>
-
-                    <div class="sw-plan-card sw-plan-featured">
-                        <div class="sw-plan-header">
-                            <h3 data-i18n="proPlan">Pro</h3>
-                            <span class="sw-plan-price">¥19.9<span>/mo</span></span>
-                        </div>
-                        <ul class="sw-plan-features">
-                            <li data-i18n="unlimitedCustomBlocks">Unlimited custom domain blocks</li>
-                            <li data-i18n="cloudSyncedRules">Cloud synced cleanup rules</li>
-                            <li data-i18n="unlimitedAiSummaries">500 AI briefs per month</li>
-                            <li data-i18n="keywordHighlighting">Keyword highlighting</li>
-                            <li data-i18n="customTrustedRules">Custom trusted-source rules</li>
-                            <li data-i18n="prioritySupport">Priority support</li>
-                        </ul>
-                        <button id="upgrade-monthly-btn" class="sw-btn sw-btn-upgrade" data-i18n="upgradeMonthly">Upgrade Monthly - $4.99/mo</button>
-                        <button id="upgrade-yearly-btn" class="sw-btn sw-btn-upgrade-secondary" data-i18n="upgradeYearly">Upgrade Yearly - $39.99/yr</button>
-                    </div>
-                </div>
-
-                <div id="sub-pro" style="display:none">
-                    <div class="sw-plan-card sw-plan-featured">
-                        <div class="sw-plan-header">
-                            <h3 data-i18n="proPlan">Pro</h3>
-                            <span class="sw-plan-badge-active" data-i18n="active">Active</span>
-                        </div>
-                        <ul class="sw-plan-features">
-                            <li data-i18n="unlimitedCustomBlocks">Unlimited custom domain blocks</li>
-                            <li data-i18n="cloudSyncedRules">Cloud synced cleanup rules</li>
-                            <li data-i18n="unlimitedAiSummaries">500 AI briefs per month</li>
-                            <li data-i18n="keywordHighlighting">Keyword highlighting</li>
-                            <li data-i18n="customTrustedRules">Custom trusted-source rules</li>
-                            <li data-i18n="prioritySupport">Priority support</li>
-                        </ul>
-                        <button id="manage-sub-btn" class="sw-btn sw-btn-secondary" data-i18n="manageSubscription">Manage Subscription</button>
-                        <button id="cancel-sub-btn" class="sw-btn sw-btn-link" data-i18n="cancelSubscription">Cancel Subscription</button>
                     </div>
                 </div>
             </div>

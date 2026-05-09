@@ -1,5 +1,5 @@
 // SearchWise - Main Content Script Entry Point
-// Orchestrates blacklist filtering, keyword highlighting, and AI sidebar
+// Orchestrates blacklist filtering and keyword highlighting
 (function () {
     'use strict';
 
@@ -47,7 +47,7 @@
 
         // Load settings
         const settings = await chrome.storage.sync.get({
-            sidebar_enabled: true,
+            sidebar_enabled: false,
             highlight_enabled: true,
             blacklist_enabled: true,
         });
