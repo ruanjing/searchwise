@@ -29,7 +29,7 @@ const BlacklistEngine = {
         const blockedResults = [];
 
         results.forEach(r => {
-            if (this._isBlocked(r.url)) {
+            if (this._isBlocked(r.url) || this._isBlocked(r.displayUrl)) {
                 r.element.style.display = 'none';
                 r.element.dataset.searchwiseBlocked = 'true';
                 r.blocked = true;
@@ -47,8 +47,11 @@ const BlacklistEngine = {
     },
 
     _isBlocked(url) {
+        if (!url) return false;
+
         try {
-            const hostname = new URL(url).hostname.toLowerCase();
+            const normalized = this._normalizeUrlCandidate(url);
+            const hostname = new URL(normalized).hostname.toLowerCase();
             
             // Check direct match or parent domain match
             let parts = hostname.split('.');
@@ -60,6 +63,21 @@ const BlacklistEngine = {
         } catch {
             return false;
         }
+    },
+
+    _normalizeUrlCandidate(value) {
+        let text = String(value || '').trim();
+        text = text
+            .replace(/^[\s·›>]+/, '')
+            .replace(/\s*[›>].*$/, '')
+            .replace(/\s+.*$/, '')
+            .replace(/\/\s*$/, '');
+
+        if (!/^https?:\/\//i.test(text)) {
+            text = `https://${text}`;
+        }
+
+        return text;
     },
 
     getDomains() {

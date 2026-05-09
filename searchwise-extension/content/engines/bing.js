@@ -4,9 +4,10 @@ const BingAdapter = {
 
     SELECTORS: {
         resultContainer: '#b_results > li.b_algo',
-        resultLink: 'h2 a[href]',
+        resultLink: ['h2 a[href]', '.b_title a[href]'],
         resultTitle: 'h2',
-        resultSnippet: '.b_caption p, .b_lineclamp2',
+        resultSnippet: ['.b_caption p', '.b_lineclamp2'],
+        resultDisplayUrl: ['cite', '.b_attribution cite', '.b_tpcn', '.tptt'],
         searchInput: 'input[name="q"]',
         rightColumn: '#b_context',
         mainContent: '#b_results',
@@ -25,15 +26,17 @@ const BingAdapter = {
         const results = [];
 
         containers.forEach(container => {
-            const linkEl = container.querySelector(this.SELECTORS.resultLink);
+            const linkEl = this._queryFirst(container, this.SELECTORS.resultLink);
             const titleEl = container.querySelector(this.SELECTORS.resultTitle);
-            const snippetEl = container.querySelector(this.SELECTORS.resultSnippet);
+            const snippetEl = this._queryFirst(container, this.SELECTORS.resultSnippet);
+            const displayUrlEl = this._queryFirst(container, this.SELECTORS.resultDisplayUrl);
 
             if (!linkEl || !titleEl) return;
 
             const url = linkEl.href;
             const title = titleEl.textContent.trim();
             const snippet = snippetEl ? snippetEl.textContent.trim() : '';
+            const displayUrl = displayUrlEl ? displayUrlEl.textContent.trim() : '';
 
             if (!url || (!url.startsWith('http://') && !url.startsWith('https://'))) return;
 
@@ -41,12 +44,22 @@ const BingAdapter = {
                 element: container,
                 title,
                 url,
+                displayUrl,
                 snippet,
                 blocked: false,
             });
         });
 
         return results;
+    },
+
+    _queryFirst(root, selectors) {
+        const list = Array.isArray(selectors) ? selectors : [selectors];
+        for (const selector of list) {
+            const found = root.querySelector(selector);
+            if (found) return found;
+        }
+        return null;
     },
 
     getPageLayout() {
