@@ -12,28 +12,23 @@
         await SWI18n.init();
         SWI18n.apply();
 
-        const data = await chrome.storage.local.get('user_info');
-        if (data.user_info) {
+        if (!SW.API_BASE) {
+            await chrome.storage.local.remove([SW.STORAGE.AUTH_TOKEN, SW.STORAGE.USER_INFO]);
+            showUserSection(localUser());
+        } else {
+            const data = await chrome.storage.local.get('user_info');
+            if (data.user_info) {
             currentUser = data.user_info;
             showUserSection(currentUser);
-        } else {
-            showUserSection({
-                name: SWI18n.t('localModeName'),
-                email: SWI18n.t('localModeDesc'),
-                plan: 'free',
-                blacklist_count: 0,
-                usage_today: { ai_summary: 0 },
-                limits: {
-                    max_domains: SW.LIMITS.LOCAL_FREE_DOMAINS,
-                    max_ai_summaries_per_day: 0,
-                },
-            });
+            } else {
+                showUserSection(localUser());
+            }
         }
 
         // Load settings
         const settings = await chrome.storage.sync.get({
             blacklist_enabled: true,
-            sidebar_enabled: true,
+            sidebar_enabled: !!SW.API_BASE,
             highlight_enabled: true,
         });
 
@@ -43,6 +38,7 @@
 
         // Try to refresh user data from API
         try {
+            if (!SW.API_BASE) return;
             const token = await chrome.storage.local.get(SW.STORAGE.AUTH_TOKEN);
             if (token[SW.STORAGE.AUTH_TOKEN]) {
                 const response = await new Promise((resolve, reject) => {
@@ -63,6 +59,21 @@
         } catch (e) {
             // Offline or token expired — keep cached data
         }
+    }
+
+    function localUser() {
+        return {
+            name: SWI18n.t('localModeName'),
+            email: SWI18n.t('localModeDesc'),
+            plan: 'free',
+            blacklist_count: 0,
+            usage_today: { ai_summary: 0 },
+            limits: {
+                max_domains: SW.LIMITS.LOCAL_FREE_DOMAINS,
+                max_ai_summaries_per_day: 0,
+            },
+            local: true,
+        };
     }
 
     function showUserSection(user) {
@@ -92,6 +103,13 @@
         if (user.limits) {
             const domainLimit = user.limits.max_domains || SW.LIMITS.LOCAL_FREE_DOMAINS;
             $('usage-domains').textContent = `${user.blacklist_count || 0}/${domainLimit}`;
+        }
+
+        if (!SW.API_BASE || user.local) {
+            $('upgrade-btn').style.display = 'none';
+            $('logout-btn').style.display = 'none';
+            const sidebarRow = $('toggle-sidebar')?.closest('.sw-toggle-row');
+            if (sidebarRow) sidebarRow.style.display = 'none';
         }
     }
 
@@ -223,7 +241,7 @@
         await new Promise((resolve) => {
             chrome.runtime.sendMessage({ type: 'LOGOUT' }, resolve);
         });
-        showAuthSection();
+        showUserSection(localUser());
     });
 
     // Settings toggles

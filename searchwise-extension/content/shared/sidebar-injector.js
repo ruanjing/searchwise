@@ -11,6 +11,8 @@ const SidebarInjector = {
     async init(layout, query, results) {
         await SWI18n.init();
 
+        if (!SW.API_BASE) return;
+
         // Skip if already fetched for this query
         if (this._fetched && this._lastQuery === query) return;
         this._lastQuery = query;
