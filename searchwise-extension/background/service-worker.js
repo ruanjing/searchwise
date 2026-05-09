@@ -122,6 +122,11 @@ async function apiFetch(endpoint, options = {}) {
 // ========== Blacklist Sync ==========
 
 async function syncBlacklist() {
+    if (!SEARCHWISE_CONFIG.API_BASE) {
+        await refreshCombinedBlacklist();
+        return;
+    }
+
     const token = await getToken();
     if (!token) {
         // Not logged in — keep existing cache or use defaults
@@ -140,7 +145,6 @@ async function syncBlacklist() {
         ];
         await chrome.storage.local.set({ [STORAGE_KEYS.BLACKLIST]: allDomains });
     } catch (e) {
-        console.error('SearchWise: Blacklist sync failed', e);
         await refreshCombinedBlacklist();
     }
 }
