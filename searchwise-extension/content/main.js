@@ -55,8 +55,9 @@
         // Phase 1: Blacklist filtering (offline)
         if (settings.blacklist_enabled) {
             await BlacklistEngine.init();
-            const { count, results: blockedResults } = BlacklistEngine.filter(results);
+            const { count } = BlacklistEngine.filter(results);
             SidebarInjector.showBlockedNotice(count, results);
+            attachBlockActions(results);
         }
 
         // Phase 2: Keyword highlighting (offline)
@@ -69,6 +70,104 @@
             const layout = adapter.getPageLayout();
             SidebarInjector.init(layout, query, results);
         }
+    }
+
+    function attachBlockActions(results) {
+        results.forEach(result => {
+            if (result.blocked || !result.element || result.element.dataset.searchwiseActionReady === 'true') return;
+
+            const domain = extractDomain(result.displayUrl || result.url);
+            if (!domain) return;
+
+            result.element.dataset.searchwiseActionReady = 'true';
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'searchwise-block-site-btn';
+            button.textContent = SWI18n.t('blockThisSite');
+            button.title = SWI18n.t('blockThisSiteTitle', [domain]);
+            button.style.cssText = `
+                display: inline-flex;
+                align-items: center;
+                border: 1px solid rgba(78, 204, 163, 0.55);
+                border-radius: 999px;
+                background: rgba(78, 204, 163, 0.08);
+                color: #087f5b;
+                cursor: pointer;
+                font: 12px/1.2 Arial, sans-serif;
+                margin: 6px 8px 2px 0;
+                padding: 4px 9px;
+                white-space: nowrap;
+            `;
+
+            button.addEventListener('click', async (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+
+                button.disabled = true;
+                button.textContent = SWI18n.t('blockingSite');
+
+                try {
+                    await ApiClient.addDomain(domain);
+                } catch (e) {
+                    if (!String(e.message || '').toLowerCase().includes('already')) {
+                        button.disabled = false;
+                        button.textContent = SWI18n.t('blockThisSite');
+                        button.title = `${SWI18n.t('failedAddDomain', [e.message])}`;
+                        return;
+                    }
+                }
+
+                result.blocked = true;
+                result.element.dataset.searchwiseBlocked = 'true';
+                result.element.dataset.searchwiseUserBlocked = 'true';
+                result.element.style.display = 'none';
+                ApiClient.reportBlockedCount(getBlockedCount());
+                SidebarInjector.showBlockedNotice(getBlockedCount(), results);
+            });
+
+            const anchor = findActionAnchor(result.element);
+            anchor.appendChild(button);
+        });
+    }
+
+    function findActionAnchor(element) {
+        const title = element.querySelector('h3, h2, a[href]');
+        const linkParent = title?.closest?.('a[href]');
+        if (linkParent?.parentElement && linkParent.parentElement !== element) {
+            return linkParent.parentElement;
+        }
+
+        const parent = title?.parentElement;
+        if (parent?.tagName?.toLowerCase() === 'a' && parent.parentElement) {
+            return parent.parentElement;
+        }
+
+        if (parent && parent !== element) return parent;
+        return element;
+    }
+
+    function extractDomain(value) {
+        if (!value) return '';
+
+        try {
+            let text = String(value).trim()
+                .replace(/^[\s›>·|/-]+/, '')
+                .replace(/\s*[›>·|].*$/, '')
+                .replace(/\s+.*$/, '')
+                .replace(/\/\s*$/, '');
+
+            if (!/^https?:\/\//i.test(text)) {
+                text = `https://${text}`;
+            }
+
+            return new URL(text).hostname.toLowerCase().replace(/^www\./, '');
+        } catch {
+            return '';
+        }
+    }
+
+    function getBlockedCount() {
+        return document.querySelectorAll('[data-searchwise-blocked="true"]').length;
     }
 
     // Run when DOM is ready (content_scripts run at document_idle)

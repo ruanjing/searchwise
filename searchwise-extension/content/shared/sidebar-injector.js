@@ -548,13 +548,22 @@ const SidebarInjector = {
 
     showBlockedNotice(count, results) {
         if (count === 0) return;
-        
+
+        const existing = document.getElementById('sw-blocked-notice');
+        if (existing) {
+            existing.dataset.count = String(count);
+            const text = existing.querySelector('#sw-filtered-count-text');
+            if (text) text.innerHTML = this._formatFilteredNotice(count);
+            return;
+        }
+
         // Find a place to insert the notice (usually above the first result)
         const firstResult = results.find(r => !r.blocked)?.element || document.querySelector('#rso');
-        if (!firstResult || document.getElementById('sw-blocked-notice')) return;
+        if (!firstResult) return;
 
         const notice = document.createElement('div');
         notice.id = 'sw-blocked-notice';
+        notice.dataset.count = String(count);
         notice.style.cssText = `
             background: #f8f9fa;
             border: 1px solid #dadce0;
@@ -571,7 +580,7 @@ const SidebarInjector = {
         notice.innerHTML = `
             <div style="display:flex;align-items:center;gap:8px">
                 <span style="background:#4ecca3;color:white;padding:2px 6px;border-radius:4px;font-weight:bold;font-size:12px">SearchWise</span>
-                <span>${this._formatFilteredNotice(count)}</span>
+                <span id="sw-filtered-count-text">${this._formatFilteredNotice(count)}</span>
             </div>
             <button id="sw-show-blocked" style="background:none;border:none;color:#1a73e8;cursor:pointer;font-weight:500;padding:4px 8px;border-radius:4px">${this._escapeHtml(SWI18n.t('showAnyway'))}</button>
         `;
@@ -581,6 +590,9 @@ const SidebarInjector = {
         notice.querySelector('#sw-show-blocked').addEventListener('click', () => {
             const blocked = document.querySelectorAll('[data-searchwise-blocked="true"]');
             blocked.forEach(el => el.style.display = 'block');
+            chrome.runtime?.sendMessage?.({ type: SW.MSG.BLOCKED_COUNT, count: 0 }, () => {
+                if (chrome.runtime.lastError) { /* ignore */ }
+            });
             notice.remove();
         });
     },
