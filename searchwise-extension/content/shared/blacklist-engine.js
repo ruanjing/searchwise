@@ -30,7 +30,9 @@ const BlacklistEngine = {
 
         results.forEach(r => {
             if (this._isBlocked(r.url) || this._isBlocked(r.displayUrl)) {
-                r.element.style.display = 'none';
+                if (document.body.dataset.searchwiseShowBlocked !== 'true') {
+                    r.element.style.display = 'none';
+                }
                 r.element.dataset.searchwiseBlocked = 'true';
                 r.blocked = true;
                 blockedCount++;

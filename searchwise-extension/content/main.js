@@ -3,6 +3,8 @@
 (function () {
     'use strict';
 
+    let currentQuery = '';
+
     function detectEngine() {
         const host = window.location.hostname;
         if (host.includes('google')) return SW.ENGINE.GOOGLE;
@@ -28,9 +30,54 @@
         }
     }
 
+    function injectGlobalStyles() {
+        if (document.getElementById('searchwise-global-styles')) return;
+        const style = document.createElement('style');
+        style.id = 'searchwise-global-styles';
+        style.textContent = `
+            /* style when blocked elements are shown anyway */
+            body[data-searchwise-show-blocked="true"] [data-searchwise-blocked="true"] {
+                display: block !important;
+                border: 1px dashed rgba(244, 63, 94, 0.45) !important;
+                background-color: rgba(244, 63, 94, 0.015) !important;
+                position: relative !important;
+                border-radius: 8px !important;
+                padding: 12px 16px !important;
+                margin-top: 10px !important;
+                margin-bottom: 10px !important;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+                transition: all 0.2s ease !important;
+            }
+
+            body[data-searchwise-show-blocked="true"] [data-searchwise-blocked="true"]:hover {
+                border-color: rgba(244, 63, 94, 0.7) !important;
+                background-color: rgba(244, 63, 94, 0.03) !important;
+            }
+
+            /* Premium SearchWise Blocked badge overlay */
+            body[data-searchwise-show-blocked="true"] [data-searchwise-blocked="true"]::before {
+                content: "🛡️ SearchWise 已拦截此站 (已设为显示)" !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                background: #ffebee !important;
+                color: #c62828 !important;
+                border: 1px solid #ffcdd2 !important;
+                font-size: 11px !important;
+                font-weight: 600 !important;
+                padding: 3px 8px !important;
+                border-radius: 4px !important;
+                margin-bottom: 10px !important;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
     async function init() {
         // Skip if extension context has been invalidated (e.g. after extension reload)
         if (!chrome.runtime?.id) return;
+
+        injectGlobalStyles();
 
         const engine = detectEngine();
         if (!engine) return;
@@ -40,6 +87,12 @@
 
         const query = adapter.getSearchQuery();
         if (!query) return;
+
+        // Reset temporary bypass on query change (SPA navigation)
+        if (currentQuery !== query) {
+            currentQuery = query;
+            delete document.body.dataset.searchwiseShowBlocked;
+        }
 
         // Get search results
         const results = adapter.getResults();

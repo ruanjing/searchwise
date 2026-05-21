@@ -547,13 +547,16 @@ const SidebarInjector = {
     },
 
     showBlockedNotice(count, results) {
-        if (count === 0) return;
+        if (count === 0) {
+            const existing = document.getElementById('sw-blocked-notice');
+            if (existing) existing.remove();
+            return;
+        }
 
         const existing = document.getElementById('sw-blocked-notice');
         if (existing) {
             existing.dataset.count = String(count);
-            const text = existing.querySelector('#sw-filtered-count-text');
-            if (text) text.innerHTML = this._formatFilteredNotice(count);
+            this.updateBlockedNoticeState(existing, count, document.body.dataset.searchwiseShowBlocked === 'true');
             return;
         }
 
@@ -587,14 +590,49 @@ const SidebarInjector = {
 
         firstResult.parentNode.insertBefore(notice, firstResult);
 
+        // Render current state correctly
+        const isShowing = document.body.dataset.searchwiseShowBlocked === 'true';
+        this.updateBlockedNoticeState(notice, count, isShowing);
+
         notice.querySelector('#sw-show-blocked').addEventListener('click', () => {
-            const blocked = document.querySelectorAll('[data-searchwise-blocked="true"]');
-            blocked.forEach(el => el.style.display = 'block');
-            chrome.runtime?.sendMessage?.({ type: SW.MSG.BLOCKED_COUNT, count: 0 }, () => {
-                if (chrome.runtime.lastError) { /* ignore */ }
-            });
-            notice.remove();
+            const currentShowing = document.body.dataset.searchwiseShowBlocked === 'true';
+            if (currentShowing) {
+                // Collapse back
+                delete document.body.dataset.searchwiseShowBlocked;
+                const blocked = document.querySelectorAll('[data-searchwise-blocked="true"]');
+                blocked.forEach(el => el.style.display = 'none');
+                chrome.runtime?.sendMessage?.({ type: SW.MSG.BLOCKED_COUNT, count: count }, () => {
+                    if (chrome.runtime.lastError) { /* ignore */ }
+                });
+                this.updateBlockedNoticeState(notice, count, false);
+            } else {
+                // Show anyway
+                document.body.dataset.searchwiseShowBlocked = 'true';
+                const blocked = document.querySelectorAll('[data-searchwise-blocked="true"]');
+                blocked.forEach(el => el.style.display = 'block');
+                chrome.runtime?.sendMessage?.({ type: SW.MSG.BLOCKED_COUNT, count: 0 }, () => {
+                    if (chrome.runtime.lastError) { /* ignore */ }
+                });
+                this.updateBlockedNoticeState(notice, count, true);
+            }
         });
+    },
+
+    updateBlockedNoticeState(notice, count, isShowing) {
+        const textEl = notice.querySelector('#sw-filtered-count-text');
+        const btnEl = notice.querySelector('#sw-show-blocked');
+        if (!textEl || !btnEl) return;
+
+        if (isShowing) {
+            textEl.innerHTML = this._escapeHtml(SWI18n.t('filteredJunk', [String(count)]))
+                .replace(this._escapeHtml(String(count)), `<strong>${count}</strong>`) + ` (${this._escapeHtml(SWI18n.t('shown'))})`;
+            btnEl.textContent = SWI18n.t('collapseAgain');
+            btnEl.style.color = '#e03131';
+        } else {
+            textEl.innerHTML = this._formatFilteredNotice(count);
+            btnEl.textContent = SWI18n.t('showAnyway');
+            btnEl.style.color = '#1a73e8';
+        }
     },
 
     _escapeHtml(text) {
