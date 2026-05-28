@@ -24,6 +24,24 @@
                 <h2 data-i18n="cleanupRules">Cleanup Rules</h2>
                 <p class="sw-description" data-i18n="cleanupDescription">Clean up low-quality, aggregator, paywall, and distracting search results.</p>
 
+                <div class="sw-stats-panel" aria-label="Cleanup statistics">
+                    <h3 data-i18n="cleanupStats">Cleanup Stats</h3>
+                    <div class="sw-stats-grid">
+                        <div class="sw-stat-card">
+                            <span class="sw-stat-label" data-i18n="cleanedToday">Cleaned Today</span>
+                            <strong id="stat-cleaned-today">0</strong>
+                        </div>
+                        <div class="sw-stat-card">
+                            <span class="sw-stat-label" data-i18n="totalCleaned">Total Cleaned</span>
+                            <strong id="stat-total-cleaned">0</strong>
+                        </div>
+                        <div class="sw-stat-card">
+                            <span class="sw-stat-label" data-i18n="customBlockCount">Custom Blocks</span>
+                            <strong id="stat-custom-blocks">0/20</strong>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="sw-add-domain">
                     <input type="text" id="new-domain" placeholder="e.g. pinterest.com">
                     <button id="add-domain-btn" class="sw-btn sw-btn-primary" data-i18n="add">Add</button>

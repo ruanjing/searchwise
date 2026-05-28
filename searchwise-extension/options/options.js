@@ -36,7 +36,19 @@
         $('opt-highlight').checked = settings.highlight_enabled;
         $('opt-language').value = settings.language || 'auto';
 
+        await loadStats();
         await loadBlacklist();
+    }
+
+    async function loadStats() {
+        const today = new Date().toISOString().slice(0, 10);
+        const data = await chrome.storage.local.get({
+            sw_stats: { totalFiltered: 0, dailyFiltered: {} },
+        });
+        const stats = data.sw_stats || { totalFiltered: 0, dailyFiltered: {} };
+        $('stat-cleaned-today').textContent = String(stats.dailyFiltered?.[today] || 0);
+        $('stat-total-cleaned').textContent = String(stats.totalFiltered || 0);
+        $('stat-custom-blocks').textContent = `${userDomains.length}/20`;
     }
 
     async function loadBlacklist() {
@@ -85,6 +97,7 @@
         });
 
         list.innerHTML = html;
+        $('stat-custom-blocks').textContent = `${userDomains.length}/20`;
         limitText.textContent = SWI18n.t('customDomainsLimit', [
             String(userDomains.length),
             '20',
@@ -148,6 +161,7 @@
         document.title = SWI18n.t('settingsTitle');
         SWI18n.apply();
         renderBlacklist();
+        await loadStats();
     });
 
     // ===== Helpers =====

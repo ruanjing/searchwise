@@ -126,6 +126,46 @@ body {
     margin-bottom: 16px;
 }
 
+.sw-stats-panel {
+    background: #15152a;
+    border: 1px solid #2a2a4a;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.sw-stats-panel h3 {
+    color: #fff;
+    font-size: 15px;
+    margin-bottom: 12px;
+}
+
+.sw-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.sw-stat-card {
+    background: #16213e;
+    border-radius: 8px;
+    padding: 12px;
+    min-height: 72px;
+}
+
+.sw-stat-label {
+    display: block;
+    color: #8c8ca8;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.sw-stat-card strong {
+    color: #4ecca3;
+    font-size: 24px;
+    line-height: 1;
+}
+
 /* Domain List */
 .sw-domain-list {
     display: flex;

@@ -4,6 +4,7 @@
     'use strict';
 
     let currentQuery = '';
+    let lastStatsKey = '';
 
     function detectEngine() {
         const host = window.location.hostname;
@@ -111,6 +112,7 @@
             await BlacklistEngine.init();
             const { count } = BlacklistEngine.filter(results);
             applyBlockedLabels(results);
+            await recordCleanupStats(engine, query, count);
             SidebarInjector.showBlockedNotice(count, results);
             attachBlockActions(results);
         }
@@ -161,8 +163,9 @@
                 button.disabled = true;
                 button.textContent = SWI18n.t('blockingSite');
 
+                let addedDomain = null;
                 try {
-                    await ApiClient.addDomain(domain);
+                    addedDomain = await ApiClient.addDomain(domain);
                 } catch (e) {
                     if (!String(e.message || '').toLowerCase().includes('already')) {
                         button.disabled = false;
@@ -179,11 +182,110 @@
                 result.element.style.display = 'none';
                 ApiClient.reportBlockedCount(getBlockedCount());
                 SidebarInjector.showBlockedNotice(getBlockedCount(), results);
+                showUndoToast(domain, async () => {
+                    if (addedDomain?.id) {
+                        await ApiClient.removeDomain(addedDomain.id);
+                    }
+
+                    result.blocked = false;
+                    result.element.removeAttribute('data-searchwise-blocked');
+                    result.element.removeAttribute('data-searchwise-blocked-label');
+                    result.element.removeAttribute('data-searchwise-user-blocked');
+                    result.element.style.display = '';
+                    button.disabled = false;
+                    button.textContent = SWI18n.t('blockThisSite');
+                    button.title = SWI18n.t('blockThisSiteTitle', [domain]);
+                    SidebarInjector.showBlockedNotice(getBlockedCount(), results);
+                    ApiClient.reportBlockedCount(getBlockedCount());
+                });
             });
 
             const anchor = findActionAnchor(result.element);
             anchor.appendChild(button);
         });
+    }
+
+    async function recordCleanupStats(engine, query, count) {
+        if (!count) return;
+
+        const statsKey = `${engine}:${query}:${location.pathname}:${location.search}`;
+        if (lastStatsKey === statsKey) return;
+        if (sessionStorage.getItem('sw_last_stats_key') === statsKey) return;
+        lastStatsKey = statsKey;
+        sessionStorage.setItem('sw_last_stats_key', statsKey);
+
+        const today = new Date().toISOString().slice(0, 10);
+        const data = await chrome.storage.local.get({
+            sw_stats: { totalFiltered: 0, dailyFiltered: {} },
+        });
+        const stats = data.sw_stats || { totalFiltered: 0, dailyFiltered: {} };
+        stats.totalFiltered = Number(stats.totalFiltered || 0) + count;
+        stats.dailyFiltered = stats.dailyFiltered || {};
+        stats.dailyFiltered[today] = Number(stats.dailyFiltered[today] || 0) + count;
+
+        const keepDates = new Set(
+            Array.from({ length: 30 }, (_, index) => {
+                const date = new Date();
+                date.setDate(date.getDate() - index);
+                return date.toISOString().slice(0, 10);
+            })
+        );
+        Object.keys(stats.dailyFiltered).forEach(date => {
+            if (!keepDates.has(date)) delete stats.dailyFiltered[date];
+        });
+
+        await chrome.storage.local.set({ sw_stats: stats });
+    }
+
+    function showUndoToast(domain, onUndo) {
+        const existing = document.getElementById('sw-undo-toast');
+        if (existing) existing.remove();
+
+        const toast = document.createElement('div');
+        toast.id = 'sw-undo-toast';
+        toast.style.cssText = `
+            position: fixed;
+            left: 24px;
+            bottom: 24px;
+            z-index: 2147483647;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: min(420px, calc(100vw - 48px));
+            background: #202124;
+            color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            padding: 12px 14px;
+            font: 13px/1.4 Arial, sans-serif;
+        `;
+        toast.innerHTML = `
+            <span>${escapeHtml(SWI18n.t('blockedDomainToast', [domain]))}</span>
+            <button type="button" style="background:none;border:none;color:#8ab4f8;cursor:pointer;font:600 13px/1.4 Arial,sans-serif;padding:4px 2px">${escapeHtml(SWI18n.t('undo'))}</button>
+        `;
+
+        const timer = setTimeout(() => toast.remove(), 7000);
+        toast.querySelector('button').addEventListener('click', async () => {
+            clearTimeout(timer);
+            const button = toast.querySelector('button');
+            button.disabled = true;
+            try {
+                await onUndo();
+                toast.querySelector('span').textContent = SWI18n.t('undoDone');
+                setTimeout(() => toast.remove(), 1600);
+            } catch (e) {
+                toast.querySelector('span').textContent = e.message || SWI18n.t('undoFailed');
+                button.disabled = false;
+            }
+        });
+
+        document.body.appendChild(toast);
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text || '';
+        return div.innerHTML;
     }
 
     function applyBlockedLabels(results) {

@@ -74,10 +74,18 @@
   "cached": { "message": "\u7f13\u5b58" },
   "summaries": { "message": "\u6b21\u6458\u8981" },
   "unlimited": { "message": "\u65e0\u9650\u5236" },
-  "filteredJunk": { "message": "\u5df2\u8fc7\u6ee4 $COUNT$ \u6761\u4f4e\u4fe1\u53f7\u6280\u672f\u7ed3\u679c\u3002", "placeholders": { "count": { "content": "$1" } } },
+  "filteredJunk": { "message": "SearchWise \u5df2\u6e05\u7406 $COUNT$ \u6761\u566a\u97f3\u7ed3\u679c\u3002", "placeholders": { "count": { "content": "$1" } } },
   "showAnyway": { "message": "\u4ecd\u7136\u663e\u793a" },
   "blockedResultShownLabel": { "message": "SearchWise \u5df2\u62e6\u622a\u6b64\u7ad9\uff08\u5df2\u8bbe\u4e3a\u663e\u793a\uff09" },
   "blockThisSite": { "message": "\u5c4f\u853d\u6b64\u7ad9" },
   "blockThisSiteTitle": { "message": "\u9690\u85cf\u6765\u81ea $DOMAIN$ \u7684\u641c\u7d22\u7ed3\u679c", "placeholders": { "domain": { "content": "$1" } } },
-  "blockingSite": { "message": "\u6b63\u5728\u5c4f\u853d..." }
+  "blockingSite": { "message": "\u6b63\u5728\u5c4f\u853d..." },
+  "undo": { "message": "\u64a4\u9500" },
+  "undoDone": { "message": "\u5df2\u64a4\u9500\u5c4f\u853d\u3002" },
+  "undoFailed": { "message": "\u64a4\u9500\u5931\u8d25\u3002" },
+  "blockedDomainToast": { "message": "\u5df2\u5c4f\u853d $DOMAIN$\u3002", "placeholders": { "domain": { "content": "$1" } } },
+  "cleanupStats": { "message": "\u51c0\u5316\u7edf\u8ba1" },
+  "cleanedToday": { "message": "\u4eca\u65e5\u6e05\u7406" },
+  "totalCleaned": { "message": "\u7d2f\u8ba1\u6e05\u7406" },
+  "customBlockCount": { "message": "\u81ea\u5b9a\u4e49\u5c4f\u853d" }
 }
