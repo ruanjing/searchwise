@@ -86,6 +86,8 @@
   "blockingSite": { "message": "\u6b63\u5728\u5c4f\u853d..." },
   "pauseCleanupThisPage": { "message": "\u672c\u9875\u6682\u505c\u51c0\u5316" },
   "cleanupPausedThisPage": { "message": "\u672c\u9875\u5df2\u6682\u505c" },
+  "resumeCleanupThisPage": { "message": "\u6062\u590d\u672c\u9875\u51c0\u5316" },
+  "cleanupPausedNotice": { "message": "SearchWise \u5df2\u6682\u505c\u672c\u9875\u51c0\u5316\uff0c$COUNT$ \u6761\u9690\u85cf\u7ed3\u679c\u5df2\u663e\u793a\u3002", "placeholders": { "count": { "content": "$1" } } },
   "undo": { "message": "\u64a4\u9500" },
   "undoDone": { "message": "\u5df2\u64a4\u9500\u5c4f\u853d\u3002" },
   "undoFailed": { "message": "\u64a4\u9500\u5931\u8d25\u3002" },

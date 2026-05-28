@@ -559,7 +559,12 @@ const SidebarInjector = {
         const existing = document.getElementById('sw-blocked-notice');
         if (existing) {
             existing.dataset.count = String(count);
-            this.updateBlockedNoticeState(existing, count, document.body.dataset.searchwiseShowBlocked === 'true');
+            this.updateBlockedNoticeState(
+                existing,
+                count,
+                document.body.dataset.searchwiseShowBlocked === 'true',
+                document.body.dataset.searchwisePageDisabled === 'true'
+            );
             return;
         }
 
@@ -598,7 +603,8 @@ const SidebarInjector = {
 
         // Render current state correctly
         const isShowing = document.body.dataset.searchwiseShowBlocked === 'true';
-        this.updateBlockedNoticeState(notice, count, isShowing);
+        const isPaused = document.body.dataset.searchwisePageDisabled === 'true';
+        this.updateBlockedNoticeState(notice, count, isShowing, isPaused);
 
         notice.querySelector('#sw-show-blocked').addEventListener('click', () => {
             const currentShowing = document.body.dataset.searchwiseShowBlocked === 'true';
@@ -610,7 +616,7 @@ const SidebarInjector = {
                 chrome.runtime?.sendMessage?.({ type: SW.MSG.BLOCKED_COUNT, count: count }, () => {
                     if (chrome.runtime.lastError) { /* ignore */ }
                 });
-                this.updateBlockedNoticeState(notice, count, false);
+                this.updateBlockedNoticeState(notice, count, false, false);
             } else {
                 // Show anyway
                 document.body.dataset.searchwiseShowBlocked = 'true';
@@ -619,32 +625,53 @@ const SidebarInjector = {
                 chrome.runtime?.sendMessage?.({ type: SW.MSG.BLOCKED_COUNT, count: 0 }, () => {
                     if (chrome.runtime.lastError) { /* ignore */ }
                 });
-                this.updateBlockedNoticeState(notice, count, true);
+                this.updateBlockedNoticeState(notice, count, true, false);
             }
         });
 
         notice.querySelector('#sw-pause-cleanup').addEventListener('click', () => {
-            window.SearchWisePageControls?.pauseCleanup?.(this._noticeEngine || this._engine || 'search', this._noticeQuery || this._lastQuery || location.href);
-            this.updateBlockedNoticeState(notice, count, true);
+            const engine = this._noticeEngine || this._engine || 'search';
+            const query = this._noticeQuery || this._lastQuery || location.href;
+            const isPaused = document.body.dataset.searchwisePageDisabled === 'true';
+            if (isPaused) {
+                window.SearchWisePageControls?.resumeCleanup?.(engine, query, count);
+                this.updateBlockedNoticeState(notice, count, false, false);
+                return;
+            }
+
+            window.SearchWisePageControls?.pauseCleanup?.(engine, query);
+            this.updateBlockedNoticeState(notice, count, true, true);
             const pauseBtn = notice.querySelector('#sw-pause-cleanup');
             if (pauseBtn) {
-                pauseBtn.textContent = SWI18n.t('cleanupPausedThisPage');
-                pauseBtn.disabled = true;
+                pauseBtn.textContent = SWI18n.t('resumeCleanupThisPage');
+                pauseBtn.disabled = false;
                 pauseBtn.style.color = '#188038';
             }
         });
     },
 
-    updateBlockedNoticeState(notice, count, isShowing) {
+    updateBlockedNoticeState(notice, count, isShowing, isPaused = false) {
         const textEl = notice.querySelector('#sw-filtered-count-text');
         const btnEl = notice.querySelector('#sw-show-blocked');
+        const pauseBtn = notice.querySelector('#sw-pause-cleanup');
         if (!textEl || !btnEl) return;
+
+        if (pauseBtn) {
+            pauseBtn.textContent = isPaused ? SWI18n.t('resumeCleanupThisPage') : SWI18n.t('pauseCleanupThisPage');
+            pauseBtn.disabled = false;
+            pauseBtn.style.color = isPaused ? '#188038' : '#5f6368';
+        }
 
         if (isShowing) {
             textEl.innerHTML = this._escapeHtml(SWI18n.t('filteredJunk', [String(count)]))
                 .replace(this._escapeHtml(String(count)), `<strong>${count}</strong>`) + ` (${this._escapeHtml(SWI18n.t('shown'))})`;
             btnEl.textContent = SWI18n.t('collapseAgain');
             btnEl.style.color = '#e03131';
+            if (isPaused) {
+                textEl.innerHTML = this._escapeHtml(SWI18n.t('cleanupPausedNotice', [String(count)]))
+                    .replace(this._escapeHtml(String(count)), `<strong>${count}</strong>`);
+                btnEl.textContent = SWI18n.t('collapseAgain');
+            }
         } else {
             textEl.innerHTML = this._formatFilteredNotice(count);
             btnEl.textContent = SWI18n.t('showAnyway');

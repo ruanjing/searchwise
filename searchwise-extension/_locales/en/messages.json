@@ -86,6 +86,8 @@
   "blockingSite": { "message": "Blocking..." },
   "pauseCleanupThisPage": { "message": "Pause on this page" },
   "cleanupPausedThisPage": { "message": "Paused on this page" },
+  "resumeCleanupThisPage": { "message": "Resume cleanup" },
+  "cleanupPausedNotice": { "message": "SearchWise paused cleanup on this page. $COUNT$ hidden result(s) are visible.", "placeholders": { "count": { "content": "$1" } } },
   "undo": { "message": "Undo" },
   "undoDone": { "message": "Block undone." },
   "undoFailed": { "message": "Undo failed." },

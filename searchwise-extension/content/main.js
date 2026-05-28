@@ -352,6 +352,15 @@
             });
             ApiClient.reportBlockedCount(0);
         },
+        resumeCleanup(engine, query, count) {
+            sessionStorage.removeItem(cleanupPauseKey(engine, query));
+            delete document.body.dataset.searchwisePageDisabled;
+            delete document.body.dataset.searchwiseShowBlocked;
+            document.querySelectorAll('[data-searchwise-blocked="true"]').forEach(el => {
+                el.style.display = 'none';
+            });
+            ApiClient.reportBlockedCount(count || getBlockedCount());
+        },
     };
 
     function insertBlockAction(element, actionRow) {
