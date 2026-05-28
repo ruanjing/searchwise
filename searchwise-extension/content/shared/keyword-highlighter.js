@@ -65,7 +65,10 @@ const KeywordHighlighter = {
                     if (['SCRIPT', 'STYLE', 'TEXTAREA', 'INPUT'].includes(parent.tagName)) {
                         return NodeFilter.FILTER_REJECT;
                     }
-                    if (!options.allowLinks && parent.closest('a, cite, .qLRx3b, .tjvcx')) {
+                    if (this._isSearchUtilityText(parent)) {
+                        return NodeFilter.FILTER_REJECT;
+                    }
+                    if (!options.allowLinks && parent.closest('a, [role="link"], cite, .qLRx3b, .tjvcx, .yuRUbf')) {
                         return NodeFilter.FILTER_REJECT;
                     }
                     return NodeFilter.FILTER_ACCEPT;
@@ -80,6 +83,8 @@ const KeywordHighlighter = {
 
         textNodes.forEach(textNode => {
             const text = textNode.textContent;
+            if (this._looksLikeSearchUtility(text)) return;
+
             const regex = this._buildRegex(keywords);
 
             if (!regex.test(text)) return;
@@ -122,6 +127,15 @@ const KeywordHighlighter = {
     _buildRegex(keywords) {
         const escaped = keywords.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
         return new RegExp(`(${escaped.join('|')})`, 'gi');
+    },
+
+    _isSearchUtilityText(element) {
+        const utilityRoot = element.closest('a, [role="link"], cite, .qLRx3b, .tjvcx, .yuRUbf');
+        return this._looksLikeSearchUtility(utilityRoot?.textContent || element.textContent || '');
+    },
+
+    _looksLikeSearchUtility(text) {
+        return /^(translate|cached|similar|转为|翻译|网页快照|頁庫存檔)/i.test(String(text || '').trim());
     },
 
     _ensureStyles() {
