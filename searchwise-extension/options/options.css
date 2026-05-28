@@ -98,6 +98,29 @@ body {
     font-size: 14px;
 }
 
+.sw-onboarding {
+    background: linear-gradient(135deg, rgba(78, 204, 163, 0.14), rgba(22, 33, 62, 0.86));
+    border: 1px solid rgba(78, 204, 163, 0.42);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.sw-onboarding h2 {
+    margin-bottom: 8px;
+}
+
+.sw-onboarding p,
+.sw-onboarding li {
+    color: #a0a0c0;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.sw-onboarding ul {
+    margin: 12px 0 16px 18px;
+}
+
 /* Add Domain */
 .sw-add-domain {
     display: flex;

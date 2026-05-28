@@ -447,9 +447,14 @@ function handleBlockedCount(message, sender) {
 
 // ========== Alarms (periodic sync) ==========
 
-chrome.runtime.onInstalled.addListener(() => {
+chrome.runtime.onInstalled.addListener((details) => {
     syncBlacklist();
     chrome.alarms.create('sync-blacklist', { periodInMinutes: 60 });
+    if (details.reason === 'install') {
+        chrome.storage.local.set({ onboarding_pending: true }, () => {
+            chrome.runtime.openOptionsPage();
+        });
+    }
 });
 
 chrome.alarms.onAlarm.addListener((alarm) => {

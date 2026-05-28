@@ -77,9 +77,15 @@
   "filteredJunk": { "message": "SearchWise \u5df2\u6e05\u7406 $COUNT$ \u6761\u566a\u97f3\u7ed3\u679c\u3002", "placeholders": { "count": { "content": "$1" } } },
   "showAnyway": { "message": "\u4ecd\u7136\u663e\u793a" },
   "blockedResultShownLabel": { "message": "SearchWise \u5df2\u62e6\u622a\u6b64\u7ad9\uff08\u5df2\u8bbe\u4e3a\u663e\u793a\uff09" },
+  "blockedResultShownLabelWithReason": { "message": "SearchWise \u5df2\u62e6\u622a\u6b64\u7ad9\uff1a$REASON$ - $DOMAIN$", "placeholders": { "reason": { "content": "$1" }, "domain": { "content": "$2" } } },
+  "blockedResultShownLabelWithReasonNoDomain": { "message": "SearchWise \u5df2\u62e6\u622a\u6b64\u7ad9\uff1a$REASON$", "placeholders": { "reason": { "content": "$1" } } },
+  "blockedReasonCustom": { "message": "\u81ea\u5b9a\u4e49\u5c4f\u853d" },
+  "blockedReasonDeveloperRule": { "message": "\u51c0\u5316\u89c4\u5219" },
   "blockThisSite": { "message": "\u5c4f\u853d\u6b64\u7ad9" },
   "blockThisSiteTitle": { "message": "\u9690\u85cf\u6765\u81ea $DOMAIN$ \u7684\u641c\u7d22\u7ed3\u679c", "placeholders": { "domain": { "content": "$1" } } },
   "blockingSite": { "message": "\u6b63\u5728\u5c4f\u853d..." },
+  "pauseCleanupThisPage": { "message": "\u672c\u9875\u6682\u505c\u51c0\u5316" },
+  "cleanupPausedThisPage": { "message": "\u672c\u9875\u5df2\u6682\u505c" },
   "undo": { "message": "\u64a4\u9500" },
   "undoDone": { "message": "\u5df2\u64a4\u9500\u5c4f\u853d\u3002" },
   "undoFailed": { "message": "\u64a4\u9500\u5931\u8d25\u3002" },
@@ -87,5 +93,9 @@
   "cleanupStats": { "message": "\u51c0\u5316\u7edf\u8ba1" },
   "cleanedToday": { "message": "\u4eca\u65e5\u6e05\u7406" },
   "totalCleaned": { "message": "\u7d2f\u8ba1\u6e05\u7406" },
-  "customBlockCount": { "message": "\u81ea\u5b9a\u4e49\u5c4f\u853d" }
+  "customBlockCount": { "message": "\u81ea\u5b9a\u4e49\u5c4f\u853d" },
+  "onboardingTitle": { "message": "SearchWise \u5df2\u51c6\u5907\u597d" },
+  "onboardingIntro": { "message": "\u641c\u7d22\u51c0\u5316\u5df2\u81ea\u52a8\u5f00\u542f\u3002\u7167\u5e38\u641c\u7d22\uff0cSearchWise \u4f1a\u5728\u652f\u6301\u7684\u641c\u7d22\u5f15\u64ce\u4e0a\u9690\u85cf\u566a\u97f3\u7ed3\u679c\u3002" },
+  "onboardingTipOne": { "message": "\u5728\u641c\u7d22\u7ed3\u679c\u4e0a\u70b9\u201c\u5c4f\u853d\u6b64\u7ad9\u201d\uff0c\u4ee5\u540e\u5c31\u4f1a\u9690\u85cf\u7c7b\u4f3c\u7ed3\u679c\u3002" },
+  "onboardingTipTwo": { "message": "\u5982\u679c\u67d0\u4e2a\u641c\u7d22\u9875\u88ab\u8fc7\u5ea6\u8fc7\u6ee4\uff0c\u53ef\u4ee5\u70b9\u201c\u672c\u9875\u6682\u505c\u51c0\u5316\u201d\u3002" }
 }

@@ -546,7 +546,10 @@ const SidebarInjector = {
         this._shadow = null;
     },
 
-    showBlockedNotice(count, results) {
+    showBlockedNotice(count, results, engine, query) {
+        if (engine) this._noticeEngine = engine;
+        if (query) this._noticeQuery = query;
+
         if (count === 0) {
             const existing = document.getElementById('sw-blocked-notice');
             if (existing) existing.remove();
@@ -585,7 +588,10 @@ const SidebarInjector = {
                 <span style="background:#4ecca3;color:white;padding:2px 6px;border-radius:4px;font-weight:bold;font-size:12px">SearchWise</span>
                 <span id="sw-filtered-count-text">${this._formatFilteredNotice(count)}</span>
             </div>
-            <button id="sw-show-blocked" style="background:none;border:none;color:#1a73e8;cursor:pointer;font-weight:500;padding:4px 8px;border-radius:4px">${this._escapeHtml(SWI18n.t('showAnyway'))}</button>
+            <div style="display:flex;align-items:center;gap:8px">
+                <button id="sw-show-blocked" style="background:none;border:none;color:#1a73e8;cursor:pointer;font-weight:500;padding:4px 8px;border-radius:4px">${this._escapeHtml(SWI18n.t('showAnyway'))}</button>
+                <button id="sw-pause-cleanup" style="background:none;border:none;color:#5f6368;cursor:pointer;font-weight:500;padding:4px 8px;border-radius:4px">${this._escapeHtml(SWI18n.t('pauseCleanupThisPage'))}</button>
+            </div>
         `;
 
         firstResult.parentNode.insertBefore(notice, firstResult);
@@ -614,6 +620,17 @@ const SidebarInjector = {
                     if (chrome.runtime.lastError) { /* ignore */ }
                 });
                 this.updateBlockedNoticeState(notice, count, true);
+            }
+        });
+
+        notice.querySelector('#sw-pause-cleanup').addEventListener('click', () => {
+            window.SearchWisePageControls?.pauseCleanup?.(this._noticeEngine || this._engine || 'search', this._noticeQuery || this._lastQuery || location.href);
+            this.updateBlockedNoticeState(notice, count, true);
+            const pauseBtn = notice.querySelector('#sw-pause-cleanup');
+            if (pauseBtn) {
+                pauseBtn.textContent = SWI18n.t('cleanupPausedThisPage');
+                pauseBtn.disabled = true;
+                pauseBtn.style.color = '#188038';
             }
         });
     },

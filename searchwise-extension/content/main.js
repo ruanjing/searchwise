@@ -94,6 +94,7 @@
         if (currentQuery !== query) {
             currentQuery = query;
             delete document.body.dataset.searchwiseShowBlocked;
+            delete document.body.dataset.searchwisePageDisabled;
         }
 
         // Get search results
@@ -108,13 +109,13 @@
         });
 
         // Phase 1: Blacklist filtering (offline)
-        if (settings.blacklist_enabled) {
+        if (settings.blacklist_enabled && !isCleanupPaused(engine, query)) {
             await BlacklistEngine.init();
             const { count } = BlacklistEngine.filter(results);
             applyBlockedLabels(results);
             await recordCleanupStats(engine, query, count);
-            SidebarInjector.showBlockedNotice(count, results);
-            attachBlockActions(results);
+            SidebarInjector.showBlockedNotice(count, results, engine, query);
+            attachBlockActions(results, engine, query);
         }
 
         // Phase 2: Keyword highlighting (offline)
@@ -129,7 +130,7 @@
         }
     }
 
-    function attachBlockActions(results) {
+    function attachBlockActions(results, engine, query) {
         results.forEach(result => {
             if (result.blocked || !result.element || result.element.dataset.searchwiseActionReady === 'true') return;
 
@@ -186,11 +187,13 @@
 
                 result.blocked = true;
                 result.element.dataset.searchwiseBlocked = 'true';
-                result.element.dataset.searchwiseBlockedLabel = SWI18n.t('blockedResultShownLabel');
+                result.element.dataset.searchwiseBlockedReason = 'custom';
+                result.element.dataset.searchwiseBlockedDomain = domain;
+                result.element.dataset.searchwiseBlockedLabel = blockedLabelFor(result.element);
                 result.element.dataset.searchwiseUserBlocked = 'true';
                 result.element.style.display = 'none';
                 ApiClient.reportBlockedCount(getBlockedCount());
-                SidebarInjector.showBlockedNotice(getBlockedCount(), results);
+                SidebarInjector.showBlockedNotice(getBlockedCount(), results, engine, query);
                 showUndoToast(domain, async () => {
                     if (addedDomain?.id) {
                         await ApiClient.removeDomain(addedDomain.id);
@@ -199,12 +202,14 @@
                     result.blocked = false;
                     result.element.removeAttribute('data-searchwise-blocked');
                     result.element.removeAttribute('data-searchwise-blocked-label');
+                    result.element.removeAttribute('data-searchwise-blocked-reason');
+                    result.element.removeAttribute('data-searchwise-blocked-domain');
                     result.element.removeAttribute('data-searchwise-user-blocked');
                     result.element.style.display = '';
                     button.disabled = false;
                     button.textContent = SWI18n.t('blockThisSite');
                     button.title = SWI18n.t('blockThisSiteTitle', [domain]);
-                    SidebarInjector.showBlockedNotice(getBlockedCount(), results);
+                    SidebarInjector.showBlockedNotice(getBlockedCount(), results, engine, query);
                     ApiClient.reportBlockedCount(getBlockedCount());
                 });
             });
@@ -311,9 +316,43 @@
     function applyBlockedLabels(results) {
         results.forEach(result => {
             if (!result.blocked || !result.element) return;
-            result.element.dataset.searchwiseBlockedLabel = SWI18n.t('blockedResultShownLabel');
+            result.element.dataset.searchwiseBlockedLabel = blockedLabelFor(result.element);
         });
     }
+
+    function blockedLabelFor(element) {
+        const reason = reasonText(element.dataset.searchwiseBlockedReason);
+        const domain = element.dataset.searchwiseBlockedDomain || '';
+        if (domain) {
+            return SWI18n.t('blockedResultShownLabelWithReason', [reason, domain]);
+        }
+        return SWI18n.t('blockedResultShownLabelWithReasonNoDomain', [reason]);
+    }
+
+    function reasonText(reasonKey) {
+        if (reasonKey === 'custom') return SWI18n.t('blockedReasonCustom');
+        return SWI18n.t('blockedReasonDeveloperRule');
+    }
+
+    function cleanupPauseKey(engine, query) {
+        return `sw_pause_cleanup:${engine}:${query}`;
+    }
+
+    function isCleanupPaused(engine, query) {
+        return sessionStorage.getItem(cleanupPauseKey(engine, query)) === 'true';
+    }
+
+    window.SearchWisePageControls = {
+        pauseCleanup(engine, query) {
+            sessionStorage.setItem(cleanupPauseKey(engine, query), 'true');
+            document.body.dataset.searchwisePageDisabled = 'true';
+            document.body.dataset.searchwiseShowBlocked = 'true';
+            document.querySelectorAll('[data-searchwise-blocked="true"]').forEach(el => {
+                el.style.display = '';
+            });
+            ApiClient.reportBlockedCount(0);
+        },
+    };
 
     function insertBlockAction(element, actionRow) {
         const title = element.querySelector('h3, h2, a[href]');

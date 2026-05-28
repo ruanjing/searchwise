@@ -26,6 +26,8 @@
         document.title = SWI18n.t('settingsTitle');
         SWI18n.apply();
 
+        await maybeShowOnboarding();
+
         const settings = await chrome.storage.sync.get({
             blacklist_enabled: true,
             highlight_enabled: true,
@@ -38,6 +40,20 @@
 
         await loadStats();
         await loadBlacklist();
+    }
+
+    async function maybeShowOnboarding() {
+        const data = await chrome.storage.local.get({ onboarding_pending: false });
+        const shouldShow = data.onboarding_pending || location.hash === '#welcome';
+        if (!shouldShow) return;
+
+        const card = $('onboarding-card');
+        card.style.display = '';
+        $('dismiss-onboarding').addEventListener('click', async () => {
+            card.style.display = 'none';
+            await chrome.storage.local.set({ onboarding_pending: false });
+            if (location.hash === '#welcome') history.replaceState(null, '', location.pathname);
+        }, { once: true });
     }
 
     async function loadStats() {

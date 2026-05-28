@@ -21,6 +21,7 @@ const SW = {
     // Storage keys
     STORAGE: {
         BLACKLIST: 'blacklist_domains',
+        CUSTOM_BLACKLIST: 'custom_blacklist_domains',
         AUTH_TOKEN: 'auth_token',
         USER_INFO: 'user_info',
         SETTINGS: 'sw_settings',
