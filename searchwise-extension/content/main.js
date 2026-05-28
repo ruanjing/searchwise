@@ -78,6 +78,7 @@
         if (!chrome.runtime?.id) return;
 
         injectGlobalStyles();
+        await SWI18n.init();
 
         const engine = detectEngine();
         if (!engine) return;
