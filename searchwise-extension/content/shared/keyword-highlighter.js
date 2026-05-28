@@ -18,15 +18,15 @@ const KeywordHighlighter = {
             // Highlight in title
             const titleEl = r.element.querySelector('h3, .title, h2, .OrganicTitle, .res-title, .vr-title, .c-title');
             if (titleEl) {
-                this._highlightInElement(titleEl, keywords);
+                this._highlightInElement(titleEl, keywords, { allowLinks: true });
             }
 
             // Highlight in snippet
             const snippetEl = r.element.querySelector(
-                '[data-sncf], .VwiC3b, .b_caption p, .c-abstract, .content-right_8Zs40, .OrganicTextContentSpan, .TextContainer, .result__snippet, [data-testid="result-snippet"], .str_info, .res-desc'
+                '.VwiC3b, .b_caption p, .c-abstract, .content-right_8Zs40, .OrganicTextContentSpan, .TextContainer, .result__snippet, [data-testid="result-snippet"], .str_info, .res-desc'
             );
             if (snippetEl) {
-                this._highlightInElement(snippetEl, keywords);
+                this._highlightInElement(snippetEl, keywords, { allowLinks: false });
             }
 
             r.element.dataset.searchwiseHighlightedFor = keywords.join('|');
@@ -53,7 +53,7 @@ const KeywordHighlighter = {
         return [...new Set(words.map(w => w.toLowerCase()))];
     },
 
-    _highlightInElement(element, keywords) {
+    _highlightInElement(element, keywords, options = {}) {
         const walker = document.createTreeWalker(
             element,
             NodeFilter.SHOW_TEXT,
@@ -63,6 +63,9 @@ const KeywordHighlighter = {
                     if (!parent) return NodeFilter.FILTER_REJECT;
                     if (parent.closest(`.${this.HIGHLIGHT_CLASS}`)) return NodeFilter.FILTER_REJECT;
                     if (['SCRIPT', 'STYLE', 'TEXTAREA', 'INPUT'].includes(parent.tagName)) {
+                        return NodeFilter.FILTER_REJECT;
+                    }
+                    if (!options.allowLinks && parent.closest('a, cite, .qLRx3b, .tjvcx')) {
                         return NodeFilter.FILTER_REJECT;
                     }
                     return NodeFilter.FILTER_ACCEPT;
