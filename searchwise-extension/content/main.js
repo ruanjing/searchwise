@@ -94,7 +94,6 @@
         if (currentQuery !== query) {
             currentQuery = query;
             delete document.body.dataset.searchwiseShowBlocked;
-            delete document.body.dataset.searchwisePageDisabled;
         }
 
         // Get search results
@@ -109,7 +108,7 @@
         });
 
         // Phase 1: Blacklist filtering (offline)
-        if (settings.blacklist_enabled && !isCleanupPaused(engine, query)) {
+        if (settings.blacklist_enabled) {
             await BlacklistEngine.init();
             const { count } = BlacklistEngine.filter(results);
             applyBlockedLabels(results);
@@ -333,35 +332,6 @@
         if (reasonKey === 'custom') return SWI18n.t('blockedReasonCustom');
         return SWI18n.t('blockedReasonDeveloperRule');
     }
-
-    function cleanupPauseKey(engine, query) {
-        return `sw_pause_cleanup:${engine}:${query}`;
-    }
-
-    function isCleanupPaused(engine, query) {
-        return sessionStorage.getItem(cleanupPauseKey(engine, query)) === 'true';
-    }
-
-    window.SearchWisePageControls = {
-        pauseCleanup(engine, query) {
-            sessionStorage.setItem(cleanupPauseKey(engine, query), 'true');
-            document.body.dataset.searchwisePageDisabled = 'true';
-            document.body.dataset.searchwiseShowBlocked = 'true';
-            document.querySelectorAll('[data-searchwise-blocked="true"]').forEach(el => {
-                el.style.display = '';
-            });
-            ApiClient.reportBlockedCount(0);
-        },
-        resumeCleanup(engine, query, count) {
-            sessionStorage.removeItem(cleanupPauseKey(engine, query));
-            delete document.body.dataset.searchwisePageDisabled;
-            delete document.body.dataset.searchwiseShowBlocked;
-            document.querySelectorAll('[data-searchwise-blocked="true"]').forEach(el => {
-                el.style.display = 'none';
-            });
-            ApiClient.reportBlockedCount(count || getBlockedCount());
-        },
-    };
 
     function insertBlockAction(element, actionRow) {
         const title = element.querySelector('h3, h2, a[href]');

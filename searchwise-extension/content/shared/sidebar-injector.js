@@ -593,10 +593,7 @@ const SidebarInjector = {
                 <span style="background:#4ecca3;color:white;padding:2px 6px;border-radius:4px;font-weight:bold;font-size:12px">SearchWise</span>
                 <span id="sw-filtered-count-text">${this._formatFilteredNotice(count)}</span>
             </div>
-            <div style="display:flex;align-items:center;gap:8px">
-                <button id="sw-show-blocked" style="background:none;border:none;color:#1a73e8;cursor:pointer;font-weight:500;padding:4px 8px;border-radius:4px">${this._escapeHtml(SWI18n.t('showAnyway'))}</button>
-                <button id="sw-pause-cleanup" style="background:none;border:none;color:#5f6368;cursor:pointer;font-weight:500;padding:4px 8px;border-radius:4px">${this._escapeHtml(SWI18n.t('pauseCleanupThisPage'))}</button>
-            </div>
+            <button id="sw-show-blocked" style="background:none;border:none;color:#1a73e8;cursor:pointer;font-weight:500;padding:4px 8px;border-radius:4px">${this._escapeHtml(SWI18n.t('showHiddenResults'))}</button>
         `;
 
         firstResult.parentNode.insertBefore(notice, firstResult);
@@ -629,52 +626,21 @@ const SidebarInjector = {
             }
         });
 
-        notice.querySelector('#sw-pause-cleanup').addEventListener('click', () => {
-            const engine = this._noticeEngine || this._engine || 'search';
-            const query = this._noticeQuery || this._lastQuery || location.href;
-            const isPaused = document.body.dataset.searchwisePageDisabled === 'true';
-            if (isPaused) {
-                window.SearchWisePageControls?.resumeCleanup?.(engine, query, count);
-                this.updateBlockedNoticeState(notice, count, false, false);
-                return;
-            }
-
-            window.SearchWisePageControls?.pauseCleanup?.(engine, query);
-            this.updateBlockedNoticeState(notice, count, true, true);
-            const pauseBtn = notice.querySelector('#sw-pause-cleanup');
-            if (pauseBtn) {
-                pauseBtn.textContent = SWI18n.t('resumeCleanupThisPage');
-                pauseBtn.disabled = false;
-                pauseBtn.style.color = '#188038';
-            }
-        });
     },
 
-    updateBlockedNoticeState(notice, count, isShowing, isPaused = false) {
+    updateBlockedNoticeState(notice, count, isShowing) {
         const textEl = notice.querySelector('#sw-filtered-count-text');
         const btnEl = notice.querySelector('#sw-show-blocked');
-        const pauseBtn = notice.querySelector('#sw-pause-cleanup');
         if (!textEl || !btnEl) return;
-
-        if (pauseBtn) {
-            pauseBtn.textContent = isPaused ? SWI18n.t('resumeCleanupThisPage') : SWI18n.t('pauseCleanupThisPage');
-            pauseBtn.disabled = false;
-            pauseBtn.style.color = isPaused ? '#188038' : '#5f6368';
-        }
 
         if (isShowing) {
             textEl.innerHTML = this._escapeHtml(SWI18n.t('filteredJunk', [String(count)]))
                 .replace(this._escapeHtml(String(count)), `<strong>${count}</strong>`) + ` (${this._escapeHtml(SWI18n.t('shown'))})`;
-            btnEl.textContent = SWI18n.t('collapseAgain');
+            btnEl.textContent = SWI18n.t('hideHiddenResults');
             btnEl.style.color = '#e03131';
-            if (isPaused) {
-                textEl.innerHTML = this._escapeHtml(SWI18n.t('cleanupPausedNotice', [String(count)]))
-                    .replace(this._escapeHtml(String(count)), `<strong>${count}</strong>`);
-                btnEl.textContent = SWI18n.t('collapseAgain');
-            }
         } else {
             textEl.innerHTML = this._formatFilteredNotice(count);
-            btnEl.textContent = SWI18n.t('showAnyway');
+            btnEl.textContent = SWI18n.t('showHiddenResults');
             btnEl.style.color = '#1a73e8';
         }
     },
