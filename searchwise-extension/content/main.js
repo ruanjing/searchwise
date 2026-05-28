@@ -56,7 +56,7 @@
 
             /* Premium SearchWise Blocked badge overlay */
             body[data-searchwise-show-blocked="true"] [data-searchwise-blocked="true"]::before {
-                content: "🛡️ SearchWise 已拦截此站 (已设为显示)" !important;
+                content: attr(data-searchwise-blocked-label) !important;
                 display: inline-flex !important;
                 align-items: center !important;
                 background: #ffebee !important;
@@ -109,6 +109,7 @@
         if (settings.blacklist_enabled) {
             await BlacklistEngine.init();
             const { count } = BlacklistEngine.filter(results);
+            applyBlockedLabels(results);
             SidebarInjector.showBlockedNotice(count, results);
             attachBlockActions(results);
         }
@@ -172,6 +173,7 @@
 
                 result.blocked = true;
                 result.element.dataset.searchwiseBlocked = 'true';
+                result.element.dataset.searchwiseBlockedLabel = SWI18n.t('blockedResultShownLabel');
                 result.element.dataset.searchwiseUserBlocked = 'true';
                 result.element.style.display = 'none';
                 ApiClient.reportBlockedCount(getBlockedCount());
@@ -180,6 +182,13 @@
 
             const anchor = findActionAnchor(result.element);
             anchor.appendChild(button);
+        });
+    }
+
+    function applyBlockedLabels(results) {
+        results.forEach(result => {
+            if (!result.blocked || !result.element) return;
+            result.element.dataset.searchwiseBlockedLabel = SWI18n.t('blockedResultShownLabel');
         });
     }
 
