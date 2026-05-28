@@ -143,17 +143,26 @@
             button.textContent = SWI18n.t('blockThisSite');
             button.title = SWI18n.t('blockThisSiteTitle', [domain]);
             button.style.cssText = `
-                display: inline-flex;
-                align-items: center;
-                border: 1px solid rgba(78, 204, 163, 0.55);
-                border-radius: 999px;
-                background: rgba(78, 204, 163, 0.08);
-                color: #087f5b;
-                cursor: pointer;
-                font: 12px/1.2 Arial, sans-serif;
-                margin: 6px 8px 2px 0;
-                padding: 4px 9px;
-                white-space: nowrap;
+                all: unset !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                border: 1px solid rgba(78, 204, 163, 0.55) !important;
+                border-radius: 999px !important;
+                background: rgba(78, 204, 163, 0.08) !important;
+                color: #087f5b !important;
+                cursor: pointer !important;
+                direction: ltr !important;
+                font: 12px/1.2 Arial, "Microsoft YaHei", sans-serif !important;
+                letter-spacing: 0 !important;
+                margin: 0 !important;
+                padding: 4px 9px !important;
+                text-align: center !important;
+                text-orientation: mixed !important;
+                transform: none !important;
+                unicode-bidi: isolate !important;
+                white-space: nowrap !important;
+                writing-mode: horizontal-tb !important;
             `;
 
             button.addEventListener('click', async (event) => {
@@ -200,8 +209,19 @@
                 });
             });
 
-            const anchor = findActionAnchor(result.element);
-            anchor.appendChild(button);
+            const actionRow = document.createElement('div');
+            actionRow.className = 'searchwise-block-action-row';
+            actionRow.style.cssText = `
+                display: flex !important;
+                align-items: center !important;
+                direction: ltr !important;
+                margin: 4px 0 2px !important;
+                transform: none !important;
+                unicode-bidi: isolate !important;
+                writing-mode: horizontal-tb !important;
+            `;
+            actionRow.appendChild(button);
+            insertBlockAction(result.element, actionRow);
         });
     }
 
@@ -295,20 +315,26 @@
         });
     }
 
-    function findActionAnchor(element) {
+    function insertBlockAction(element, actionRow) {
         const title = element.querySelector('h3, h2, a[href]');
         const linkParent = title?.closest?.('a[href]');
         if (linkParent?.parentElement && linkParent.parentElement !== element) {
-            return linkParent.parentElement;
+            linkParent.parentElement.insertAdjacentElement('afterend', actionRow);
+            return;
         }
 
         const parent = title?.parentElement;
         if (parent?.tagName?.toLowerCase() === 'a' && parent.parentElement) {
-            return parent.parentElement;
+            parent.parentElement.insertAdjacentElement('afterend', actionRow);
+            return;
         }
 
-        if (parent && parent !== element) return parent;
-        return element;
+        if (parent && parent !== element) {
+            parent.insertAdjacentElement('afterend', actionRow);
+            return;
+        }
+
+        element.appendChild(actionRow);
     }
 
     function extractDomain(value) {
