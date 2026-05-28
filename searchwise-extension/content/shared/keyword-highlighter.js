@@ -68,7 +68,7 @@ const KeywordHighlighter = {
                     if (this._isSearchUtilityText(parent)) {
                         return NodeFilter.FILTER_REJECT;
                     }
-                    if (!options.allowLinks && parent.closest('a, [role="link"], cite, .qLRx3b, .tjvcx, .yuRUbf')) {
+                    if (!options.allowLinks && parent.closest('a, [role="link"], cite, .qLRx3b, .tjvcx, .yuRUbf, .fl')) {
                         return NodeFilter.FILTER_REJECT;
                     }
                     return NodeFilter.FILTER_ACCEPT;
@@ -130,12 +130,12 @@ const KeywordHighlighter = {
     },
 
     _isSearchUtilityText(element) {
-        const utilityRoot = element.closest('a, [role="link"], cite, .qLRx3b, .tjvcx, .yuRUbf');
+        const utilityRoot = element.closest('a, [role="link"], cite, .qLRx3b, .tjvcx, .yuRUbf, .fl');
         return this._looksLikeSearchUtility(utilityRoot?.textContent || element.textContent || '');
     },
 
     _looksLikeSearchUtility(text) {
-        return /^(translate|cached|similar|转为|翻译|网页快照|頁庫存檔)/i.test(String(text || '').trim());
+        return /^(translate|cached|similar|转为|轉為|翻译|翻譯|网页快照|網頁庫存檔|頁庫存檔)/i.test(String(text || '').trim());
     },
 
     _ensureStyles() {
