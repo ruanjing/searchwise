@@ -593,7 +593,10 @@ const SidebarInjector = {
                 <span style="background:#4ecca3;color:white;padding:2px 6px;border-radius:4px;font-weight:bold;font-size:12px">SearchWise</span>
                 <span id="sw-filtered-count-text">${this._formatFilteredNotice(count)}</span>
             </div>
-            <button id="sw-show-blocked" style="background:none;border:none;color:#1a73e8;cursor:pointer;font-weight:500;padding:4px 8px;border-radius:4px">${this._escapeHtml(SWI18n.t('showHiddenResults'))}</button>
+            <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+                <button id="sw-feedback-blocked" style="background:none;border:none;color:#5f6368;cursor:pointer;font-weight:500;padding:4px 8px;border-radius:4px">${this._escapeHtml(SWI18n.t('reportFalsePositive'))}</button>
+                <button id="sw-show-blocked" style="background:none;border:none;color:#1a73e8;cursor:pointer;font-weight:500;padding:4px 8px;border-radius:4px">${this._escapeHtml(SWI18n.t('showHiddenResults'))}</button>
+            </div>
         `;
 
         firstResult.parentNode.insertBefore(notice, firstResult);
@@ -626,6 +629,10 @@ const SidebarInjector = {
             }
         });
 
+        notice.querySelector('#sw-feedback-blocked').addEventListener('click', () => {
+            this.openFalsePositiveFeedback(count);
+        });
+
     },
 
     updateBlockedNoticeState(notice, count, isShowing) {
@@ -643,6 +650,57 @@ const SidebarInjector = {
             btnEl.textContent = SWI18n.t('showHiddenResults');
             btnEl.style.color = '#1a73e8';
         }
+    },
+
+    openFalsePositiveFeedback(count) {
+        const blocked = Array.from(document.querySelectorAll('[data-searchwise-blocked="true"]'))
+            .slice(0, 15)
+            .map((el, index) => {
+                const domain = el.dataset.searchwiseBlockedDomain || '(unknown domain)';
+                const reason = this._blockedReasonLabel(el.dataset.searchwiseBlockedReason);
+                const title = this._resultTitle(el);
+                return `${index + 1}. ${domain} | ${reason}${title ? ` | ${title}` : ''}`;
+            });
+
+        const version = chrome.runtime?.getManifest?.().version || 'unknown';
+        const body = [
+            'SearchWise feedback',
+            '',
+            `Type: false positive / useful result was hidden`,
+            `Search engine: ${this._noticeEngine || 'unknown'}`,
+            `Query: ${this._noticeQuery || ''}`,
+            `Hidden result count: ${count}`,
+            `Extension version: ${version}`,
+            `UI language: ${SWI18n.currentLanguage()}`,
+            `Browser language: ${navigator.language || ''}`,
+            `Platform: ${navigator.platform || ''}`,
+            `Page URL: ${location.href}`,
+            '',
+            'Hidden results:',
+            blocked.length ? blocked.join('\n') : '(none found)',
+            '',
+            'What should SearchWise change?',
+            '',
+        ].join('\n');
+
+        const mailto = `mailto:ruanjing40783008@126.com?subject=${encodeURIComponent('SearchWise false positive feedback')}&body=${encodeURIComponent(body)}`;
+        window.location.href = mailto;
+    },
+
+    _blockedReasonLabel(reasonKey) {
+        if (reasonKey === 'custom') return SWI18n.t('blockedReasonCustom');
+        if (reasonKey === 'content_farm') return SWI18n.t('blockedReasonContentFarm');
+        if (reasonKey === 'cn_mirror') return SWI18n.t('blockedReasonCnMirror');
+        if (reasonKey === 'low_signal_tutorial') return SWI18n.t('blockedReasonLowSignalTutorial');
+        if (reasonKey === 'qa_noise') return SWI18n.t('blockedReasonQaNoise');
+        return SWI18n.t('blockedReasonDeveloperRule');
+    },
+
+    _resultTitle(element) {
+        return (element.querySelector('h3, h2, .c-title, .OrganicTitle, .res-title')?.textContent || '')
+            .replace(/\s+/g, ' ')
+            .trim()
+            .slice(0, 120);
     },
 
     _escapeHtml(text) {

@@ -78,6 +78,7 @@
   "showAnyway": { "message": "Show anyway" },
   "showHiddenResults": { "message": "Show hidden results" },
   "hideHiddenResults": { "message": "Hide again" },
+  "reportFalsePositive": { "message": "Report mistake" },
   "blockedResultShownLabel": { "message": "SearchWise blocked this site (shown anyway)" },
   "blockedResultShownLabelWithReason": { "message": "SearchWise blocked this site: $REASON$ - $DOMAIN$", "placeholders": { "reason": { "content": "$1" }, "domain": { "content": "$2" } } },
   "blockedResultShownLabelWithReasonNoDomain": { "message": "SearchWise blocked this site: $REASON$", "placeholders": { "reason": { "content": "$1" } } },
