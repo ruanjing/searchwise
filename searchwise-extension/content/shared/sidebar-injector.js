@@ -593,10 +593,7 @@ const SidebarInjector = {
                 <span style="background:#4ecca3;color:white;padding:2px 6px;border-radius:4px;font-weight:bold;font-size:12px">SearchWise</span>
                 <span id="sw-filtered-count-text">${this._formatFilteredNotice(count)}</span>
             </div>
-            <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-                <button id="sw-feedback-blocked" style="background:none;border:none;color:#5f6368;cursor:pointer;font-weight:500;padding:4px 8px;border-radius:4px">${this._escapeHtml(SWI18n.t('reportFalsePositive'))}</button>
-                <button id="sw-show-blocked" style="background:none;border:none;color:#1a73e8;cursor:pointer;font-weight:500;padding:4px 8px;border-radius:4px">${this._escapeHtml(SWI18n.t('showHiddenResults'))}</button>
-            </div>
+            <button id="sw-show-blocked" style="background:none;border:none;color:#1a73e8;cursor:pointer;font-weight:500;padding:4px 8px;border-radius:4px;flex-shrink:0">${this._escapeHtml(SWI18n.t('showHiddenResults'))}</button>
         `;
 
         firstResult.parentNode.insertBefore(notice, firstResult);
@@ -613,6 +610,7 @@ const SidebarInjector = {
                 delete document.body.dataset.searchwiseShowBlocked;
                 const blocked = document.querySelectorAll('[data-searchwise-blocked="true"]');
                 blocked.forEach(el => el.style.display = 'none');
+                this.removeFeedbackButtons();
                 chrome.runtime?.sendMessage?.({ type: SW.MSG.BLOCKED_COUNT, count: count }, () => {
                     if (chrome.runtime.lastError) { /* ignore */ }
                 });
@@ -622,15 +620,12 @@ const SidebarInjector = {
                 document.body.dataset.searchwiseShowBlocked = 'true';
                 const blocked = document.querySelectorAll('[data-searchwise-blocked="true"]');
                 blocked.forEach(el => el.style.display = 'block');
+                this.attachFeedbackButtons(blocked);
                 chrome.runtime?.sendMessage?.({ type: SW.MSG.BLOCKED_COUNT, count: 0 }, () => {
                     if (chrome.runtime.lastError) { /* ignore */ }
                 });
                 this.updateBlockedNoticeState(notice, count, true, false);
             }
-        });
-
-        notice.querySelector('#sw-feedback-blocked').addEventListener('click', () => {
-            this.openFalsePositiveFeedback(count);
         });
 
     },
@@ -652,39 +647,72 @@ const SidebarInjector = {
         }
     },
 
-    openFalsePositiveFeedback(count) {
-        const blocked = Array.from(document.querySelectorAll('[data-searchwise-blocked="true"]'))
-            .slice(0, 15)
-            .map((el, index) => {
-                const domain = el.dataset.searchwiseBlockedDomain || '(unknown domain)';
-                const reason = this._blockedReasonLabel(el.dataset.searchwiseBlockedReason);
-                const title = this._resultTitle(el);
-                return `${index + 1}. ${domain} | ${reason}${title ? ` | ${title}` : ''}`;
+    attachFeedbackButtons(blockedElements) {
+        Array.from(blockedElements).forEach(element => {
+            if (element.querySelector(':scope > .searchwise-feedback-row')) return;
+
+            const row = document.createElement('div');
+            row.className = 'searchwise-feedback-row';
+            row.style.cssText = `
+                display: flex !important;
+                justify-content: flex-end !important;
+                margin: 8px 0 0 !important;
+                padding: 0 !important;
+            `;
+
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.textContent = SWI18n.t('copyFeedbackInfo');
+            button.style.cssText = `
+                all: unset !important;
+                color: #1a73e8 !important;
+                cursor: pointer !important;
+                font: 12px/1.4 Arial, "Microsoft YaHei", sans-serif !important;
+                padding: 4px 6px !important;
+                border-radius: 4px !important;
+            `;
+            button.addEventListener('click', async event => {
+                event.preventDefault();
+                event.stopPropagation();
+
+                const text = this.buildFeedbackText(element);
+                const ok = await this.copyText(text);
+                this.showFeedbackToast(ok ? SWI18n.t('feedbackCopied') : SWI18n.t('feedbackCopyFailed'));
             });
 
+            row.appendChild(button);
+            element.insertAdjacentElement('afterbegin', row);
+        });
+    },
+
+    removeFeedbackButtons() {
+        document.querySelectorAll('.searchwise-feedback-row').forEach(el => el.remove());
+    },
+
+    buildFeedbackText(element) {
         const version = chrome.runtime?.getManifest?.().version || 'unknown';
-        const body = [
+        const domain = element.dataset.searchwiseBlockedDomain || '(unknown domain)';
+        const reason = this._blockedReasonLabel(element.dataset.searchwiseBlockedReason);
+        const title = this._resultTitle(element);
+
+        return [
             'SearchWise feedback',
             '',
             `Type: false positive / useful result was hidden`,
             `Search engine: ${this._noticeEngine || 'unknown'}`,
             `Query: ${this._noticeQuery || ''}`,
-            `Hidden result count: ${count}`,
+            `Blocked domain: ${domain}`,
+            `Rule reason: ${reason}`,
+            `Result title: ${title || ''}`,
             `Extension version: ${version}`,
             `UI language: ${SWI18n.currentLanguage()}`,
             `Browser language: ${navigator.language || ''}`,
             `Platform: ${navigator.platform || ''}`,
             `Page URL: ${location.href}`,
             '',
-            'Hidden results:',
-            blocked.length ? blocked.join('\n') : '(none found)',
-            '',
             'What should SearchWise change?',
             '',
         ].join('\n');
-
-        const mailto = `mailto:ruanjing40783008@126.com?subject=${encodeURIComponent('SearchWise false positive feedback')}&body=${encodeURIComponent(body)}`;
-        window.location.href = mailto;
     },
 
     _blockedReasonLabel(reasonKey) {
@@ -701,6 +729,55 @@ const SidebarInjector = {
             .replace(/\s+/g, ' ')
             .trim()
             .slice(0, 120);
+    },
+
+    async copyText(text) {
+        try {
+            if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(text);
+                return true;
+            }
+        } catch {
+            // Fall back to the old selection API below.
+        }
+
+        try {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.setAttribute('readonly', '');
+            textarea.style.cssText = 'position:fixed;left:-9999px;top:-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
+            const ok = document.execCommand('copy');
+            textarea.remove();
+            return ok;
+        } catch {
+            return false;
+        }
+    },
+
+    showFeedbackToast(message) {
+        const existing = document.getElementById('sw-feedback-toast');
+        if (existing) existing.remove();
+
+        const toast = document.createElement('div');
+        toast.id = 'sw-feedback-toast';
+        toast.textContent = message;
+        toast.style.cssText = `
+            position: fixed;
+            left: 24px;
+            bottom: 24px;
+            z-index: 2147483647;
+            max-width: min(420px, calc(100vw - 48px));
+            background: #202124;
+            color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            padding: 12px 14px;
+            font: 13px/1.4 Arial, "Microsoft YaHei", sans-serif;
+        `;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2800);
     },
 
     _escapeHtml(text) {
