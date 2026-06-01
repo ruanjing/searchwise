@@ -106,7 +106,7 @@
                 <div class="sw-domain-item">
                     <div>
                         <span class="sw-domain-name">${escapeHtml(d.domain)}</span>
-                        <span class="sw-domain-source">(${SWI18n.t('defaultLabel')}${d.label ? ' - ' + escapeHtml(d.label) : ''})</span>
+                        <span class="sw-domain-source">(${escapeHtml(ruleSourceLabel(d.category || d.label))})</span>
                     </div>
                 </div>
             `;
@@ -201,6 +201,17 @@
         const div = document.createElement('div');
         div.textContent = text || '';
         return div.innerHTML;
+    }
+
+    function ruleSourceLabel(category) {
+        const labels = {
+            content_farm: SWI18n.t('ruleCategoryContentFarm'),
+            cn_mirror: SWI18n.t('ruleCategoryCnMirror'),
+            low_signal_tutorial: SWI18n.t('ruleCategoryLowSignalTutorial'),
+            qa_noise: SWI18n.t('ruleCategoryQaNoise'),
+            developer_rule: SWI18n.t('defaultLabel'),
+        };
+        return labels[category] || SWI18n.t('defaultLabel');
     }
 
     init();

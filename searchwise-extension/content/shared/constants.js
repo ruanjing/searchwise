@@ -41,25 +41,32 @@ const SW = {
         FREE_AI_SUMMARIES_PER_DAY: 3,
     },
 
-    DEFAULT_BLACKLIST: [
-        'pinterest.com',
-        'pinterest.jp',
-        'csdn.net',
-        'zhuanlan.zhihu.com',
-        'zhihu.com',
-        'jianshu.com',
-        'toutiao.com',
-        'answers.com',
-        'e-how.com',
-        'wikihow.com',
-        'buzzfeed.com',
-        'quora.com',
-        'iteye.com',
-        'jb51.net',
-        'php.cn',
-        'educba.com',
-        'tutorialspoint.com',
+    DEFAULT_RULES: [
+        { domain: 'pinterest.com', category: 'content_farm' },
+        { domain: 'pinterest.jp', category: 'content_farm' },
+        { domain: 'csdn.net', category: 'cn_mirror' },
+        { domain: 'zhuanlan.zhihu.com', category: 'cn_mirror' },
+        { domain: 'zhihu.com', category: 'cn_mirror' },
+        { domain: 'jianshu.com', category: 'cn_mirror' },
+        { domain: 'toutiao.com', category: 'content_farm' },
+        { domain: 'answers.com', category: 'content_farm' },
+        { domain: 'e-how.com', category: 'content_farm' },
+        { domain: 'wikihow.com', category: 'content_farm' },
+        { domain: 'buzzfeed.com', category: 'content_farm' },
+        { domain: 'quora.com', category: 'qa_noise' },
+        { domain: 'iteye.com', category: 'cn_mirror' },
+        { domain: 'jb51.net', category: 'cn_mirror' },
+        { domain: 'php.cn', category: 'cn_mirror' },
+        { domain: 'educba.com', category: 'low_signal_tutorial' },
+        { domain: 'tutorialspoint.com', category: 'low_signal_tutorial' },
+        { domain: 'javatpoint.com', category: 'low_signal_tutorial' },
+        { domain: 'guru99.com', category: 'low_signal_tutorial' },
+        { domain: 'w3resource.com', category: 'low_signal_tutorial' },
+        { domain: 'includehelp.com', category: 'low_signal_tutorial' },
+        { domain: 'brainly.com', category: 'qa_noise' },
     ],
+
+    DEFAULT_BLACKLIST: [],
 
     // UI
     SIDEBAR_WIDTH: 380,
@@ -75,3 +82,5 @@ const SW = {
         YANDEX: 'yandex',
     },
 };
+
+SW.DEFAULT_BLACKLIST = SW.DEFAULT_RULES.map(rule => rule.domain);

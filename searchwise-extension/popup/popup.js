@@ -8,7 +8,6 @@
     async function init() {
         await SWI18n.init();
         SWI18n.apply();
-        await chrome.storage.local.remove([SW.STORAGE.AUTH_TOKEN, SW.STORAGE.USER_INFO]);
 
         $('user-name').textContent = SWI18n.t('localModeName');
         $('user-email').textContent = SWI18n.t('localModeDesc');

@@ -17,7 +17,10 @@ It works on supported search result pages and helps hide low-quality content far
 Core features:
 
 - Hide low-quality search results with built-in cleanup rules.
+- Use improved English cleanup rules for low-signal tutorial, Q&A, and content-farm pages.
+- See why a hidden result matched a rule when you reveal hidden results.
 - Add your own blocked domains locally.
+- Block unwanted sites directly from search result pages and undo mistakes.
 - Highlight search keywords inside result titles and snippets.
 - Use the extension without creating an account.
 - Keep the free version local-first and lightweight.
@@ -33,7 +36,10 @@ SearchWise 是一个本地优先的浏览器扩展，用来净化搜索结果、
 核心功能：
 
 - 隐藏低质量搜索结果和内容农场。
+- 增强英文低信号教程站、问答页和内容农场规则。
+- 显示隐藏结果时可以看到命中的规则原因。
 - 添加自定义屏蔽域名。
+- 在搜索结果页一键屏蔽网站，并可撤销误操作。
 - 高亮搜索关键词。
 - 无需账号即可使用。
 - 不在搜索结果页插入第三方广告。

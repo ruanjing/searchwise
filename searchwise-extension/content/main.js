@@ -330,6 +330,10 @@
 
     function reasonText(reasonKey) {
         if (reasonKey === 'custom') return SWI18n.t('blockedReasonCustom');
+        if (reasonKey === 'content_farm') return SWI18n.t('blockedReasonContentFarm');
+        if (reasonKey === 'cn_mirror') return SWI18n.t('blockedReasonCnMirror');
+        if (reasonKey === 'low_signal_tutorial') return SWI18n.t('blockedReasonLowSignalTutorial');
+        if (reasonKey === 'qa_noise') return SWI18n.t('blockedReasonQaNoise');
         return SWI18n.t('blockedReasonDeveloperRule');
     }
 

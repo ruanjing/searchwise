@@ -8,13 +8,19 @@ const BlacklistEngine = {
         const data = await chrome.storage.local.get([SW.STORAGE.BLACKLIST, SW.STORAGE.CUSTOM_BLACKLIST]);
         const customDomains = data[SW.STORAGE.CUSTOM_BLACKLIST] || [];
         const customList = customDomains.map(d => d.domain).filter(Boolean);
-        const list = [...new Set([...(data[SW.STORAGE.BLACKLIST] || []), ...customList, ...(SW.DEFAULT_BLACKLIST || [])])];
+        const defaultRules = SW.DEFAULT_RULES || (SW.DEFAULT_BLACKLIST || []).map(domain => ({
+            domain,
+            category: 'developer_rule',
+        }));
+        const defaultList = defaultRules.map(rule => rule.domain).filter(Boolean);
+        const list = [...new Set([...(data[SW.STORAGE.BLACKLIST] || []), ...customList, ...defaultList])];
         this._domains = new Set(list.map(d => d.toLowerCase()));
         this._domainSources = new Map();
         customList.forEach(domain => this._domainSources.set(domain.toLowerCase(), 'custom'));
-        (SW.DEFAULT_BLACKLIST || []).forEach(domain => {
-            if (!this._domainSources.has(domain.toLowerCase())) {
-                this._domainSources.set(domain.toLowerCase(), 'developer_rule');
+        defaultRules.forEach(rule => {
+            const domain = String(rule.domain || '').toLowerCase();
+            if (domain && !this._domainSources.has(domain)) {
+                this._domainSources.set(domain, rule.category || 'developer_rule');
             }
         });
         await chrome.storage.local.set({ [SW.STORAGE.BLACKLIST]: list });
