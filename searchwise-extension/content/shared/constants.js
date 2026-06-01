@@ -14,6 +14,8 @@ const SW = {
         GET_USER: 'GET_USER',
         ADD_DOMAIN: 'ADD_DOMAIN',
         REMOVE_DOMAIN: 'REMOVE_DOMAIN',
+        ADD_ALLOWED_DOMAIN: 'ADD_ALLOWED_DOMAIN',
+        REMOVE_ALLOWED_DOMAIN: 'REMOVE_ALLOWED_DOMAIN',
         CHECKOUT: 'CHECKOUT',
         BILLING_PORTAL: 'BILLING_PORTAL',
     },
@@ -22,6 +24,7 @@ const SW = {
     STORAGE: {
         BLACKLIST: 'blacklist_domains',
         CUSTOM_BLACKLIST: 'custom_blacklist_domains',
+        ALLOWLIST: 'allowed_domains',
         AUTH_TOKEN: 'auth_token',
         USER_INFO: 'user_info',
         SETTINGS: 'sw_settings',

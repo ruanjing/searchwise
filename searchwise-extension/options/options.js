@@ -4,6 +4,7 @@
 
     const $ = id => document.getElementById(id);
     let userDomains = [];
+    let allowedDomains = [];
     let defaultDomains = [];
 
     // ===== Navigation =====
@@ -72,6 +73,7 @@
             const response = await sendMessage('FETCH_BLACKLIST');
             if (response) {
                 userDomains = response.user_domains || [];
+                allowedDomains = response.allowed_domains || [];
                 defaultDomains = response.default_domains || [];
                 renderBlacklist();
             }
@@ -80,51 +82,65 @@
             defaultDomains = (data.blacklist_domains || []).map(d => ({
                 domain: d, source: 'default',
             }));
+            allowedDomains = [];
             renderBlacklist();
         }
     }
 
     function renderBlacklist() {
-        const list = $('domain-list');
         const limitText = $('domain-limit-text');
-        let html = '';
 
-        userDomains.forEach(d => {
-            html += `
-                <div class="sw-domain-item">
-                    <div>
-                        <span class="sw-domain-name">${escapeHtml(d.domain)}</span>
-                        <span class="sw-domain-source">(${SWI18n.t('customLabel')})</span>
-                    </div>
-                    <button class="sw-domain-remove" data-id="${d.id}" data-domain="${escapeHtml(d.domain)}" title="${SWI18n.t('close')}">&times;</button>
-                </div>
-            `;
+        renderDomainList('blocked-domain-list', userDomains, {
+            emptyText: SWI18n.t('noBlockedDomains'),
+            sourceLabel: () => SWI18n.t('customLabel'),
+            removable: true,
+            removeMessage: 'REMOVE_DOMAIN',
+        });
+        renderDomainList('allowed-domain-list', allowedDomains, {
+            emptyText: SWI18n.t('noAllowedDomains'),
+            sourceLabel: () => SWI18n.t('allowedLabel'),
+            removable: true,
+            removeMessage: 'REMOVE_ALLOWED_DOMAIN',
+        });
+        renderDomainList('default-domain-list', defaultDomains, {
+            emptyText: SWI18n.t('noBuiltInRules'),
+            sourceLabel: d => ruleSourceLabel(d.category || d.label),
+            removable: false,
         });
 
-        defaultDomains.forEach(d => {
-            html += `
-                <div class="sw-domain-item">
-                    <div>
-                        <span class="sw-domain-name">${escapeHtml(d.domain)}</span>
-                        <span class="sw-domain-source">(${escapeHtml(ruleSourceLabel(d.category || d.label))})</span>
-                    </div>
-                </div>
-            `;
-        });
-
-        list.innerHTML = html;
         $('stat-custom-blocks').textContent = `${userDomains.length}/20`;
         limitText.textContent = SWI18n.t('customDomainsLimit', [
             String(userDomains.length),
             '20',
             '',
         ]);
+    }
+
+    function renderDomainList(listId, domains, options) {
+        const list = $(listId);
+        if (!domains.length) {
+            list.innerHTML = `<div class="sw-empty-state">${escapeHtml(options.emptyText)}</div>`;
+            return;
+        }
+
+        list.innerHTML = domains.map(d => `
+            <div class="sw-domain-item">
+                <div>
+                    <span class="sw-domain-name">${escapeHtml(d.domain)}</span>
+                    <span class="sw-domain-source">(${escapeHtml(options.sourceLabel(d))})</span>
+                </div>
+                ${options.removable ? `<button class="sw-domain-remove" data-id="${escapeHtml(d.id)}" data-domain="${escapeHtml(d.domain)}" title="${SWI18n.t('close')}">&times;</button>` : ''}
+            </div>
+        `).join('');
+
+        if (!options.removable) return;
 
         list.querySelectorAll('.sw-domain-remove').forEach(btn => {
             btn.addEventListener('click', async () => {
                 const id = btn.dataset.id;
+                const domain = btn.dataset.domain;
                 try {
-                    await sendMessage('REMOVE_DOMAIN', { id });
+                    await sendMessage(options.removeMessage, { id, domain });
                     await loadBlacklist();
                 } catch (e) {
                     alert(SWI18n.t('failedRemoveDomain', [e.message]));

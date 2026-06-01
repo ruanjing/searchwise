@@ -58,7 +58,21 @@
                 </div>
                 <p id="domain-limit-text" class="sw-limit-text"></p>
 
-                <div id="domain-list" class="sw-domain-list"></div>
+                <div class="sw-rule-group">
+                    <h3 data-i18n="blockedDomainsTitle">My blocked sites</h3>
+                    <div id="blocked-domain-list" class="sw-domain-list"></div>
+                </div>
+
+                <div class="sw-rule-group">
+                    <h3 data-i18n="allowedDomainsTitle">Allowed sites</h3>
+                    <p class="sw-rule-group-desc" data-i18n="allowedDomainsDesc">Sites restored from hidden results will not be blocked by built-in cleanup rules.</p>
+                    <div id="allowed-domain-list" class="sw-domain-list"></div>
+                </div>
+
+                <div class="sw-rule-group">
+                    <h3 data-i18n="builtInRulesTitle">Built-in cleanup rules</h3>
+                    <div id="default-domain-list" class="sw-domain-list"></div>
+                </div>
             </div>
 
             <div id="section-settings" class="sw-section" style="display:none">

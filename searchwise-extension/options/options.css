@@ -190,6 +190,23 @@ body {
 }
 
 /* Domain List */
+.sw-rule-group {
+    margin-top: 24px;
+}
+
+.sw-rule-group h3 {
+    color: #fff;
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+.sw-rule-group-desc {
+    color: #777;
+    font-size: 12px;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
 .sw-domain-list {
     display: flex;
     flex-direction: column;
@@ -214,6 +231,15 @@ body {
     font-size: 11px;
     color: #666;
     margin-left: 8px;
+}
+
+.sw-empty-state {
+    padding: 12px 14px;
+    background: rgba(22, 33, 62, 0.56);
+    border: 1px dashed #2a2a4a;
+    border-radius: 6px;
+    color: #777;
+    font-size: 13px;
 }
 
 .sw-domain-remove {

@@ -655,23 +655,39 @@ const SidebarInjector = {
             row.className = 'searchwise-feedback-row';
             row.style.cssText = `
                 display: flex !important;
+                gap: 12px !important;
                 justify-content: flex-end !important;
+                align-items: center !important;
                 margin: 8px 0 0 !important;
                 padding: 0 !important;
             `;
 
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.textContent = SWI18n.t('copyFeedbackInfo');
-            button.style.cssText = `
-                all: unset !important;
-                color: #1a73e8 !important;
-                cursor: pointer !important;
-                font: 12px/1.4 Arial, "Microsoft YaHei", sans-serif !important;
-                padding: 4px 6px !important;
-                border-radius: 4px !important;
-            `;
-            button.addEventListener('click', async event => {
+            const allowButton = this._createInlineActionButton(SWI18n.t('allowThisSite'));
+            allowButton.addEventListener('click', async event => {
+                event.preventDefault();
+                event.stopPropagation();
+
+                const domain = element.dataset.searchwiseBlockedDomain;
+                if (!domain) return;
+
+                const originalText = allowButton.textContent;
+                allowButton.textContent = SWI18n.t('allowingSite');
+                allowButton.disabled = true;
+
+                try {
+                    await ApiClient.addAllowedDomain(domain);
+                    this.unblockElementsByDomain(domain);
+                    this.updateNoticeAfterAllow(domain);
+                    this.showFeedbackToast(SWI18n.t('siteAllowedToast', [domain]));
+                } catch (e) {
+                    allowButton.disabled = false;
+                    allowButton.textContent = originalText;
+                    this.showFeedbackToast(SWI18n.t('failedAllowDomain', [e.message]));
+                }
+            });
+
+            const feedbackButton = this._createInlineActionButton(SWI18n.t('copyFeedbackInfo'));
+            feedbackButton.addEventListener('click', async event => {
                 event.preventDefault();
                 event.stopPropagation();
 
@@ -680,9 +696,63 @@ const SidebarInjector = {
                 this.showFeedbackToast(ok ? SWI18n.t('feedbackCopied') : SWI18n.t('feedbackCopyFailed'));
             });
 
-            row.appendChild(button);
+            row.appendChild(allowButton);
+            row.appendChild(feedbackButton);
             element.insertAdjacentElement('afterbegin', row);
         });
+    },
+
+    _createInlineActionButton(label) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent = label;
+        button.style.cssText = `
+                all: unset !important;
+                color: #1a73e8 !important;
+                cursor: pointer !important;
+                font: 12px/1.4 Arial, "Microsoft YaHei", sans-serif !important;
+                padding: 4px 6px !important;
+                border-radius: 4px !important;
+            `;
+        return button;
+    },
+
+    unblockElementsByDomain(domain) {
+        document.querySelectorAll('[data-searchwise-blocked="true"]').forEach(element => {
+            if (element.dataset.searchwiseBlockedDomain === domain) {
+                this.unblockElement(element);
+            }
+        });
+    },
+
+    unblockElement(element) {
+        const row = element.querySelector(':scope > .searchwise-feedback-row');
+        if (row) row.remove();
+
+        element.style.display = '';
+        delete element.dataset.searchwiseBlocked;
+        delete element.dataset.searchwiseBlockedReason;
+        delete element.dataset.searchwiseBlockedDomain;
+        element.classList.remove('searchwise-blocked-shown');
+    },
+
+    updateNoticeAfterAllow() {
+        const notice = document.getElementById('sw-blocked-notice');
+        if (!notice) return;
+
+        const remaining = document.querySelectorAll('[data-searchwise-blocked="true"]').length;
+        notice.dataset.count = String(remaining);
+        chrome.runtime?.sendMessage?.({ type: SW.MSG.BLOCKED_COUNT, count: remaining }, () => {
+            if (chrome.runtime.lastError) { /* ignore */ }
+        });
+
+        if (remaining === 0) {
+            notice.remove();
+            delete document.body.dataset.searchwiseShowBlocked;
+            return;
+        }
+
+        this.updateBlockedNoticeState(notice, remaining, document.body.dataset.searchwiseShowBlocked === 'true');
     },
 
     removeFeedbackButtons() {

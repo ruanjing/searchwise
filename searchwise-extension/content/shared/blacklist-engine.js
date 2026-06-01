@@ -2,18 +2,23 @@
 // Filters search results based on cached domain blacklist (offline-first)
 const BlacklistEngine = {
     _domains: new Set(),
+    _allowedDomains: new Set(),
     _domainSources: new Map(),
 
     async init() {
-        const data = await chrome.storage.local.get([SW.STORAGE.BLACKLIST, SW.STORAGE.CUSTOM_BLACKLIST]);
+        const data = await chrome.storage.local.get([SW.STORAGE.BLACKLIST, SW.STORAGE.CUSTOM_BLACKLIST, SW.STORAGE.ALLOWLIST]);
         const customDomains = data[SW.STORAGE.CUSTOM_BLACKLIST] || [];
+        const allowedDomains = data[SW.STORAGE.ALLOWLIST] || [];
         const customList = customDomains.map(d => d.domain).filter(Boolean);
+        const allowedList = allowedDomains.map(d => d.domain).filter(Boolean);
+        this._allowedDomains = new Set(allowedList.map(d => d.toLowerCase()));
         const defaultRules = SW.DEFAULT_RULES || (SW.DEFAULT_BLACKLIST || []).map(domain => ({
             domain,
             category: 'developer_rule',
         }));
         const defaultList = defaultRules.map(rule => rule.domain).filter(Boolean);
-        const list = [...new Set([...(data[SW.STORAGE.BLACKLIST] || []), ...customList, ...defaultList])];
+        const list = [...new Set([...(data[SW.STORAGE.BLACKLIST] || []), ...customList, ...defaultList])]
+            .filter(domain => !this._allowedDomains.has(String(domain).toLowerCase()));
         this._domains = new Set(list.map(d => d.toLowerCase()));
         this._domainSources = new Map();
         customList.forEach(domain => this._domainSources.set(domain.toLowerCase(), 'custom'));
@@ -30,7 +35,11 @@ const BlacklistEngine = {
             try {
                 const response = await ApiClient.fetchBlacklist();
                 if (response && response.all_domains) {
-                    const domains = response.all_domains;
+                    const allowed = new Set((response.allowed_domains || [])
+                        .map(d => String(d.domain || '').toLowerCase())
+                        .filter(Boolean));
+                    const domains = response.all_domains.filter(domain => !allowed.has(String(domain).toLowerCase()));
+                    this._allowedDomains = allowed;
                     this._domains = new Set(domains.map(d => d.toLowerCase()));
                     this._domainSources = new Map();
                     (response.user_domains || []).forEach(d => this._domainSources.set(String(d.domain || '').toLowerCase(), 'custom'));
@@ -87,6 +96,9 @@ const BlacklistEngine = {
             let parts = hostname.split('.');
             while (parts.length >= 2) {
                 const candidate = parts.join('.');
+                if (this._allowedDomains.has(candidate)) {
+                    return false;
+                }
                 if (this._domains.has(candidate)) {
                     return {
                         domain: candidate,

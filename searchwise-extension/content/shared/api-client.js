@@ -101,6 +101,14 @@ const ApiClient = {
         return this.sendMessage(SW.MSG.REMOVE_DOMAIN, { id });
     },
 
+    async addAllowedDomain(domain) {
+        return this.sendMessage(SW.MSG.ADD_ALLOWED_DOMAIN, { domain });
+    },
+
+    async removeAllowedDomain(id) {
+        return this.sendMessage(SW.MSG.REMOVE_ALLOWED_DOMAIN, { id });
+    },
+
     async reportBlockedCount(count) {
         chrome.runtime.sendMessage({ type: SW.MSG.BLOCKED_COUNT, count }, () => {
             if (chrome.runtime.lastError) { /* ignore */ }

@@ -34,6 +34,7 @@ SEARCHWISE_CONFIG.DEFAULT_BLACKLIST = SEARCHWISE_CONFIG.DEFAULT_RULES.map(rule =
 const STORAGE_KEYS = {
     BLACKLIST: 'blacklist_domains',
     CUSTOM_BLACKLIST: 'custom_blacklist_domains',
+    ALLOWLIST: 'allowed_domains',
     AUTH_TOKEN: 'auth_token',
     USER_INFO: 'user_info',
 };
@@ -77,15 +78,28 @@ async function getLocalCustomDomains() {
     return data[STORAGE_KEYS.CUSTOM_BLACKLIST] || [];
 }
 
+async function getLocalAllowedDomains() {
+    const data = await chrome.storage.local.get(STORAGE_KEYS.ALLOWLIST);
+    return data[STORAGE_KEYS.ALLOWLIST] || [];
+}
+
 async function setLocalCustomDomains(domains) {
     await chrome.storage.local.set({ [STORAGE_KEYS.CUSTOM_BLACKLIST]: domains });
     await refreshCombinedBlacklist();
 }
 
+async function setLocalAllowedDomains(domains) {
+    await chrome.storage.local.set({ [STORAGE_KEYS.ALLOWLIST]: domains });
+    await refreshCombinedBlacklist();
+}
+
 async function refreshCombinedBlacklist() {
     const customDomains = await getLocalCustomDomains();
+    const allowedDomains = await getLocalAllowedDomains();
+    const allowed = new Set(allowedDomains.map(d => d.domain));
     const custom = customDomains.map(d => d.domain);
-    const allDomains = [...new Set([...custom, ...SEARCHWISE_CONFIG.DEFAULT_BLACKLIST])];
+    const allDomains = [...new Set([...custom, ...SEARCHWISE_CONFIG.DEFAULT_BLACKLIST])]
+        .filter(domain => !allowed.has(domain));
     await chrome.storage.local.set({ [STORAGE_KEYS.BLACKLIST]: allDomains });
     return allDomains;
 }
@@ -146,10 +160,12 @@ async function syncBlacklist() {
 
     try {
         const data = await apiFetch('/blacklist');
+        const allowedDomains = await getLocalAllowedDomains();
+        const allowed = new Set(allowedDomains.map(d => d.domain));
         const allDomains = [
             ...(data.user_domains || []).map(d => d.domain),
             ...(data.default_domains || []).map(d => d.domain),
-        ];
+        ].filter(domain => !allowed.has(domain));
         await chrome.storage.local.set({ [STORAGE_KEYS.BLACKLIST]: allDomains });
     } catch (e) {
         await refreshCombinedBlacklist();
@@ -181,6 +197,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         GET_USAGE: handleGetUsage,
         ADD_DOMAIN: handleAddDomain,
         REMOVE_DOMAIN: handleRemoveDomain,
+        ADD_ALLOWED_DOMAIN: handleAddAllowedDomain,
+        REMOVE_ALLOWED_DOMAIN: handleRemoveAllowedDomain,
         CHECKOUT: handleCheckout,
         BILLING_PORTAL: handleBillingPortal,
     };
@@ -254,9 +272,13 @@ async function handleGetUser() {
 
 async function handleFetchBlacklist() {
     const customDomains = await getLocalCustomDomains();
+    const allowedDomains = await getLocalAllowedDomains();
+    const allowed = new Set(allowedDomains.map(d => d.domain));
     const localResponse = {
-        all_domains: [...new Set([...customDomains.map(d => d.domain), ...SEARCHWISE_CONFIG.DEFAULT_BLACKLIST])],
+        all_domains: [...new Set([...customDomains.map(d => d.domain), ...SEARCHWISE_CONFIG.DEFAULT_BLACKLIST])]
+            .filter(domain => !allowed.has(domain)),
         user_domains: customDomains,
+        allowed_domains: allowedDomains,
         default_domains: SEARCHWISE_CONFIG.DEFAULT_RULES.map(rule => ({
             domain: rule.domain,
             category: rule.category,
@@ -269,7 +291,16 @@ async function handleFetchBlacklist() {
     if (!token) return localResponse;
 
     try {
-        return await apiFetch('/blacklist');
+        const remoteResponse = await apiFetch('/blacklist');
+        const remoteAllDomains = remoteResponse.all_domains || [
+            ...(remoteResponse.user_domains || []).map(d => d.domain),
+            ...(remoteResponse.default_domains || []).map(d => d.domain),
+        ];
+        return {
+            ...remoteResponse,
+            all_domains: remoteAllDomains.filter(domain => !allowed.has(domain)),
+            allowed_domains: allowedDomains,
+        };
     } catch (e) {
         return localResponse;
     }
@@ -322,6 +353,12 @@ async function handleAddDomain(data) {
         throw new Error('Domain already in cleanup rules');
     }
 
+    const allowedDomains = await getLocalAllowedDomains();
+    const nextAllowed = allowedDomains.filter(d => d.domain !== domain);
+    if (nextAllowed.length !== allowedDomains.length) {
+        await chrome.storage.local.set({ [STORAGE_KEYS.ALLOWLIST]: nextAllowed });
+    }
+
     const item = { id: `local-${Date.now()}`, domain, local: true };
     await setLocalCustomDomains([...domains, item]);
     return item;
@@ -343,6 +380,40 @@ async function handleRemoveDomain(data) {
 
     const domains = await getLocalCustomDomains();
     await setLocalCustomDomains(domains.filter(d => String(d.id) !== String(data.id)));
+    return { success: true };
+}
+
+async function handleAddAllowedDomain(data) {
+    const domain = normalizeDomain(data.domain);
+    if (!domain) throw new Error('Invalid domain');
+
+    const customDomains = await getLocalCustomDomains();
+    const nextCustom = customDomains.filter(d => d.domain !== domain);
+    if (nextCustom.length !== customDomains.length) {
+        await chrome.storage.local.set({ [STORAGE_KEYS.CUSTOM_BLACKLIST]: nextCustom });
+    }
+
+    const allowedDomains = await getLocalAllowedDomains();
+    const existing = allowedDomains.find(d => d.domain === domain);
+    if (existing) {
+        await refreshCombinedBlacklist();
+        return existing;
+    }
+
+    const item = { id: `allow-local-${Date.now()}`, domain, local: true };
+    await setLocalAllowedDomains([...allowedDomains, item]);
+    return item;
+}
+
+async function handleRemoveAllowedDomain(data) {
+    const allowedDomains = await getLocalAllowedDomains();
+    const id = String(data.id || '');
+    const domain = normalizeDomain(data.domain);
+    const nextAllowed = allowedDomains.filter(d => {
+        if (id) return String(d.id) !== id;
+        return d.domain !== domain;
+    });
+    await setLocalAllowedDomains(nextAllowed);
     return { success: true };
 }
 
