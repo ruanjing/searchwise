@@ -21,4 +21,4 @@
 
 - `index.html` 里的 Pro 预约邮箱。
 - `privacy.html` 里的联系邮箱。
-- 扩展上架后，把 `install.html` 的开发者模式说明换成商店链接。
+- 扩展上架后，把 `install.html` 的开发者模式说明换成商店链接。线上链接建议使用 `/install` 和 `/privacy` 这种无后缀路径。
