@@ -21,8 +21,10 @@ Core features:
 - See why a hidden result matched a rule when you reveal hidden results.
 - Copy mistaken-cleanup feedback from the search results page without opening a mail app.
 - Add your own blocked domains locally.
+- Allow sites again when a cleanup rule is too aggressive.
 - Block unwanted sites directly from search result pages and undo mistakes.
 - Highlight search keywords inside result titles and snippets.
+- Works on Google, Bing, Baidu, DuckDuckGo, Sogou, 360 Search, and Yandex result pages.
 - Use the extension without creating an account.
 - Keep the free version local-first and lightweight.
 
@@ -41,10 +43,36 @@ SearchWise 是一个本地优先的浏览器扩展，用来净化搜索结果、
 - 显示隐藏结果时可以看到命中的规则原因。
 - 在搜索结果页复制误伤反馈信息，不会强制打开邮件客户端。
 - 添加自定义屏蔽域名。
+- 误伤时可以把站点加入允许列表，恢复展示。
 - 在搜索结果页一键屏蔽网站，并可撤销误操作。
 - 高亮搜索关键词。
+- 支持 Google、Bing、百度、DuckDuckGo、搜狗、360 搜索和 Yandex 搜索结果页。
 - 无需账号即可使用。
 - 不在搜索结果页插入第三方广告。
+
+## Keyword Bank
+
+Use these phrases naturally in store updates, website copy, videos, and community posts:
+
+- search result cleaner
+- clean Google search results
+- clean Bing search results
+- hide search results
+- block websites from search results
+- content farm blocker
+- low quality result blocker
+- developer search cleaner
+- keyword highlighter
+- Chrome search extension
+- local-first browser extension
+- CSDN blocker
+- mirror site blocker
+- 搜索结果净化
+- 屏蔽搜索结果
+- 内容农场屏蔽
+- 搜索关键词高亮
+- Chrome 搜索插件
+- 程序员搜索工具
 
 ## Category
 
