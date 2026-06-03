@@ -133,7 +133,7 @@
         results.forEach(result => {
             if (result.blocked || !result.element || result.element.dataset.searchwiseActionReady === 'true') return;
 
-            const domain = extractDomain(result.displayUrl || result.url);
+            const domain = extractDomain(result.displayUrl) || extractDomain(result.url);
             if (!domain) return;
 
             result.element.dataset.searchwiseActionReady = 'true';
@@ -363,9 +363,12 @@
         if (!value) return '';
 
         try {
-            let text = String(value).trim()
-                .replace(/^[\s›>·|/-]+/, '')
-                .replace(/\s*[›>·|].*$/, '')
+            const raw = String(value).trim();
+            const urlMatch = raw.match(/https?:\/\/[^\s<>"')]+/i);
+            const domainMatch = raw.match(/(?:^|[\s/|>-])((?:[a-z0-9-]+\.)+[a-z]{2,})(?:[\/\s:]|$)/i);
+            let text = (urlMatch?.[0] || domainMatch?.[1] || raw)
+                .replace(/^[\s�?·|/-]+/, '')
+                .replace(/\s*[�?·|].*$/, '')
                 .replace(/\s+.*$/, '')
                 .replace(/\/\s*$/, '');
 
