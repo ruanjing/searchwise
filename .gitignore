@@ -21,6 +21,8 @@ public/hot
 .phpunit.cache/
 release/searchwise-extension-*/
 release/searchwise-extension-*.zip
+release/edge-package/
+release/searchwise-edge-*.zip
 
 # Logs and local OS files
 *.log

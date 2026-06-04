@@ -159,6 +159,13 @@ h3 {
     line-height: 1.7;
 }
 
+.store-note {
+    margin: 12px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
 .button {
     display: inline-flex;
     align-items: center;
@@ -183,6 +190,22 @@ h3 {
 
 .button.full {
     width: 100%;
+}
+
+.store-secondary {
+    margin-top: 10px;
+}
+
+.install-actions {
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.install-actions .button {
+    min-width: 220px;
+    min-height: 52px;
+    padding: 0 28px;
+    font-size: 1.05rem;
 }
 
 .product-shot {
