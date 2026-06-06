@@ -121,5 +121,12 @@
   "onboardingTitle": { "message": "SearchWise \u5df2\u51c6\u5907\u597d" },
   "onboardingIntro": { "message": "\u641c\u7d22\u51c0\u5316\u5df2\u81ea\u52a8\u5f00\u542f\u3002\u7167\u5e38\u641c\u7d22\uff0cSearchWise \u4f1a\u5728\u652f\u6301\u7684\u641c\u7d22\u5f15\u64ce\u4e0a\u9690\u85cf\u566a\u97f3\u7ed3\u679c\u3002" },
   "onboardingTipOne": { "message": "\u5728\u641c\u7d22\u7ed3\u679c\u4e0a\u70b9\u201c\u5c4f\u853d\u6b64\u7ad9\u201d\uff0c\u4ee5\u540e\u5c31\u4f1a\u9690\u85cf\u7c7b\u4f3c\u7ed3\u679c\u3002" },
-  "onboardingTipTwo": { "message": "\u5982\u679c\u67d0\u4e2a\u641c\u7d22\u9875\u88ab\u8fc7\u5ea6\u8fc7\u6ee4\uff0c\u53ef\u4ee5\u70b9\u201c\u663e\u793a\u9690\u85cf\u7ed3\u679c\u201d\u3002" }
+  "onboardingTipTwo": { "message": "\u5982\u679c\u67d0\u4e2a\u641c\u7d22\u9875\u88ab\u8fc7\u5ea6\u8fc7\u6ee4\uff0c\u53ef\u4ee5\u70b9\u201c\u663e\u793a\u9690\u85cf\u7ed3\u679c\u201d\u3002" },
+  "contextMenuAdd": { "message": "🛡️ 将此站加入 SearchWise 屏蔽列表" },
+  "contextMenuAddLink": { "message": "🛡️ 将此链接域名加入 SearchWise 屏蔽列表" },
+  "customDomainsLimitReached": { "message": "已达到自定义屏蔽域名上限（20个）" },
+  "filterMode": { "message": "过滤模式" },
+  "filterModeDesc": { "message": "选择如何处理被屏蔽的搜索结果" },
+  "filterModeHide": { "message": "完全隐藏" },
+  "filterModeMild": { "message": "温和置灰（半透明并打标签）" }
 }

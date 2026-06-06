@@ -27,6 +27,24 @@
         } catch (e) {
             $('usage-domains').textContent = `0/${SW.LIMITS.LOCAL_FREE_DOMAINS}`;
         }
+
+        // Load stats
+        try {
+            const data = await chrome.storage.local.get({
+                sw_stats: { totalFiltered: 0, dailyFiltered: {} },
+            });
+            const stats = data.sw_stats || { totalFiltered: 0, dailyFiltered: {} };
+            const today = new Date().toISOString().slice(0, 10);
+            const todayCount = stats.dailyFiltered?.[today] || 0;
+            const totalCount = stats.totalFiltered || 0;
+
+            $('stats-today').textContent = String(todayCount);
+            $('stats-total').textContent = String(totalCount);
+        } catch (e) {
+            console.error('Error loading stats in popup:', e);
+            $('stats-today').textContent = '0';
+            $('stats-total').textContent = '0';
+        }
     }
 
     // ===== Settings toggles =====

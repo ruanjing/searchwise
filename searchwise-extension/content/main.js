@@ -47,6 +47,7 @@
                 margin-top: 10px !important;
                 margin-bottom: 10px !important;
                 box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+                opacity: 1 !important;
                 transition: all 0.2s ease !important;
             }
 
@@ -57,6 +58,43 @@
 
             /* Premium SearchWise Blocked badge overlay */
             body[data-searchwise-show-blocked="true"] [data-searchwise-blocked="true"]::before {
+                content: attr(data-searchwise-blocked-label) !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                background: #ffebee !important;
+                color: #c62828 !important;
+                border: 1px solid #ffcdd2 !important;
+                font-size: 11px !important;
+                font-weight: 600 !important;
+                padding: 3px 8px !important;
+                border-radius: 4px !important;
+                margin-bottom: 10px !important;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+            }
+
+            /* style when blocked elements are shown in mild filtering mode */
+            body[data-searchwise-filter-mode="mild"] [data-searchwise-blocked="true"] {
+                display: block !important;
+                border: 1px dashed rgba(244, 63, 94, 0.45) !important;
+                background-color: rgba(244, 63, 94, 0.015) !important;
+                position: relative !important;
+                border-radius: 8px !important;
+                padding: 12px 16px !important;
+                margin-top: 10px !important;
+                margin-bottom: 10px !important;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+                opacity: 0.35 !important;
+                transition: opacity 0.2s ease, border-color 0.2s ease, background-color 0.2s ease !important;
+            }
+
+            body[data-searchwise-filter-mode="mild"] [data-searchwise-blocked="true"]:hover {
+                opacity: 0.90 !important;
+                border-color: rgba(244, 63, 94, 0.7) !important;
+                background-color: rgba(244, 63, 94, 0.03) !important;
+            }
+
+            /* Blocked badge in mild filtering mode */
+            body[data-searchwise-filter-mode="mild"] [data-searchwise-blocked="true"]::before {
                 content: attr(data-searchwise-blocked-label) !important;
                 display: inline-flex !important;
                 align-items: center !important;
@@ -96,8 +134,10 @@
             delete document.body.dataset.searchwiseShowBlocked;
         }
 
+        console.log(`[SearchWise DEBUG] init called. Engine: ${engine}, Query: ${query}`);
         // Get search results
         const results = adapter.getResults();
+        console.log(`[SearchWise DEBUG] getResults returned ${results.length} elements:`, results.map(r => ({ title: r.title, url: r.url, displayUrl: r.displayUrl })));
         if (results.length === 0) return;
 
         // Load settings
@@ -105,7 +145,9 @@
             sidebar_enabled: false,
             highlight_enabled: true,
             blacklist_enabled: true,
+            filter_mode: 'hide',
         });
+        document.body.dataset.searchwiseFilterMode = settings.filter_mode || 'hide';
 
         // Phase 1: Blacklist filtering (offline)
         if (settings.blacklist_enabled) {
@@ -130,13 +172,21 @@
     }
 
     function attachBlockActions(results, engine, query) {
-        results.forEach(result => {
-            if (result.blocked || !result.element || result.element.dataset.searchwiseActionReady === 'true') return;
-
+        console.log(`[SearchWise DEBUG] attachBlockActions called with ${results.length} results.`);
+        results.forEach((result, idx) => {
             const domain = extractDomain(result.displayUrl) || extractDomain(result.url);
-            if (!domain) return;
+            console.log(`[SearchWise DEBUG] Result #${idx}: title="${result.title}", domain="${domain}", blocked=${result.blocked}, elementExists=${!!result.element}`);
+            if (result.blocked || !result.element) return;
+            if (result.element.querySelector('.searchwise-block-site-btn')) {
+                console.log(`[SearchWise DEBUG] Result #${idx} already has a block button.`);
+                return;
+            }
 
-            result.element.dataset.searchwiseActionReady = 'true';
+            if (!domain) {
+                console.log(`[SearchWise DEBUG] Result #${idx} skipped: domain is empty.`);
+                return;
+            }
+
             const button = document.createElement('button');
             button.type = 'button';
             button.className = 'searchwise-block-site-btn';
@@ -190,7 +240,9 @@
                 result.element.dataset.searchwiseBlockedDomain = domain;
                 result.element.dataset.searchwiseBlockedLabel = blockedLabelFor(result.element);
                 result.element.dataset.searchwiseUserBlocked = 'true';
-                result.element.style.display = 'none';
+                if (document.body.dataset.searchwiseFilterMode !== 'mild') {
+                    result.element.style.display = 'none';
+                }
                 ApiClient.reportBlockedCount(getBlockedCount());
                 SidebarInjector.showBlockedNotice(getBlockedCount(), results, engine, query);
                 showUndoToast(domain, async () => {
@@ -213,16 +265,13 @@
                 });
             });
 
-            const actionRow = document.createElement('div');
+            const actionRow = document.createElement('span');
             actionRow.className = 'searchwise-block-action-row';
             actionRow.style.cssText = `
-                display: flex !important;
+                display: inline-flex !important;
                 align-items: center !important;
-                direction: ltr !important;
-                margin: 4px 0 2px !important;
-                transform: none !important;
-                unicode-bidi: isolate !important;
-                writing-mode: horizontal-tb !important;
+                margin-left: 8px !important;
+                vertical-align: middle !important;
             `;
             actionRow.appendChild(button);
             insertBlockAction(result.element, actionRow);
@@ -338,25 +387,34 @@
     }
 
     function insertBlockAction(element, actionRow) {
-        const title = element.querySelector('h3, h2, a[href]');
-        const linkParent = title?.closest?.('a[href]');
-        if (linkParent?.parentElement && linkParent.parentElement !== element) {
-            linkParent.parentElement.insertAdjacentElement('afterend', actionRow);
+        // Query headings first (h2/h3 are the main title headings)
+        let title = element.querySelector('h2, h3, .b_title, .b_algoHeaders, .OrganicTitle, .c-title');
+        
+        // If not found, try title links (like a.tilk)
+        if (!title) {
+            title = element.querySelector('a.tilk');
+        }
+
+        // Generic fallback
+        if (!title) {
+            title = element.querySelector('a[href]');
+        }
+
+        if (!title) {
+            element.appendChild(actionRow);
             return;
         }
 
-        const parent = title?.parentElement;
-        if (parent?.tagName?.toLowerCase() === 'a' && parent.parentElement) {
-            parent.parentElement.insertAdjacentElement('afterend', actionRow);
-            return;
+        // Find the actual link element
+        const link = title.tagName.toLowerCase() === 'a' ? title : title.querySelector('a[href]');
+        
+        if (link) {
+            link.insertAdjacentElement('afterend', actionRow);
+            console.log(`[SearchWise DEBUG] insertBlockAction: inserted after link. parentTagName=${actionRow.parentElement?.tagName}, parentClassName=${actionRow.parentElement?.className}`);
+        } else {
+            title.appendChild(actionRow);
+            console.log(`[SearchWise DEBUG] insertBlockAction: appended to title. parentTagName=${actionRow.parentElement?.tagName}, parentClassName=${actionRow.parentElement?.className}`);
         }
-
-        if (parent && parent !== element) {
-            parent.insertAdjacentElement('afterend', actionRow);
-            return;
-        }
-
-        element.appendChild(actionRow);
     }
 
     function extractDomain(value) {
@@ -367,8 +425,8 @@
             const urlMatch = raw.match(/https?:\/\/[^\s<>"')]+/i);
             const domainMatch = raw.match(/(?:^|[\s/|>-])((?:[a-z0-9-]+\.)+[a-z]{2,})(?:[\/\s:]|$)/i);
             let text = (urlMatch?.[0] || domainMatch?.[1] || raw)
-                .replace(/^[\s�?·|/-]+/, '')
-                .replace(/\s*[�?·|].*$/, '')
+                .replace(/^[\s�?·|/-]+/, '')
+                .replace(/\s*[�?·|].*$/, '')
                 .replace(/\s+.*$/, '')
                 .replace(/\/\s*$/, '');
 

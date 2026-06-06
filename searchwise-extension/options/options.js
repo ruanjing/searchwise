@@ -33,11 +33,13 @@
             blacklist_enabled: true,
             highlight_enabled: true,
             language: 'auto',
+            filter_mode: 'hide',
         });
 
         $('opt-blacklist').checked = settings.blacklist_enabled;
         $('opt-highlight').checked = settings.highlight_enabled;
         $('opt-language').value = settings.language || 'auto';
+        $('opt-filter-mode').value = settings.filter_mode || 'hide';
 
         await loadStats();
         await loadBlacklist();
@@ -194,6 +196,10 @@
         SWI18n.apply();
         renderBlacklist();
         await loadStats();
+    });
+
+    $('opt-filter-mode').addEventListener('change', async (e) => {
+        await chrome.storage.sync.set({ filter_mode: e.target.value });
     });
 
     // ===== Helpers =====

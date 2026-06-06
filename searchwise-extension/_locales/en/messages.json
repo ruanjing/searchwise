@@ -121,5 +121,12 @@
   "onboardingTitle": { "message": "SearchWise is ready" },
   "onboardingIntro": { "message": "Search cleanup is already enabled. Search as usual, and SearchWise will hide noisy results on supported search engines." },
   "onboardingTipOne": { "message": "Use \"Block this site\" on a search result to hide similar results next time." },
-  "onboardingTipTwo": { "message": "Use \"Show hidden results\" if a search page looks over-filtered." }
+  "onboardingTipTwo": { "message": "Use \"Show hidden results\" if a search page looks over-filtered." },
+  "contextMenuAdd": { "message": "🛡️ Add this site to SearchWise Blocklist" },
+  "contextMenuAddLink": { "message": "🛡️ Add link domain to SearchWise Blocklist" },
+  "customDomainsLimitReached": { "message": "Reached maximum limit for custom blocked domains (20)" },
+  "filterMode": { "message": "Filter Mode" },
+  "filterModeDesc": { "message": "Choose how to handle blocked search results" },
+  "filterModeHide": { "message": "Hide Completely" },
+  "filterModeMild": { "message": "Mild Fade (Semi-transparent & Tagged)" }
 }

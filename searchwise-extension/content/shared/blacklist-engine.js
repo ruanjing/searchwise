@@ -59,7 +59,7 @@ const BlacklistEngine = {
         results.forEach(r => {
             const match = this._getBlockedMatch(r.url) || this._getBlockedMatch(r.displayUrl);
             if (match) {
-                if (document.body.dataset.searchwiseShowBlocked !== 'true') {
+                if (document.body.dataset.searchwiseShowBlocked !== 'true' && document.body.dataset.searchwiseFilterMode !== 'mild') {
                     r.element.style.display = 'none';
                 }
                 r.element.dataset.searchwiseBlocked = 'true';

@@ -28,6 +28,10 @@ class FakeElement {
   }
 
   querySelector(selector) {
+    const parts = selector.split(',').map(s => s.trim());
+    for (const part of parts) {
+      if (this.children[part]) return this.children[part];
+    }
     return this.children[selector] || null;
   }
 

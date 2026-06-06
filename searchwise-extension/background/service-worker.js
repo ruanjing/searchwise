@@ -349,6 +349,13 @@ async function handleAddDomain(data) {
     }
 
     const domains = await getLocalCustomDomains();
+    
+    const user = await getUser();
+    const isPro = user && user.plan === 'pro';
+    if (!isPro && domains.length >= 20) {
+        throw new Error('Limit reached: Free plan is limited to 20 custom domains. Please delete some or upgrade to Pro.');
+    }
+
     if (domains.some(d => d.domain === domain) || SEARCHWISE_CONFIG.DEFAULT_BLACKLIST.includes(domain)) {
         throw new Error('Domain already in cleanup rules');
     }
@@ -523,11 +530,19 @@ function handleBlockedCount(message, sender) {
     }
 }
 
-// ========== Alarms (periodic sync) ==========
+// ========== Alarms (periodic sync) & Context Menus ==========
 
 chrome.runtime.onInstalled.addListener((details) => {
     syncBlacklist();
     chrome.alarms.create('sync-blacklist', { periodInMinutes: 60 });
+
+    // Create context menu item
+    chrome.contextMenus.create({
+        id: 'searchwise-add-to-blacklist',
+        title: chrome.i18n.getMessage('contextMenuAdd') || '🛡️ 将此站加入 SearchWise 屏蔽列表',
+        contexts: ['page', 'link']
+    });
+
     if (details.reason === 'install') {
         chrome.storage.local.set({ onboarding_pending: true }, () => {
             chrome.runtime.openOptionsPage();
@@ -540,3 +555,59 @@ chrome.alarms.onAlarm.addListener((alarm) => {
         syncBlacklist();
     }
 });
+
+chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+    if (info.menuItemId === 'searchwise-add-to-blacklist') {
+        const urlString = info.linkUrl || info.pageUrl || tab?.url;
+        if (!urlString) return;
+
+        try {
+            const domain = extractDomainFromUrl(urlString);
+            if (!domain) return;
+
+            // Check if domain is already blocked
+            const customDomains = await getLocalCustomDomains();
+            if (customDomains.some(d => d.domain === domain) || SEARCHWISE_CONFIG.DEFAULT_BLACKLIST.includes(domain)) {
+                return;
+            }
+
+            // Check limits (free plan max 20)
+            const token = await getToken();
+            const user = await getUser();
+            const isPro = user && user.plan === 'pro';
+
+            if (!isPro && customDomains.length >= 20) {
+                chrome.notifications.create('', {
+                    type: 'basic',
+                    iconUrl: '/assets/icons/icon128.png',
+                    title: 'SearchWise',
+                    message: chrome.i18n.getMessage('customDomainsLimitReached') || '已达到自定义屏蔽域名上限（20个）'
+                });
+                return;
+            }
+
+            // Add the domain
+            await handleAddDomain({ domain });
+
+            // Notify user
+            chrome.notifications.create('', {
+                type: 'basic',
+                iconUrl: '/assets/icons/icon128.png',
+                title: 'SearchWise',
+                message: (chrome.i18n.getMessage('blockedDomainToast') || '已屏蔽 $DOMAIN$').replace('$DOMAIN$', domain)
+            });
+        } catch (e) {
+            console.error('Error adding domain from context menu:', e);
+        }
+    }
+});
+
+function extractDomainFromUrl(urlString) {
+    try {
+        const url = new URL(urlString);
+        return url.hostname.toLowerCase().replace(/^www\./, '');
+    } catch {
+        return null;
+    }
+}
+

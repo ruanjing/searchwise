@@ -3,9 +3,9 @@ const BingAdapter = {
     engine: SW.ENGINE.BING,
 
     SELECTORS: {
-        resultContainer: '#b_results > li.b_algo',
-        resultLink: ['h2 a[href]', '.b_title a[href]'],
-        resultTitle: 'h2',
+        resultContainer: '#b_results > li',
+        resultLink: ['h2 a[href]', '.b_title a[href]', 'a[href]'],
+        resultTitle: 'h2, .b_title, .b_algoHeaders, h3',
         resultSnippet: ['.b_caption p', '.b_lineclamp2'],
         resultDisplayUrl: ['cite', '.b_attribution cite', '.b_tpcn', '.tptt'],
         searchInput: 'input[name="q"]',
