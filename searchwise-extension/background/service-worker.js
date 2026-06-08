@@ -199,6 +199,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         REMOVE_DOMAIN: handleRemoveDomain,
         ADD_ALLOWED_DOMAIN: handleAddAllowedDomain,
         REMOVE_ALLOWED_DOMAIN: handleRemoveAllowedDomain,
+        IMPORT_DOMAINS: handleImportDomains,
         CHECKOUT: handleCheckout,
         BILLING_PORTAL: handleBillingPortal,
     };
@@ -352,8 +353,12 @@ async function handleAddDomain(data) {
     
     const user = await getUser();
     const isPro = user && user.plan === 'pro';
-    if (!isPro && domains.length >= 20) {
-        throw new Error('Limit reached: Free plan is limited to 20 custom domains. Please delete some or upgrade to Pro.');
+    if (!isPro) {
+        const bonusData = await chrome.storage.sync.get({ sharing_bonus_unlocked: false });
+        const limit = bonusData.sharing_bonus_unlocked ? 50 : 20;
+        if (domains.length >= limit) {
+            throw new Error(`Limit reached: Free plan is limited to ${limit} custom domains. Please delete some or upgrade to Pro.`);
+        }
     }
 
     if (domains.some(d => d.domain === domain) || SEARCHWISE_CONFIG.DEFAULT_BLACKLIST.includes(domain)) {
@@ -576,14 +581,19 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
             const user = await getUser();
             const isPro = user && user.plan === 'pro';
 
-            if (!isPro && customDomains.length >= 20) {
-                chrome.notifications.create('', {
-                    type: 'basic',
-                    iconUrl: '/assets/icons/icon128.png',
-                    title: 'SearchWise',
-                    message: chrome.i18n.getMessage('customDomainsLimitReached') || '已达到自定义屏蔽域名上限（20个）'
-                });
-                return;
+            if (!isPro) {
+                const bonusData = await chrome.storage.sync.get({ sharing_bonus_unlocked: false });
+                const limit = bonusData.sharing_bonus_unlocked ? 50 : 20;
+                if (customDomains.length >= limit) {
+                    const msg = chrome.i18n.getMessage('customDomainsLimitReachedWithLimit', [String(limit)]) || `已达到自定义屏蔽域名上限（${limit}个）`;
+                    chrome.notifications.create('', {
+                        type: 'basic',
+                        iconUrl: '/assets/icons/icon128.png',
+                        title: 'SearchWise',
+                        message: msg
+                    });
+                    return;
+                }
             }
 
             // Add the domain
@@ -609,5 +619,55 @@ function extractDomainFromUrl(urlString) {
     } catch {
         return null;
     }
+}
+
+async function handleImportDomains(data) {
+    if (!data || !Array.isArray(data.domains)) throw new Error('Invalid domains list');
+
+    const token = await getToken();
+    const user = await getUser();
+    const isPro = user && user.plan === 'pro';
+
+    const bonusData = await chrome.storage.sync.get({ sharing_bonus_unlocked: false });
+    const limit = isPro ? Infinity : (bonusData.sharing_bonus_unlocked ? 50 : 20);
+
+    const currentDomains = await getLocalCustomDomains();
+    const allowedDomains = await getLocalAllowedDomains();
+
+    let addedCount = 0;
+    const nextDomains = [...currentDomains];
+    const normalizedList = [];
+
+    for (const rawDomain of data.domains) {
+        const domain = normalizeDomain(rawDomain);
+        if (!domain) continue;
+
+        // Skip if already in custom list or default list
+        if (nextDomains.some(d => d.domain === domain) || SEARCHWISE_CONFIG.DEFAULT_BLACKLIST.includes(domain)) {
+            continue;
+        }
+
+        // Check limits
+        if (nextDomains.length >= limit) {
+            break;
+        }
+
+        const item = { id: `local-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`, domain, local: true };
+        nextDomains.push(item);
+        addedCount++;
+        normalizedList.push(domain);
+    }
+
+    if (addedCount > 0) {
+        await setLocalCustomDomains(nextDomains);
+        
+        // Remove from allowlist if they were present
+        const nextAllowed = allowedDomains.filter(d => !normalizedList.includes(d.domain));
+        if (nextAllowed.length !== allowedDomains.length) {
+            await chrome.storage.local.set({ [STORAGE_KEYS.ALLOWLIST]: nextAllowed });
+        }
+    }
+
+    return { addedCount, totalCount: nextDomains.length };
 }
 

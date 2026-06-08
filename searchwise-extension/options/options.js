@@ -6,6 +6,7 @@
     let userDomains = [];
     let allowedDomains = [];
     let defaultDomains = [];
+    let sharingBonusUnlocked = false;
 
     // ===== Navigation =====
     document.querySelectorAll('.sw-nav-item').forEach(item => {
@@ -34,8 +35,10 @@
             highlight_enabled: true,
             language: 'auto',
             filter_mode: 'hide',
+            sharing_bonus_unlocked: false,
         });
 
+        sharingBonusUnlocked = settings.sharing_bonus_unlocked;
         $('opt-blacklist').checked = settings.blacklist_enabled;
         $('opt-highlight').checked = settings.highlight_enabled;
         $('opt-language').value = settings.language || 'auto';
@@ -110,10 +113,11 @@
             removable: false,
         });
 
-        $('stat-custom-blocks').textContent = `${userDomains.length}/20`;
+        const limit = sharingBonusUnlocked ? 50 : 20;
+        $('stat-custom-blocks').textContent = `${userDomains.length}/${limit}`;
         limitText.textContent = SWI18n.t('customDomainsLimit', [
             String(userDomains.length),
-            '20',
+            String(limit),
             '',
         ]);
     }
@@ -200,6 +204,55 @@
 
     $('opt-filter-mode').addEventListener('change', async (e) => {
         await chrome.storage.sync.set({ filter_mode: e.target.value });
+    });
+
+    $('btn-export-config').addEventListener('click', async () => {
+        if (!userDomains.length) {
+            alert(SWI18n.t('noBlockedDomainsToExport') || '您还没有任何自定义屏蔽域名可以导出。');
+            return;
+        }
+        try {
+            const domains = userDomains.map(d => d.domain);
+            const shareToken = btoa(JSON.stringify(domains));
+            await navigator.clipboard.writeText(shareToken);
+            
+            // Unlock sharing bonus!
+            if (!sharingBonusUnlocked) {
+                sharingBonusUnlocked = true;
+                await chrome.storage.sync.set({ sharing_bonus_unlocked: true });
+                renderBlacklist();
+                await loadStats();
+            }
+            
+            alert(SWI18n.t('exportSuccessAndBonus') || '导出成功！分享配置代码已复制到您的剪贴板。\n\n🎉 恭喜！由于您分享了规则，已为您解锁“分享达人”奖励，自定义屏蔽域名上限提升至 50 个！');
+        } catch (e) {
+            alert('导出失败: ' + e.message);
+        }
+    });
+
+    $('btn-import-config').addEventListener('click', async () => {
+        const pasted = prompt(SWI18n.t('pasteShareCode') || '请粘贴分享配置代码（Base64 字符串）：');
+        if (!pasted) return;
+        try {
+            const cleaned = pasted.trim();
+            const domains = JSON.parse(atob(cleaned));
+            if (!Array.isArray(domains)) {
+                throw new Error('Invalid backup format');
+            }
+            
+            // Validate domains
+            const validDomains = domains.filter(d => typeof d === 'string' && d.trim().length > 0);
+            if (!validDomains.length) {
+                alert(SWI18n.t('noValidDomains') || '配置中未发现有效的域名。');
+                return;
+            }
+            
+            const result = await sendMessage('IMPORT_DOMAINS', { domains: validDomains });
+            await loadBlacklist();
+            alert((SWI18n.t('importSuccess') || '导入成功！已成功导入 $COUNT$ 个网站规则。').replace('$COUNT$', result.addedCount));
+        } catch (e) {
+            alert((SWI18n.t('importFailed') || '导入失败，请检查分享代码是否完整或正确。') + ' (' + e.message + ')');
+        }
     });
 
     // ===== Helpers =====

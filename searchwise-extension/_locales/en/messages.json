@@ -125,8 +125,13 @@
   "contextMenuAdd": { "message": "🛡️ Add this site to SearchWise Blocklist" },
   "contextMenuAddLink": { "message": "🛡️ Add link domain to SearchWise Blocklist" },
   "customDomainsLimitReached": { "message": "Reached maximum limit for custom blocked domains (20)" },
+  "customDomainsLimitReachedWithLimit": { "message": "Reached maximum limit for custom blocked domains ($LIMIT$)", "placeholders": { "limit": { "content": "$1" } } },
   "filterMode": { "message": "Filter Mode" },
   "filterModeDesc": { "message": "Choose how to handle blocked search results" },
   "filterModeHide": { "message": "Hide Completely" },
-  "filterModeMild": { "message": "Mild Fade (Semi-transparent & Tagged)" }
+  "filterModeMild": { "message": "Mild Fade (Semi-transparent & Tagged)" },
+  "backupAndShare": { "message": "Backup & Share" },
+  "backupAndShareDesc": { "message": "Export your blocklist to share or back up, or import from a friend" },
+  "exportRules": { "message": "Export Rules" },
+  "importRules": { "message": "Import Rules" }
 }

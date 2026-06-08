@@ -11,7 +11,7 @@ function hasMatch(fragment) {
 }
 
 assert.equal(manifest.manifest_version, 3);
-assert.equal(manifest.version, '1.5.1');
+assert.equal(manifest.version, '1.5.3');
 assert.ok(hasMatch('google.com/search'));
 assert.ok(hasMatch('google.com.hk/search'));
 assert.ok(hasMatch('bing.com/search'));

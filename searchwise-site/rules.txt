@@ -1,0 +1,28 @@
+! Title: SearchWise Public Blacklist
+! Description: Block rules for common content farms, mirrored sites, low-signal tutorials, and QA noise.
+! Homepage: https://searchwise.net/
+! Expires: 4 days
+! Version: 1.0.0
+
+||pinterest.com^
+||pinterest.jp^
+||csdn.net^
+||zhuanlan.zhihu.com^
+||zhihu.com^
+||jianshu.com^
+||toutiao.com^
+||answers.com^
+||e-how.com^
+||wikihow.com^
+||buzzfeed.com^
+||quora.com^
+||iteye.com^
+||jb51.net^
+||php.cn^
+||educba.com^
+||tutorialspoint.com^
+||javatpoint.com^
+||guru99.com^
+||w3resource.com^
+||includehelp.com^
+||brainly.com^

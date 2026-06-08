@@ -125,8 +125,13 @@
   "contextMenuAdd": { "message": "🛡️ 将此站加入 SearchWise 屏蔽列表" },
   "contextMenuAddLink": { "message": "🛡️ 将此链接域名加入 SearchWise 屏蔽列表" },
   "customDomainsLimitReached": { "message": "已达到自定义屏蔽域名上限（20个）" },
+  "customDomainsLimitReachedWithLimit": { "message": "已达到自定义屏蔽域名上限（$LIMIT$个）", "placeholders": { "limit": { "content": "$1" } } },
   "filterMode": { "message": "过滤模式" },
   "filterModeDesc": { "message": "选择如何处理被屏蔽的搜索结果" },
   "filterModeHide": { "message": "完全隐藏" },
-  "filterModeMild": { "message": "温和置灰（半透明并打标签）" }
+  "filterModeMild": { "message": "温和置灰（半透明并打标签）" },
+  "backupAndShare": { "message": "备份与分享" },
+  "backupAndShareDesc": { "message": "导出您的屏蔽列表以进行备份或分享给他人，也可导入他人的配置" },
+  "exportRules": { "message": "导出配置" },
+  "importRules": { "message": "导入配置" }
 }
