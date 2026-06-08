@@ -214,7 +214,13 @@
         try {
             const domains = userDomains.map(d => d.domain);
             const shareToken = btoa(JSON.stringify(domains));
-            await navigator.clipboard.writeText(shareToken);
+            
+            // Try to write to clipboard
+            try {
+                await navigator.clipboard.writeText(shareToken);
+            } catch (clipErr) {
+                console.warn('Clipboard write failed', clipErr);
+            }
             
             // Unlock sharing bonus!
             if (!sharingBonusUnlocked) {
@@ -224,7 +230,10 @@
                 await loadStats();
             }
             
-            alert(SWI18n.t('exportSuccessAndBonus') || '导出成功！分享配置代码已复制到您的剪贴板。\n\n🎉 恭喜！由于您分享了规则，已为您解锁“分享达人”奖励，自定义屏蔽域名上限提升至 50 个！');
+            prompt(
+                (SWI18n.t('exportSuccessPrompt') || '导出成功！分享配置代码已复制到剪贴板（若自动复制失败，请手动复制下方框内的文本）：'),
+                shareToken
+            );
         } catch (e) {
             alert('导出失败: ' + e.message);
         }
