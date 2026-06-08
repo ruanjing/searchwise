@@ -152,12 +152,38 @@
                 <p>我们也提供标准的 Adblock 格式规则列表。你可以将其直接导入到 uBlock Origin、AdGuard 或其他广告拦截扩展中：</p>
                 <div class="ublock-actions">
                     <a class="button secondary" href="./rules.txt" target="_blank">查看公共规则文件 (rules.txt)</a>
-                    <a class="button primary" href="abp:subscribe?location=https%3A%2F%2Fsearchwise.net%2Frules.txt&amp;title=SearchWise%20Public%20Blacklist">一键订阅规则列表</a>
+                    <a class="button primary" id="btn-subscribe-rules" href="abp:subscribe?location=https%3A%2F%2Fsearchwise.net%2Frules.txt&amp;title=SearchWise%20Public%20Blacklist">一键订阅规则列表</a>
                 </div>
                 <p class="ublock-hint">💡 <b>为什么更推荐使用 SearchWise 浏览器扩展？</b><br>
                 除了过滤噪音网站外，SearchWise 扩展还提供在搜索页<b>“一键屏蔽/撤销某个网站”</b>、<b>“显示/隐藏被拦截的网页”</b>、以及<b>“温和过滤模式（置灰半透明显示）”</b>等原生级交互体验，比单纯的静态过滤列表功能更强大、更符合程序员的刚需。</p>
             </div>
         </section>
+
+        <script>
+            document.getElementById('btn-subscribe-rules').addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = this.getAttribute('href');
+                const webAbpUrl = url.replace('abp:', 'web+abp:');
+                
+                // Try standard abp:
+                window.location.href = url;
+                
+                // Fallback to web+abp: after 500ms
+                setTimeout(() => {
+                    window.location.href = webAbpUrl;
+                }, 500);
+                
+                // Show manual copy alert after 1500ms
+                setTimeout(() => {
+                    const copyUrl = 'https://searchwise.net/rules.txt';
+                    navigator.clipboard.writeText(copyUrl).then(() => {
+                        alert('如果浏览器未自动弹出订阅提示，已为您复制规则链接：\n' + copyUrl + '\n\n您可以在 uBlock / AdGuard 的设置中（如“自定义静态规则”或“过滤器列表”底部）直接粘贴此链接进行订阅。');
+                    }).catch(() => {
+                        alert('订阅链接：\nhttps://searchwise.net/rules.txt\n\n您可以复制该链接并在 uBlock / AdGuard 的设置中手动添加。');
+                    });
+                }, 1500);
+            });
+        </script>
 
         <section class="section compact">
             <h2>本地优先，不打扰你的搜索习惯</h2>

@@ -152,12 +152,38 @@
                 <p>We also provide a standard Adblock-formatted rules list. You can import it directly into uBlock Origin, AdGuard, or other ad-blocking extensions:</p>
                 <div class="ublock-actions">
                     <a class="button secondary" href="../rules.txt" target="_blank">View Rules File (rules.txt)</a>
-                    <a class="button primary" href="abp:subscribe?location=https%3A%2F%2Fsearchwise.net%2Frules.txt&amp;title=SearchWise%20Public%20Blacklist">One-click Subscribe</a>
+                    <a class="button primary" id="btn-subscribe-rules" href="abp:subscribe?location=https%3A%2F%2Fsearchwise.net%2Frules.txt&amp;title=SearchWise%20Public%20Blacklist">One-click Subscribe</a>
                 </div>
                 <p class="ublock-hint">💡 <b>Why is the SearchWise browser extension recommended?</b><br>
                 Besides filtering noisy sites, the SearchWise extension provides rich page-level interactions, including <b>"One-click site blocking/undo"</b>, <b>"Reveal/hide filtered results"</b>, and <b>"Mild Fade mode (semi-translucent styling)"</b>. It offers a much smoother developer search experience than static blocklists.</p>
             </div>
         </section>
+
+        <script>
+            document.getElementById('btn-subscribe-rules').addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = this.getAttribute('href');
+                const webAbpUrl = url.replace('abp:', 'web+abp:');
+                
+                // Try standard abp:
+                window.location.href = url;
+                
+                // Fallback to web+abp: after 500ms
+                setTimeout(() => {
+                    window.location.href = webAbpUrl;
+                }, 500);
+                
+                // Show manual copy alert after 1500ms
+                setTimeout(() => {
+                    const copyUrl = 'https://searchwise.net/rules.txt';
+                    navigator.clipboard.writeText(copyUrl).then(() => {
+                        alert('If the browser did not display a subscription prompt, the rules link has been copied to your clipboard:\n' + copyUrl + '\n\nYou can manually paste this URL in your uBlock / AdGuard settings (under "Custom Filters" or "Filter lists") to subscribe.');
+                    }).catch(() => {
+                        alert('Subscription URL:\nhttps://searchwise.net/rules.txt\n\nYou can copy this URL and add it manually in uBlock / AdGuard settings.');
+                    });
+                }, 1500);
+            });
+        </script>
 
         <section class="section compact">
             <h2>Local-first, no account required.</h2>
