@@ -1,5 +1,5 @@
 {
-  "appName": { "message": "SearchWise" },
+  "appName": { "message": "SearchWise - Search Filter & Content Farm Blocker" },
   "appDescription": { "message": "Clean search results by hiding content farms and highlighting trusted technical sources." },
   "settingsTitle": { "message": "SearchWise Settings" },
   "freePlan": { "message": "Free" },
