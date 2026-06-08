@@ -120,6 +120,13 @@
             String(limit),
             '',
         ]);
+
+        const descEl = $('backup-share-desc');
+        if (descEl) {
+            descEl.innerHTML = sharingBonusUnlocked ? 
+                SWI18n.t('backupAndShareDescUnlocked') : 
+                SWI18n.t('backupAndShareDescLocked');
+        }
     }
 
     function renderDomainList(listId, domains, options) {

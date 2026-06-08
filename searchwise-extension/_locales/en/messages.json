@@ -132,6 +132,9 @@
   "filterModeMild": { "message": "Mild Fade (Semi-transparent & Tagged)" },
   "backupAndShare": { "message": "Backup & Share" },
   "backupAndShareDesc": { "message": "Export your blocklist to share or back up, or import from a friend" },
+  "backupAndShareDescLocked": { "message": "Export your blocklist to share or back up, or import from a friend. <span style=\"color: #ff5b45; font-weight: bold;\">(🎁 Share to unlock 50 custom domains limit)</span>" },
+  "backupAndShareDescUnlocked": { "message": "Export your blocklist to share or back up, or import from a friend. <span style=\"color: #27b07d; font-weight: bold;\">(🎉 50 custom domains limit unlocked!)</span>" },
   "exportRules": { "message": "Export Rules" },
-  "importRules": { "message": "Import Rules" }
+  "importRules": { "message": "Import Rules" },
+  "exportSuccessPrompt": { "message": "Export successful! Unlocked 50 domains limit for you. The share code has been copied to your clipboard (if copy failed, please manually copy the text below):" }
 }

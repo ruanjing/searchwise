@@ -132,6 +132,9 @@
   "filterModeMild": { "message": "温和置灰（半透明并打标签）" },
   "backupAndShare": { "message": "备份与分享" },
   "backupAndShareDesc": { "message": "导出您的屏蔽列表以进行备份或分享给他人，也可导入他人的配置" },
+  "backupAndShareDescLocked": { "message": "导出您的屏蔽列表以进行备份或分享给他人，也可导入他人的配置 <span style=\"color: #ff5b45; font-weight: bold;\">(🎁 分享可免费解锁 50 个域名上限)</span>" },
+  "backupAndShareDescUnlocked": { "message": "导出您的屏蔽列表以进行备份或分享给他人，也可导入他人的配置 <span style=\"color: #27b07d; font-weight: bold;\">(🎉 已解锁 50 个域名上限奖励)</span>" },
   "exportRules": { "message": "导出配置" },
-  "importRules": { "message": "导入配置" }
+  "importRules": { "message": "导入配置" },
+  "exportSuccessPrompt": { "message": "导出成功！已为您免费解锁 50 个屏蔽名额！分享配置代码已复制到剪贴板（若自动复制失败，请手动复制下方框内的文本）：" }
 }
