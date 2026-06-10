@@ -608,6 +608,7 @@ const SidebarInjector = {
             if (currentShowing) {
                 // Collapse back
                 delete document.body.dataset.searchwiseShowBlocked;
+                delete document.body.dataset.searchwiseOverfiltered;
                 const blocked = document.querySelectorAll('[data-searchwise-blocked="true"]');
                 blocked.forEach(el => el.style.display = 'none');
                 this.removeFeedbackButtons();
@@ -618,9 +619,9 @@ const SidebarInjector = {
             } else {
                 // Show anyway
                 document.body.dataset.searchwiseShowBlocked = 'true';
+                delete document.body.dataset.searchwiseOverfiltered;
                 const blocked = document.querySelectorAll('[data-searchwise-blocked="true"]');
                 blocked.forEach(el => el.style.display = 'block');
-                this.attachFeedbackButtons(blocked);
                 chrome.runtime?.sendMessage?.({ type: SW.MSG.BLOCKED_COUNT, count: 0 }, () => {
                     if (chrome.runtime.lastError) { /* ignore */ }
                 });
@@ -636,8 +637,12 @@ const SidebarInjector = {
         if (!textEl || !btnEl) return;
 
         if (isShowing) {
-            textEl.innerHTML = this._escapeHtml(SWI18n.t('filteredJunk', [String(count)]))
-                .replace(this._escapeHtml(String(count)), `<strong>${count}</strong>`) + ` (${this._escapeHtml(SWI18n.t('shown'))})`;
+            if (document.body.dataset.searchwiseOverfiltered === 'true') {
+                textEl.innerHTML = this._formatAutoShownNotice(count);
+            } else {
+                textEl.innerHTML = this._escapeHtml(SWI18n.t('filteredJunk', [String(count)]))
+                    .replace(this._escapeHtml(String(count)), `<strong>${count}</strong>`) + ` (${this._escapeHtml(SWI18n.t('shown'))})`;
+            }
             btnEl.textContent = SWI18n.t('hideHiddenResults');
             btnEl.style.color = '#e03131';
         } else {
@@ -648,71 +653,43 @@ const SidebarInjector = {
     },
 
     attachFeedbackButtons(blockedElements) {
-        Array.from(blockedElements).forEach(element => {
-            if (element.querySelector(':scope > .searchwise-feedback-row')) return;
+        // Kept for compatibility with older call sites; action bars are created in main.js.
+    },
 
-            const row = document.createElement('div');
-            row.className = 'searchwise-feedback-row';
-            row.style.cssText = `
-                display: flex !important;
-                gap: 12px !important;
-                justify-content: flex-end !important;
-                align-items: center !important;
-                margin: 8px 0 0 !important;
-                padding: 0 !important;
-            `;
+    _ensureBlockedResultId(element) {
+        if (!element.dataset.searchwiseResultId) {
+            element.dataset.searchwiseResultId = `sw-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        }
+        return element.dataset.searchwiseResultId;
+    },
 
-            const allowButton = this._createInlineActionButton(SWI18n.t('allowThisSite'));
-            allowButton.addEventListener('click', async event => {
-                event.preventDefault();
-                event.stopPropagation();
-
-                const domain = element.dataset.searchwiseBlockedDomain;
-                if (!domain) return;
-
-                const originalText = allowButton.textContent;
-                allowButton.textContent = SWI18n.t('allowingSite');
-                allowButton.disabled = true;
-
-                try {
-                    await ApiClient.addAllowedDomain(domain);
-                    this.unblockElementsByDomain(domain);
-                    this.updateNoticeAfterAllow(domain);
-                    this.showFeedbackToast(SWI18n.t('siteAllowedToast', [domain]));
-                } catch (e) {
-                    allowButton.disabled = false;
-                    allowButton.textContent = originalText;
-                    this.showFeedbackToast(SWI18n.t('failedAllowDomain', [e.message]));
-                }
-            });
-
-            const feedbackButton = this._createInlineActionButton(SWI18n.t('copyFeedbackInfo'));
-            feedbackButton.addEventListener('click', async event => {
-                event.preventDefault();
-                event.stopPropagation();
-
-                const text = this.buildFeedbackText(element);
-                const ok = await this.copyText(text);
-                this.showFeedbackToast(ok ? SWI18n.t('feedbackCopied') : SWI18n.t('feedbackCopyFailed'));
-            });
-
-            row.appendChild(allowButton);
-            row.appendChild(feedbackButton);
-            element.insertAdjacentElement('afterbegin', row);
-        });
+    _shouldUseSiblingActionRow(element) {
+        const host = location.hostname || '';
+        return host.includes('bing') && element.tagName === 'LI' && !!element.parentNode;
     },
 
     _createInlineActionButton(label) {
         const button = document.createElement('button');
         button.type = 'button';
+        button.className = 'searchwise-feedback-btn';
         button.textContent = label;
         button.style.cssText = `
                 all: unset !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                box-sizing: border-box !important;
+                min-height: 28px !important;
+                border: 1px solid rgba(26, 115, 232, 0.3) !important;
+                border-radius: 999px !important;
+                background: #fff !important;
                 color: #1a73e8 !important;
                 cursor: pointer !important;
-                font: 12px/1.4 Arial, "Microsoft YaHei", sans-serif !important;
-                padding: 4px 6px !important;
-                border-radius: 4px !important;
+                font: 600 12px/1.2 Arial, "Microsoft YaHei", sans-serif !important;
+                letter-spacing: 0 !important;
+                padding: 6px 10px !important;
+                white-space: nowrap !important;
+                box-shadow: 0 1px 4px rgba(60, 64, 67, 0.18) !important;
             `;
         return button;
     },
@@ -726,13 +703,22 @@ const SidebarInjector = {
     },
 
     unblockElement(element) {
-        const row = element.querySelector(':scope > .searchwise-feedback-row');
+        if (element.dataset.searchwiseResultId) {
+            document.querySelectorAll(`[data-searchwise-action-for="${element.dataset.searchwiseResultId}"]`).forEach(row => row.remove());
+        }
+        const actionBar = element.querySelector('.searchwise-blocked-action-bar');
+        if (actionBar) actionBar.remove();
+        const row = element.querySelector('.searchwise-feedback-row');
         if (row) row.remove();
 
         element.style.display = '';
         delete element.dataset.searchwiseBlocked;
+        delete element.dataset.searchwiseBlockedLabel;
         delete element.dataset.searchwiseBlockedReason;
         delete element.dataset.searchwiseBlockedDomain;
+        delete element.dataset.searchwiseUserBlocked;
+        delete element.dataset.searchwiseResultId;
+        delete element.dataset.searchwiseHasActions;
         element.classList.remove('searchwise-blocked-shown');
     },
 
@@ -858,6 +844,12 @@ const SidebarInjector = {
 
     _formatFilteredNotice(count) {
         return this._escapeHtml(SWI18n.t('filteredJunk', [String(count)]))
+            .replace(this._escapeHtml(String(count)), `<strong>${count}</strong>`);
+    },
+
+    _formatAutoShownNotice(count) {
+        const fallback = `SearchWise cleaned $COUNT$ noisy result(s), but this page would be empty, so hidden results are shown.`;
+        return this._escapeHtml(SWI18n.t('overfilteredAutoShown', [String(count)]) || fallback.replace('$COUNT$', String(count)))
             .replace(this._escapeHtml(String(count)), `<strong>${count}</strong>`);
     },
 

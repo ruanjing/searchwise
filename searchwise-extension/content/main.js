@@ -5,6 +5,7 @@
 
     let currentQuery = '';
     let lastStatsKey = '';
+    const MIN_VISIBLE_RESULTS_AFTER_FILTER = 1;
 
     function detectEngine() {
         const host = window.location.hostname;
@@ -72,6 +73,89 @@
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
             }
 
+            body[data-searchwise-show-blocked="true"] [data-searchwise-has-actions="true"]::before,
+            body[data-searchwise-filter-mode="mild"] [data-searchwise-has-actions="true"]::before {
+                content: none !important;
+                display: none !important;
+            }
+
+            [data-searchwise-blocked="true"] > .searchwise-blocked-action-bar {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                gap: 12px !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+                margin: 0 0 10px !important;
+                padding: 0 !important;
+                clear: both !important;
+            }
+
+            .searchwise-blocked-action-label {
+                display: inline-flex !important;
+                align-items: center !important;
+                max-width: 100% !important;
+                background: #ffebee !important;
+                color: #c62828 !important;
+                border: 1px solid #ffcdd2 !important;
+                font-size: 11px !important;
+                font-weight: 600 !important;
+                padding: 3px 8px !important;
+                border-radius: 4px !important;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+                line-height: 1.4 !important;
+            }
+
+            .searchwise-blocked-action-buttons {
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: flex-end !important;
+                gap: 8px !important;
+                flex-shrink: 0 !important;
+            }
+
+            [data-searchwise-blocked="true"] > .searchwise-feedback-row {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: flex-end !important;
+                gap: 8px !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+                margin: 0 0 10px !important;
+                padding: 0 !important;
+                pointer-events: auto !important;
+                clear: both !important;
+            }
+
+            [data-searchwise-blocked="true"] .searchwise-feedback-btn {
+                all: unset !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                box-sizing: border-box !important;
+                min-height: 28px !important;
+                border: 1px solid rgba(26, 115, 232, 0.3) !important;
+                border-radius: 999px !important;
+                background: #fff !important;
+                color: #1a73e8 !important;
+                cursor: pointer !important;
+                font: 600 12px/1.2 Arial, "Microsoft YaHei", sans-serif !important;
+                letter-spacing: 0 !important;
+                padding: 6px 10px !important;
+                white-space: nowrap !important;
+                box-shadow: 0 1px 4px rgba(60, 64, 67, 0.18) !important;
+            }
+
+            [data-searchwise-blocked="true"] .searchwise-feedback-btn:hover {
+                background: #e8f0fe !important;
+                border-color: rgba(26, 115, 232, 0.55) !important;
+            }
+
+            [data-searchwise-blocked="true"] .searchwise-feedback-btn:disabled {
+                cursor: default !important;
+                opacity: 0.65 !important;
+            }
+
             /* style when blocked elements are shown in mild filtering mode */
             body[data-searchwise-filter-mode="mild"] [data-searchwise-blocked="true"] {
                 display: block !important;
@@ -132,6 +216,7 @@
         if (currentQuery !== query) {
             currentQuery = query;
             delete document.body.dataset.searchwiseShowBlocked;
+            delete document.body.dataset.searchwiseOverfiltered;
         }
 
         console.log(`[SearchWise DEBUG] init called. Engine: ${engine}, Query: ${query}`);
@@ -154,8 +239,10 @@
             await BlacklistEngine.init();
             const { count } = BlacklistEngine.filter(results);
             applyBlockedLabels(results);
+            preventEmptyResultPage(results, count);
             await recordCleanupStats(engine, query, count);
             SidebarInjector.showBlockedNotice(count, results, engine, query);
+            ensureShownBlockedActions();
             attachBlockActions(results, engine, query);
         }
 
@@ -243,6 +330,7 @@
                 if (document.body.dataset.searchwiseFilterMode !== 'mild') {
                     result.element.style.display = 'none';
                 }
+                preventEmptyResultPage(results, getBlockedCount());
                 ApiClient.reportBlockedCount(getBlockedCount());
                 SidebarInjector.showBlockedNotice(getBlockedCount(), results, engine, query);
                 showUndoToast(domain, async () => {
@@ -365,7 +453,146 @@
         results.forEach(result => {
             if (!result.blocked || !result.element) return;
             result.element.dataset.searchwiseBlockedLabel = blockedLabelFor(result.element);
+            ensureBlockedActionBar(result, results);
         });
+    }
+
+    function ensureBlockedActionBar(result, results) {
+        const element = result.element;
+        if (!element || element.querySelector('.searchwise-blocked-action-bar')) return;
+
+        element.dataset.searchwiseHasActions = 'true';
+
+        const bar = document.createElement('div');
+        bar.className = 'searchwise-blocked-action-bar';
+        bar.style.cssText = `
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            gap: 12px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            margin: 0 0 10px !important;
+            padding: 0 !important;
+            clear: both !important;
+        `;
+
+        const label = document.createElement('span');
+        label.className = 'searchwise-blocked-action-label';
+        label.textContent = element.dataset.searchwiseBlockedLabel || blockedLabelFor(element);
+        label.style.cssText = `
+            display: inline-flex !important;
+            align-items: center !important;
+            max-width: 100% !important;
+            background: #ffebee !important;
+            color: #c62828 !important;
+            border: 1px solid #ffcdd2 !important;
+            font-size: 11px !important;
+            font-weight: 600 !important;
+            padding: 3px 8px !important;
+            border-radius: 4px !important;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+            line-height: 1.4 !important;
+        `;
+
+        const actions = document.createElement('span');
+        actions.className = 'searchwise-blocked-action-buttons';
+        actions.style.cssText = `
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: flex-end !important;
+            gap: 8px !important;
+            flex-shrink: 0 !important;
+        `;
+
+        const unblockButton = createBlockedActionButton(SWI18n.t('unblockThisSite'));
+        unblockButton.title = SWI18n.t('unblockThisSiteTitle');
+        unblockButton.addEventListener('click', async event => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const domain = element.dataset.searchwiseBlockedDomain;
+            if (!domain) return;
+
+            const originalText = unblockButton.textContent;
+            unblockButton.textContent = SWI18n.t('unblockingSite');
+            unblockButton.disabled = true;
+
+            try {
+                await ApiClient.addAllowedDomain(domain);
+                results.forEach(item => {
+                    if (item.element?.dataset.searchwiseBlockedDomain === domain) {
+                        item.blocked = false;
+                    }
+                });
+                SidebarInjector.unblockElementsByDomain(domain);
+                SidebarInjector.updateNoticeAfterAllow(domain);
+                SidebarInjector.showFeedbackToast(SWI18n.t('siteUnblockedToast', [domain]));
+            } catch (e) {
+                unblockButton.disabled = false;
+                unblockButton.textContent = originalText;
+                SidebarInjector.showFeedbackToast(SWI18n.t('failedUnblockDomain', [e.message]));
+            }
+        });
+
+        actions.appendChild(unblockButton);
+        bar.appendChild(label);
+        bar.appendChild(actions);
+        element.insertAdjacentElement('afterbegin', bar);
+    }
+
+    function createBlockedActionButton(label) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent = label;
+        button.className = 'searchwise-feedback-btn';
+        button.style.cssText = `
+            all: unset !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            box-sizing: border-box !important;
+            min-height: 28px !important;
+            border: 1px solid rgba(26, 115, 232, 0.3) !important;
+            border-radius: 999px !important;
+            background: #fff !important;
+            color: #1a73e8 !important;
+            cursor: pointer !important;
+            font: 600 12px/1.2 Arial, "Microsoft YaHei", sans-serif !important;
+            letter-spacing: 0 !important;
+            padding: 6px 10px !important;
+            white-space: nowrap !important;
+            box-shadow: 0 1px 4px rgba(60, 64, 67, 0.18) !important;
+        `;
+        return button;
+    }
+
+    function preventEmptyResultPage(results, blockedCount) {
+        if (!blockedCount) {
+            delete document.body.dataset.searchwiseOverfiltered;
+            return;
+        }
+
+        if (document.body.dataset.searchwiseFilterMode === 'mild') {
+            delete document.body.dataset.searchwiseOverfiltered;
+            return;
+        }
+
+        const visibleCount = results.filter(result => result.element && !result.blocked).length;
+        if (visibleCount >= MIN_VISIBLE_RESULTS_AFTER_FILTER) {
+            delete document.body.dataset.searchwiseOverfiltered;
+            return;
+        }
+
+        document.body.dataset.searchwiseShowBlocked = 'true';
+        document.body.dataset.searchwiseOverfiltered = 'true';
+        document.querySelectorAll('[data-searchwise-blocked="true"]').forEach(element => {
+            element.style.display = 'block';
+        });
+    }
+
+    function ensureShownBlockedActions() {
+        // Blocked action bars are now created alongside the visible blocked label.
     }
 
     function blockedLabelFor(element) {
