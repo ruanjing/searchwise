@@ -2,9 +2,9 @@
 
 ## Upload Package
 
-- Package: `release/searchwise-edge-1.5.5.zip`
+- Package: `release/searchwise-edge-1.5.6.zip`
 - Manifest version: 3
-- Extension version: 1.5.5
+- Extension version: 1.5.6
 - Package root contains `manifest.json`: yes
 
 ## Store Assets
