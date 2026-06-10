@@ -1,0 +1,23 @@
+{
+  "appName": { "message": "DraftWise - Form Draft Autosave" },
+  "appDescription": { "message": "Automatically save form drafts locally and restore them after refreshes, crashes, or accidental tab closes." },
+  "restoreDraft": { "message": "Restore draft" },
+  "discardDraft": { "message": "Discard" },
+  "draftFound": { "message": "DraftWise found saved draft(s) on this page." },
+  "restoreAll": { "message": "Restore all" },
+  "dismiss": { "message": "Dismiss" },
+  "draftSaved": { "message": "Draft saved locally" },
+  "popupTitle": { "message": "DraftWise" },
+  "globalEnabled": { "message": "Autosave" },
+  "siteEnabled": { "message": "Current site" },
+  "savedDrafts": { "message": "Saved drafts" },
+  "currentSiteDrafts": { "message": "This site" },
+  "lastSaved": { "message": "Last saved" },
+  "never": { "message": "Never" },
+  "enabled": { "message": "Enabled" },
+  "disabled": { "message": "Disabled" },
+  "clearSite": { "message": "Clear this site" },
+  "clearAll": { "message": "Clear all drafts" },
+  "openPageFirst": { "message": "Open a web page to manage site drafts." },
+  "cleared": { "message": "Cleared" }
+}

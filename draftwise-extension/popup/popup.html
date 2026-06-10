@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DraftWise</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="header">
+      <div class="mark">D</div>
+      <div>
+        <h1 data-i18n="popupTitle">DraftWise</h1>
+        <p id="site-label">Local draft autosave</p>
+      </div>
+    </header>
+
+    <section class="panel">
+      <label class="toggle-row">
+        <span>
+          <strong data-i18n="globalEnabled">Autosave</strong>
+          <small id="global-status" data-i18n="enabled">Enabled</small>
+        </span>
+        <input id="global-toggle" type="checkbox" role="switch">
+      </label>
+
+      <label class="toggle-row">
+        <span>
+          <strong data-i18n="siteEnabled">Current site</strong>
+          <small id="site-status" data-i18n="enabled">Enabled</small>
+        </span>
+        <input id="site-toggle" type="checkbox" role="switch">
+      </label>
+    </section>
+
+    <section class="stats">
+      <div>
+        <span data-i18n="savedDrafts">Saved drafts</span>
+        <strong id="total-count">0</strong>
+      </div>
+      <div>
+        <span data-i18n="currentSiteDrafts">This site</span>
+        <strong id="site-count">0</strong>
+      </div>
+      <div>
+        <span data-i18n="lastSaved">Last saved</span>
+        <strong id="last-saved" data-i18n="never">Never</strong>
+      </div>
+    </section>
+
+    <section class="actions">
+      <button id="clear-site" type="button" data-i18n="clearSite">Clear this site</button>
+      <button id="clear-all" type="button" class="danger" data-i18n="clearAll">Clear all drafts</button>
+    </section>
+
+    <p id="message" class="message" hidden></p>
+  </main>
+  <script src="popup.js"></script>
+</body>
+</html>
