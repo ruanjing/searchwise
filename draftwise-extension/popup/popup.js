@@ -25,6 +25,7 @@
     applyI18n();
     await loadActiveTab();
     await loadSettings();
+    await ensureContentScript();
     bindEvents();
     await render();
   }
@@ -109,9 +110,23 @@
     await chrome.storage.local.set({ [SETTINGS_KEY]: state.settings });
   }
 
+  async function ensureContentScript() {
+    if (!state.tab?.id || !isWebPage(state.tab.url)) return false;
+    try {
+      await chrome.scripting.executeScript({
+        target: { tabId: state.tab.id },
+        files: ['content/draftwise.js'],
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   async function notifyContentScript() {
     if (!state.tab?.id) return;
     try {
+      await ensureContentScript();
       await chrome.tabs.sendMessage(state.tab.id, { type: 'DRAFTWISE_REFRESH_SETTINGS' });
     } catch {
       // The current tab might be a browser page or a site where the content script is unavailable.
@@ -143,6 +158,10 @@
     } catch {
       return new Date(timestamp).toLocaleString();
     }
+  }
+
+  function isWebPage(url) {
+    return /^https?:\/\//i.test(url || '');
   }
 
   function applyI18n() {

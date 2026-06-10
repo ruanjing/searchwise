@@ -1,24 +1,13 @@
 {
   "manifest_version": 3,
   "name": "__MSG_appName__",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "__MSG_appDescription__",
   "default_locale": "en",
   "permissions": [
     "activeTab",
-    "storage"
-  ],
-  "content_scripts": [
-    {
-      "matches": [
-        "http://*/*",
-        "https://*/*"
-      ],
-      "js": [
-        "content/draftwise.js"
-      ],
-      "run_at": "document_idle"
-    }
+    "storage",
+    "scripting"
   ],
   "action": {
     "default_title": "DraftWise",

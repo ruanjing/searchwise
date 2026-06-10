@@ -8,13 +8,11 @@ const en = JSON.parse(fs.readFileSync(path.join(root, '_locales/en/messages.json
 const zh = JSON.parse(fs.readFileSync(path.join(root, '_locales/zh_CN/messages.json'), 'utf8'));
 
 assert.equal(manifest.manifest_version, 3);
-assert.equal(manifest.version, '0.1.0');
+assert.equal(manifest.version, '0.1.1');
 assert.equal(manifest.default_locale, 'en');
-assert.deepEqual(manifest.permissions.sort(), ['activeTab', 'storage']);
+assert.deepEqual(manifest.permissions.sort(), ['activeTab', 'scripting', 'storage']);
 assert.ok(!manifest.host_permissions);
-assert.equal(manifest.content_scripts.length, 1);
-assert.deepEqual(manifest.content_scripts[0].matches, ['http://*/*', 'https://*/*']);
-assert.ok(manifest.content_scripts[0].js.includes('content/draftwise.js'));
+assert.ok(!manifest.content_scripts);
 assert.equal(manifest.action.default_popup, 'popup/popup.html');
 assert.equal(manifest.icons['128'], 'assets/icons/icon128.png');
 assert.equal(manifest.action.default_icon['128'], 'assets/icons/icon128.png');

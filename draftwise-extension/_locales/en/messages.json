@@ -1,6 +1,6 @@
 {
   "appName": { "message": "DraftWise - Form Draft Autosave" },
-  "appDescription": { "message": "Automatically save form drafts locally and restore them after refreshes, crashes, or accidental tab closes." },
+  "appDescription": { "message": "Click DraftWise on a page to locally save form drafts and restore them after refreshes, crashes, or accidental tab closes." },
   "restoreDraft": { "message": "Restore draft" },
   "discardDraft": { "message": "Discard" },
   "draftFound": { "message": "DraftWise found saved draft(s) on this page." },

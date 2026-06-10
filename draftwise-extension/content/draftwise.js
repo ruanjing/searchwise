@@ -2,6 +2,9 @@
 (function () {
   'use strict';
 
+  if (window.__draftwiseContentScriptReady) return;
+  window.__draftwiseContentScriptReady = true;
+
   const SETTINGS_KEY = 'draftwise_settings';
   const DRAFT_PREFIX = 'draftwise_draft_';
   const STATE = {
