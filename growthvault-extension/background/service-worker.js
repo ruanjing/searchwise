@@ -38,7 +38,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   const handlers = {
     CREATE_PROJECT: async () => GrowthVaultStorage.createProject(message.name),
     LIST_PROJECTS: async () => listProjectsWithInbox(),
+    DELETE_PROJECT: async () => GrowthVaultStorage.deleteProject(message.projectId),
     CREATE_CLIP: async () => GrowthVaultStorage.createClip(message.clip),
+    UPDATE_CLIP: async () => GrowthVaultStorage.updateClip(message.clipId, message.patch),
+    DELETE_CLIP: async () => GrowthVaultStorage.deleteClip(message.clipId),
+    LIST_CLIPS: async () => GrowthVaultStorage.listClips(message.filters || {}),
     CONSUME_PENDING_DRAFT: async () => GrowthVaultStorage.consumePendingDraft(message.draftId),
     HAS_DUPLICATE_URL: async () => GrowthVaultStorage.hasDuplicateUrl(message.projectId, message.url)
   };

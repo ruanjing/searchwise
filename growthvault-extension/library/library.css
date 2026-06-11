@@ -1,18 +1,90 @@
 body {
   margin: 0;
-  font-family: system-ui, sans-serif;
+  font-family: Arial, sans-serif;
+  color: #17202a;
+  background: #f6f7f9;
 }
 
-main {
+.gv-app {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+}
+
+aside {
+  background: #163b35;
+  color: #fff;
   padding: 24px;
 }
 
-h1 {
-  margin: 0 0 8px;
-  font-size: 24px;
+aside a {
+  color: #c7f3e6;
 }
 
+.content {
+  padding: 28px;
+  display: grid;
+  gap: 18px;
+  align-content: start;
+}
+
+h1,
+h2,
 p {
   margin: 0;
-  color: #555;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+select,
+input,
+textarea {
+  border: 1px solid #c8d0da;
+  border-radius: 6px;
+  padding: 9px 10px;
+  font: inherit;
+  background: #fff;
+}
+
+.clip-list {
+  display: grid;
+  gap: 10px;
+}
+
+.clip {
+  background: #fff;
+  border: 1px solid #dce2e8;
+  border-radius: 8px;
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.clip-meta {
+  color: #5b6673;
+  font-size: 13px;
+}
+
+.clip-actions {
+  display: flex;
+  gap: 8px;
+}
+
+button {
+  border: 0;
+  border-radius: 6px;
+  background: #1d6f5f;
+  color: #fff;
+  padding: 8px 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: #e5ece9;
+  color: #163b35;
 }
