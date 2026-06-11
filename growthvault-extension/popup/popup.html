@@ -1,16 +1,45 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>GrowthVault</title>
-    <link rel="stylesheet" href="popup.css">
-  </head>
-  <body>
-    <main>
-      <h1>GrowthVault</h1>
-      <p>Popup placeholder</p>
-    </main>
-    <script src="popup.js" type="module"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GrowthVault</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main class="gv-popup">
+    <header>
+      <strong>GrowthVault</strong>
+      <a href="../library/library.html" target="_blank">Library</a>
+    </header>
+
+    <p id="page-title">Loading page...</p>
+
+    <label>
+      Project
+      <select id="project-select"></select>
+    </label>
+
+    <div class="inline-create">
+      <input id="new-project-name" type="text" placeholder="New project">
+      <button id="create-project-btn" type="button">Create</button>
+    </div>
+
+    <label>
+      Type
+      <select id="type-select"></select>
+    </label>
+
+    <label>
+      Note
+      <textarea id="clip-note" placeholder="Optional note"></textarea>
+    </label>
+
+    <p id="status" role="status"></p>
+    <button id="save-page-btn" type="button">Save current page</button>
+  </main>
+
+  <script src="../shared/constants.js"></script>
+  <script src="popup.js"></script>
+</body>
 </html>

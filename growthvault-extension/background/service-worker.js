@@ -39,7 +39,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     CREATE_PROJECT: async () => GrowthVaultStorage.createProject(message.name),
     LIST_PROJECTS: async () => listProjectsWithInbox(),
     CREATE_CLIP: async () => GrowthVaultStorage.createClip(message.clip),
-    CONSUME_PENDING_DRAFT: async () => GrowthVaultStorage.consumePendingDraft(message.draftId)
+    CONSUME_PENDING_DRAFT: async () => GrowthVaultStorage.consumePendingDraft(message.draftId),
+    HAS_DUPLICATE_URL: async () => GrowthVaultStorage.hasDuplicateUrl(message.projectId, message.url)
   };
 
   const handler = handlers[message.type];
