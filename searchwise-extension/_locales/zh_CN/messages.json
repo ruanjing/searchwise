@@ -20,6 +20,7 @@
   "customBlocks": { "message": "\u81ea\u5b9a\u4e49\u5c4f\u853d" },
   "upgradeMonthlyShort": { "message": "\u5347\u7ea7 Pro - \u00a519.9/\u6708" },
   "settings": { "message": "\u8bbe\u7f6e" },
+  "trySearchWise": { "message": "\u5728 Bing \u4e0a\u8bd5\u7528" },
   "logout": { "message": "\u9000\u51fa\u767b\u5f55" },
   "cleanupRules": { "message": "\u51c0\u5316\u89c4\u5219" },
   "account": { "message": "\u8d26\u53f7" },

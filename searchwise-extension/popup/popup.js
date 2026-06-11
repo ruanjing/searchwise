@@ -60,6 +60,12 @@
         chrome.runtime.openOptionsPage();
     });
 
+    $('try-search-btn').addEventListener('click', () => {
+        chrome.tabs.create({
+            url: 'https://www.bing.com/search?q=javascript%20tutorial%20javatpoint%20guru99',
+        });
+    });
+
     function sendMessage(type, data = {}) {
         return new Promise((resolve, reject) => {
             chrome.runtime.sendMessage({ type, data }, (response) => {

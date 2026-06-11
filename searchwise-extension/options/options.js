@@ -55,6 +55,11 @@
 
         const card = $('onboarding-card');
         card.style.display = '';
+        $('try-search-onboarding').addEventListener('click', () => {
+            chrome.tabs.create({
+                url: 'https://www.bing.com/search?q=javascript%20tutorial%20javatpoint%20guru99',
+            });
+        });
         $('dismiss-onboarding').addEventListener('click', async () => {
             card.style.display = 'none';
             await chrome.storage.local.set({ onboarding_pending: false });

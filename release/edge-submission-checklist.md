@@ -2,9 +2,9 @@
 
 ## Upload Package
 
-- Package: `release/searchwise-edge-1.5.6.zip`
+- Package: `release/searchwise-edge-1.5.7.zip`
 - Manifest version: 3
-- Extension version: 1.5.6
+- Extension version: 1.5.7
 - Package root contains `manifest.json`: yes
 
 ## Store Assets
@@ -125,12 +125,13 @@ No. This Manifest V3 build does not load or execute remotely hosted code.
 
 SearchWise is a local-first extension. The current store build does not require a user account or backend service for its core functionality.
 
-To test:
+To test the primary function:
 
 1. Install the extension.
-2. Open any supported search result page.
-3. Search for a technical query such as `laravel sanctum`.
-4. The extension highlights query keywords and hides results from built-in low-quality domains when matched.
-5. Open the extension options page to add a custom blocked domain.
+2. Click the SearchWise toolbar icon.
+3. Click `Try on Bing`. This opens a supported Bing search results page for `javascript tutorial javatpoint guru99`.
+4. On the Bing results page, SearchWise highlights query keywords. If results from built-in low-signal tutorial domains such as `javatpoint.com` or `guru99.com` appear, SearchWise hides or tags them according to the selected filter mode.
+5. Open the extension options page to review built-in cleanup rules or add a custom blocked domain.
+6. Optional manual test: search any supported engine, then use the SearchWise controls on a result to block a site or show hidden results.
 
 AI summaries and cloud sync are optional future cloud features and are not required for this initial local-first release.

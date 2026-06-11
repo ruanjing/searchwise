@@ -20,6 +20,7 @@
   "customBlocks": { "message": "Custom Blocks" },
   "upgradeMonthlyShort": { "message": "Upgrade to Pro - CNY 19.9/mo" },
   "settings": { "message": "Settings" },
+  "trySearchWise": { "message": "Try on Bing" },
   "logout": { "message": "Logout" },
   "cleanupRules": { "message": "Cleanup Rules" },
   "account": { "message": "Account" },
