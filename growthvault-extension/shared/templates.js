@@ -61,7 +61,8 @@ const GrowthVaultTemplates = (() => {
     ].join('\n');
   }
 
-  function renderTemplate(templateId, { projectName, clips } = {}) {
+  function renderTemplate(templateId, options = {}) {
+    const { projectName, clips } = options || {};
     const safeName = projectName || 'Untitled Project';
     const safeClips = Array.isArray(clips) ? clips : [];
     if (templateId === 'competitor_analysis') return renderCompetitorAnalysis(safeName, safeClips);

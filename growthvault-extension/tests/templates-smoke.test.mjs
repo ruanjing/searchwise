@@ -45,4 +45,7 @@ assert.ok(!missingTitleOutput.includes('undefined'));
 const defaultOutput = context.GVT.renderTemplate('pain_point_list');
 assert.ok(defaultOutput.includes('# User Pain Points: Untitled Project'));
 
+const nullOptionsOutput = context.GVT.renderTemplate('pain_point_list', null);
+assert.ok(nullOptionsOutput.includes('# User Pain Points: Untitled Project'));
+
 console.log('GrowthVault template smoke tests passed');
