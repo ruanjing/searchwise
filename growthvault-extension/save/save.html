@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Save to GrowthVault</title>
+  <link rel="stylesheet" href="save.css">
+</head>
+<body>
+  <main class="gv-save">
+    <header>
+      <h1>Save to GrowthVault</h1>
+      <p id="source-label">Review this clip before saving it.</p>
+    </header>
+
+    <label>
+      Project
+      <select id="project-select"></select>
+    </label>
+
+    <div class="inline-create">
+      <input id="new-project-name" type="text" placeholder="New project name">
+      <button id="create-project-btn" type="button">Create</button>
+    </div>
+
+    <label>
+      Type
+      <select id="type-select"></select>
+    </label>
+
+    <label>
+      Clip
+      <textarea id="clip-text" maxlength="10000"></textarea>
+    </label>
+
+    <label>
+      Note
+      <textarea id="clip-note" maxlength="1000" placeholder="Optional note"></textarea>
+    </label>
+
+    <p id="status" role="status"></p>
+    <div class="actions">
+      <button id="save-btn" type="button">Save clip</button>
+      <a href="../library/library.html">Open library</a>
+    </div>
+  </main>
+
+  <script src="../shared/constants.js"></script>
+  <script src="save.js"></script>
+</body>
+</html>
