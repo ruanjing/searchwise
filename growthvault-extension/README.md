@@ -15,7 +15,7 @@ GrowthVault is a vanilla Manifest V3 browser extension for saving growth ideas f
 1. Open Chrome and go to `chrome://extensions`.
 2. Enable Developer mode.
 3. Choose **Load unpacked**.
-4. Select `F:\demo0422\growthvault-extension`.
+4. Select the `growthvault-extension` folder in your current checkout or worktree, for example `F:\demo0422\.worktrees\codex-growthvault\growthvault-extension`.
 
 ## Verify
 
