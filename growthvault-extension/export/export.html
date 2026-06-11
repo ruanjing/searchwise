@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GrowthVault Export</title>
+  <link rel="stylesheet" href="export.css">
+</head>
+<body>
+  <main class="gv-export">
+    <header>
+      <div>
+        <h1>Export</h1>
+        <p>Generate Markdown from saved project clips.</p>
+      </div>
+      <a href="../library/library.html">Back to library</a>
+    </header>
+
+    <div class="controls">
+      <select id="project-select"></select>
+      <select id="template-select"></select>
+      <button id="copy-btn" type="button">Copy Markdown</button>
+    </div>
+
+    <textarea id="output" readonly></textarea>
+    <p id="status" role="status"></p>
+  </main>
+
+  <script src="../shared/constants.js"></script>
+  <script src="../shared/templates.js"></script>
+  <script src="export.js"></script>
+</body>
+</html>
