@@ -1,6 +1,7 @@
 .claude/
 .playwright-mcp/
 **/.git-backup/
+.worktrees/
 
 # Environment and secrets
 .env
