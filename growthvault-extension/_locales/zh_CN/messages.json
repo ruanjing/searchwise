@@ -1,0 +1,11 @@
+{
+  "appName": {
+    "message": "GrowthVault"
+  },
+  "appDescription": {
+    "message": "保存网页上的增长素材，并整理成发布文案、竞品笔记、落地页卖点和用户痛点列表。"
+  },
+  "contextMenuSaveSelection": {
+    "message": "保存到 GrowthVault"
+  }
+}

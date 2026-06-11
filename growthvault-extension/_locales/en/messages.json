@@ -1,0 +1,11 @@
+{
+  "appName": {
+    "message": "GrowthVault"
+  },
+  "appDescription": {
+    "message": "Save growth ideas from any web page and turn them into launch posts, competitor notes, landing page copy, and pain point lists."
+  },
+  "contextMenuSaveSelection": {
+    "message": "Save to GrowthVault"
+  }
+}
