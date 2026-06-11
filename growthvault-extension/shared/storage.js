@@ -85,9 +85,35 @@ const GrowthVaultStorage = (() => {
   }
 
   async function ensureInboxProject() {
-    const projects = await getProjects();
-    const existing = projects.find((project) => project.name === DEFAULT_PROJECT_NAME);
-    if (existing) return existing;
+    let projects = await getProjects();
+    const inboxProjects = projects.filter((project) => project.name === DEFAULT_PROJECT_NAME);
+    
+    if (inboxProjects.length > 0) {
+      if (inboxProjects.length > 1) {
+        const primaryInbox = inboxProjects[0];
+        const primaryInboxId = primaryInbox.id;
+        const duplicateInboxIds = inboxProjects.slice(1).map(p => p.id);
+        
+        // Deduplicate projects list
+        projects = projects.filter(p => p.name !== DEFAULT_PROJECT_NAME || p.id === primaryInboxId);
+        await saveProjects(projects);
+        
+        // Re-assign clips to primary inbox
+        const clips = await getClips();
+        let clipsChanged = false;
+        const nextClips = clips.map(clip => {
+          if (duplicateInboxIds.includes(clip.projectId)) {
+            clipsChanged = true;
+            return { ...clip, projectId: primaryInboxId };
+          }
+          return clip;
+        });
+        if (clipsChanged) {
+          await saveClips(nextClips);
+        }
+      }
+      return inboxProjects[0];
+    }
 
     const timestamp = now();
     const inbox = {
@@ -102,11 +128,20 @@ const GrowthVaultStorage = (() => {
   }
 
   async function createProject(name) {
+    const trimmedName = normalizeText(name);
+    if (!trimmedName) {
+      throw new Error('Project name cannot be empty.');
+    }
+
     const projects = await getProjects();
+    if (projects.some(p => p.name.toLowerCase() === trimmedName.toLowerCase())) {
+      throw new Error('Project name already exists.');
+    }
+
     const timestamp = now();
     const project = {
       id: createId('project'),
-      name: normalizeText(name) || DEFAULT_PROJECT_NAME,
+      name: trimmedName,
       createdAt: timestamp,
       updatedAt: timestamp
     };

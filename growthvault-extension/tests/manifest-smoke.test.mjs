@@ -13,7 +13,7 @@ function assertManifestFileExists(relativePath) {
 
 assert.equal(manifest.manifest_version, 3);
 assert.equal(manifest.name, '__MSG_appName__');
-assert.equal(manifest.version, '0.1.1');
+assert.equal(manifest.version, '0.1.2');
 assert.equal(manifest.default_locale, 'en');
 assert.deepEqual(manifest.permissions.sort(), ['activeTab', 'contextMenus', 'storage']);
 assert.ok(!manifest.host_permissions);
