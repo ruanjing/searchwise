@@ -35,4 +35,14 @@ const competitorOutput = context.GVT.renderTemplate('competitor_analysis', {
 assert.ok(competitorOutput.includes('## Competitor Signals'));
 assert.ok(competitorOutput.includes('Competitor promises setup'));
 
+const missingTitleOutput = context.GVT.renderTemplate('landing_page_value_props', {
+  projectName: 'GrowthVault',
+  clips: [{ type: 'value_proposition', url: 'https://fallback.test' }]
+});
+assert.ok(missingTitleOutput.includes('Untitled saved material'));
+assert.ok(!missingTitleOutput.includes('undefined'));
+
+const defaultOutput = context.GVT.renderTemplate('pain_point_list');
+assert.ok(defaultOutput.includes('# User Pain Points: Untitled Project'));
+
 console.log('GrowthVault template smoke tests passed');

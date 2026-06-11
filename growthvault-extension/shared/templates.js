@@ -7,9 +7,10 @@ const GrowthVaultTemplates = (() => {
   ];
 
   function clipLine(clip) {
+    const text = clip.text || clip.title || 'Untitled saved material';
     const note = clip.note ? ` (${clip.note})` : '';
     const source = clip.url ? `\n  Source: ${clip.url}` : '';
-    return `- ${clip.text || clip.title}${note}${source}`;
+    return `- ${text}${note}${source}`;
   }
 
   function clipsOf(clips, types) {
@@ -60,7 +61,7 @@ const GrowthVaultTemplates = (() => {
     ].join('\n');
   }
 
-  function renderTemplate(templateId, { projectName, clips }) {
+  function renderTemplate(templateId, { projectName, clips } = {}) {
     const safeName = projectName || 'Untitled Project';
     const safeClips = Array.isArray(clips) ? clips : [];
     if (templateId === 'competitor_analysis') return renderCompetitorAnalysis(safeName, safeClips);
