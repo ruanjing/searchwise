@@ -6,14 +6,14 @@ const GrowthVaultConstants = (() => {
   };
 
   const MATERIAL_TYPES = [
-    { id: 'competitor', label: 'Competitor' },
-    { id: 'value_proposition', label: 'Value Proposition' },
-    { id: 'pain_point', label: 'Pain Point' },
-    { id: 'user_comment', label: 'User Comment' },
-    { id: 'pricing', label: 'Pricing' },
-    { id: 'title', label: 'Title' },
-    { id: 'channel_example', label: 'Channel Example' },
-    { id: 'idea', label: 'Idea' }
+    { id: 'competitor', label: (typeof chrome !== 'undefined' && chrome.i18n) ? chrome.i18n.getMessage('typeCompetitor') || 'Competitor' : 'Competitor' },
+    { id: 'value_proposition', label: (typeof chrome !== 'undefined' && chrome.i18n) ? chrome.i18n.getMessage('typeValueProposition') || 'Value Proposition' : 'Value Proposition' },
+    { id: 'pain_point', label: (typeof chrome !== 'undefined' && chrome.i18n) ? chrome.i18n.getMessage('typePainPoint') || 'Pain Point' : 'Pain Point' },
+    { id: 'user_comment', label: (typeof chrome !== 'undefined' && chrome.i18n) ? chrome.i18n.getMessage('typeUserComment') || 'User Comment' : 'User Comment' },
+    { id: 'pricing', label: (typeof chrome !== 'undefined' && chrome.i18n) ? chrome.i18n.getMessage('typePricing') || 'Pricing' : 'Pricing' },
+    { id: 'title', label: (typeof chrome !== 'undefined' && chrome.i18n) ? chrome.i18n.getMessage('typeTitle') || 'Title' : 'Title' },
+    { id: 'channel_example', label: (typeof chrome !== 'undefined' && chrome.i18n) ? chrome.i18n.getMessage('typeChannelExample') || 'Channel Example' : 'Channel Example' },
+    { id: 'idea', label: (typeof chrome !== 'undefined' && chrome.i18n) ? chrome.i18n.getMessage('typeIdea') || 'Idea' : 'Idea' }
   ];
 
   const DEFAULT_PROJECT_NAME = 'Inbox';

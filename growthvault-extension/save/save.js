@@ -53,12 +53,12 @@ async function init() {
   }
 
   if (!draft) {
-    setStatus('No pending clip found. You can paste text manually.');
+    setStatus(GrowthVaultI18n.getMessage('saveStatusNoPending') || 'No pending clip found. You can paste text manually.');
     draft = { text: '', title: '', url: '', domain: '' };
   }
 
   clipText.value = draft.text || '';
-  sourceLabel.textContent = draft.url ? `${draft.title || draft.domain} - ${draft.url}` : 'Review this clip before saving it.';
+  sourceLabel.textContent = draft.url ? `${draft.title || draft.domain} - ${draft.url}` : (GrowthVaultI18n.getMessage('saveSourceLabel') || 'Review this clip before saving it.');
 }
 
 document.querySelector('#create-project-btn').addEventListener('click', async () => {
@@ -66,14 +66,16 @@ document.querySelector('#create-project-btn').addEventListener('click', async ()
     const project = await sendMessage({ type: 'CREATE_PROJECT', name: newProjectName.value });
     newProjectName.value = '';
     await loadProjects(project.id);
-    setStatus(`Created project: ${project.name}`);
+    setStatus(GrowthVaultI18n.getMessage('saveStatusCreatedProject', [project.name]) || `Created project: ${project.name}`);
   } catch (error) {
     setStatus(error.message);
   }
 });
 
-document.querySelector('#save-btn').addEventListener('click', async () => {
+const saveBtn = document.querySelector('#save-btn');
+saveBtn.addEventListener('click', async () => {
   try {
+    saveBtn.disabled = true;
     await sendMessage({
       type: 'CREATE_CLIP',
       clip: {
@@ -86,10 +88,16 @@ document.querySelector('#save-btn').addEventListener('click', async () => {
         domain: draft.domain
       }
     });
-    setStatus('Saved.');
+    const savedMsg = GrowthVaultI18n.getMessage('saveStatusSaved') || 'Saved.';
+    setStatus(savedMsg);
+    saveBtn.textContent = savedMsg;
   } catch (error) {
     setStatus(error.message);
+    saveBtn.disabled = false;
   }
 });
 
-init();
+GrowthVaultI18n.initPromise.then(() => {
+  init();
+  GrowthVaultI18n.renderLanguageSwitcher('.gv-save');
+});

@@ -1,0 +1,145 @@
+.settings-card {
+  background: #fff;
+  border: 1px solid #dce2e8;
+  border-radius: 8px;
+  padding: 24px;
+  display: grid;
+  gap: 16px;
+}
+
+.settings-card h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #163b35;
+  border-bottom: 2px solid #e5ece9;
+  padding-bottom: 8px;
+}
+
+.settings-card .desc {
+  font-size: 14px;
+  color: #5b6673;
+  line-height: 1.5;
+}
+
+.actions-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.file-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: #e5ece9;
+  color: #163b35;
+  padding: 8px 12px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid #c8d0da;
+  font-size: 13.33px;
+  height: 18px; /* align with button */
+  line-height: 18px;
+}
+
+.file-upload-btn:hover {
+  background: #d4e0db;
+}
+
+.template-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+}
+
+.template-list-container {
+  border: 1px solid #dce2e8;
+  border-radius: 6px;
+  background: #fafbfc;
+  padding: 10px;
+  max-height: 450px;
+  overflow-y: auto;
+}
+
+.template-list {
+  display: grid;
+  gap: 8px;
+}
+
+.template-item {
+  background: #fff;
+  border: 1px solid #dce2e8;
+  border-radius: 6px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.template-item:hover {
+  border-color: #1d6f5f;
+  background: #f4faf8;
+}
+
+.template-item.active {
+  border-color: #1d6f5f;
+  background: #e5ece9;
+  font-weight: bold;
+}
+
+.template-item span {
+  font-size: 14px;
+  color: #163b35;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 180px;
+}
+
+.template-item button {
+  padding: 4px 8px;
+  font-size: 11px;
+  background: #f8ecec;
+  color: #c0392b;
+}
+
+.template-item button:hover {
+  background: #fadbd8;
+}
+
+.template-form {
+  display: grid;
+  gap: 16px;
+}
+
+.template-form label {
+  display: grid;
+  gap: 6px;
+}
+
+.template-form span {
+  font-size: 14px;
+  font-weight: bold;
+  color: #163b35;
+}
+
+.template-form textarea {
+  font-family: monospace;
+  font-size: 13px;
+  resize: vertical;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+}
+
+#status {
+  text-align: center;
+  font-weight: bold;
+  color: #1d6f5f;
+  min-height: 20px;
+}

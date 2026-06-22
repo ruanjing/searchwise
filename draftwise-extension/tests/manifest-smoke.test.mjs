@@ -8,7 +8,7 @@ const en = JSON.parse(fs.readFileSync(path.join(root, '_locales/en/messages.json
 const zh = JSON.parse(fs.readFileSync(path.join(root, '_locales/zh_CN/messages.json'), 'utf8'));
 
 assert.equal(manifest.manifest_version, 3);
-assert.equal(manifest.version, '0.1.1');
+assert.equal(manifest.version, '0.2.0');
 assert.equal(manifest.default_locale, 'en');
 assert.deepEqual(manifest.permissions.sort(), ['activeTab', 'scripting', 'storage']);
 assert.ok(!manifest.host_permissions);

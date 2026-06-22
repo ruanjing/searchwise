@@ -192,6 +192,14 @@
                 margin-bottom: 10px !important;
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
             }
+
+            body [data-searchwise-trusted="true"] {
+                border-left: 4px solid #137333 !important;
+                padding-left: 12px !important;
+                background-color: rgba(230, 244, 234, 0.04) !important;
+                border-radius: 4px !important;
+                transition: all 0.2s ease !important;
+            }
         `;
         document.head.appendChild(style);
     }
@@ -245,6 +253,10 @@
             ensureShownBlockedActions();
             attachBlockActions(results, engine, query);
         }
+
+        // Highlight trusted domains
+        await BlacklistEngine.init();
+        applyTrustedHighlights(results);
 
         // Phase 2: Keyword highlighting (offline)
         if (settings.highlight_enabled) {
@@ -349,6 +361,84 @@
                     button.textContent = SWI18n.t('blockThisSite');
                     button.title = SWI18n.t('blockThisSiteTitle', [domain]);
                     SidebarInjector.showBlockedNotice(getBlockedCount(), results, engine, query);
+                    button.disabled = false;
+                    button.textContent = SWI18n.t('blockThisSite');
+                    button.title = SWI18n.t('blockThisSiteTitle', [domain]);
+                    SidebarInjector.showBlockedNotice(getBlockedCount(), results, engine, query);
+                    ApiClient.reportBlockedCount(getBlockedCount());
+                });
+            });
+
+            const reportButton = document.createElement('button');
+            reportButton.type = 'button';
+            reportButton.className = 'searchwise-report-site-btn';
+            reportButton.textContent = '举报内容农场';
+            reportButton.title = '举报并屏蔽该垃圾站点';
+            reportButton.style.cssText = `
+                all: unset !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                border: 1px solid rgba(220, 53, 69, 0.55) !important;
+                border-radius: 999px !important;
+                background: rgba(220, 53, 69, 0.08) !important;
+                color: #dc3545 !important;
+                cursor: pointer !important;
+                direction: ltr !important;
+                font: 12px/1.2 Arial, "Microsoft YaHei", sans-serif !important;
+                letter-spacing: 0 !important;
+                margin: 0 0 0 6px !important;
+                padding: 4px 9px !important;
+                text-align: center !important;
+                white-space: nowrap !important;
+            `;
+
+            reportButton.addEventListener('click', async (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+
+                reportButton.disabled = true;
+                reportButton.textContent = '正在举报...';
+
+                let addedDomain = null;
+                try {
+                    addedDomain = await ApiClient.addDomain(domain);
+                    await ApiClient.reportSpam(domain);
+                } catch (e) {
+                    if (!String(e.message || '').toLowerCase().includes('already')) {
+                        reportButton.disabled = false;
+                        reportButton.textContent = '举报内容农场';
+                        return;
+                    }
+                }
+
+                result.blocked = true;
+                result.element.dataset.searchwiseBlocked = 'true';
+                result.element.dataset.searchwiseBlockedReason = 'custom';
+                result.element.dataset.searchwiseBlockedDomain = domain;
+                result.element.dataset.searchwiseBlockedLabel = '已举报并屏蔽此内容农场';
+                result.element.dataset.searchwiseUserBlocked = 'true';
+                if (document.body.dataset.searchwiseFilterMode !== 'mild') {
+                    result.element.style.display = 'none';
+                }
+                preventEmptyResultPage(results, getBlockedCount());
+                ApiClient.reportBlockedCount(getBlockedCount());
+                SidebarInjector.showBlockedNotice(getBlockedCount(), results, engine, query);
+                showUndoToast(domain, async () => {
+                    if (addedDomain?.id) {
+                        await ApiClient.removeDomain(addedDomain.id);
+                    }
+
+                    result.blocked = false;
+                    result.element.removeAttribute('data-searchwise-blocked');
+                    result.element.removeAttribute('data-searchwise-blocked-label');
+                    result.element.removeAttribute('data-searchwise-blocked-reason');
+                    result.element.removeAttribute('data-searchwise-blocked-domain');
+                    result.element.removeAttribute('data-searchwise-user-blocked');
+                    result.element.style.display = '';
+                    reportButton.disabled = false;
+                    reportButton.textContent = '举报内容农场';
+                    SidebarInjector.showBlockedNotice(getBlockedCount(), results, engine, query);
                     ApiClient.reportBlockedCount(getBlockedCount());
                 });
             });
@@ -362,6 +452,7 @@
                 vertical-align: middle !important;
             `;
             actionRow.appendChild(button);
+            actionRow.appendChild(reportButton);
             insertBlockAction(result.element, actionRow);
         });
     }
@@ -642,6 +733,36 @@
             title.appendChild(actionRow);
             console.log(`[SearchWise DEBUG] insertBlockAction: appended to title. parentTagName=${actionRow.parentElement?.tagName}, parentClassName=${actionRow.parentElement?.className}`);
         }
+    }
+
+    function applyTrustedHighlights(results) {
+        results.forEach(result => {
+            if (result.blocked) return;
+            const isTrusted = BlacklistEngine.isTrusted(result.url);
+            if (isTrusted) {
+                result.element.dataset.searchwiseTrusted = 'true';
+                if (!result.element.querySelector('.searchwise-trusted-badge')) {
+                    const badge = document.createElement('span');
+                    badge.className = 'searchwise-trusted-badge';
+                    badge.innerHTML = '💎 推荐站点';
+                    badge.style.cssText = `
+                        display: inline-flex !important;
+                        align-items: center !important;
+                        background: #e6f4ea !important;
+                        color: #137333 !important;
+                        border: 1px solid #ceead6 !important;
+                        font-size: 11px !important;
+                        font-weight: 600 !important;
+                        padding: 2px 6px !important;
+                        border-radius: 4px !important;
+                        margin-bottom: 6px !important;
+                        margin-right: 8px !important;
+                        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+                    `;
+                    result.element.insertBefore(badge, result.element.firstChild);
+                }
+            }
+        });
     }
 
     function extractDomain(value) {

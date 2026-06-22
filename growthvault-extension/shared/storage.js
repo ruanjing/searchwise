@@ -158,6 +158,28 @@ const GrowthVaultStorage = (() => {
     await saveClips(clips.filter((clip) => clip.projectId !== projectId));
   }
 
+  async function renameProject(projectId, name) {
+    const trimmedName = normalizeText(name);
+    if (!trimmedName) {
+      throw new Error('Project name cannot be empty.');
+    }
+    const projects = await getProjects();
+    if (projects.some(p => p.id !== projectId && p.name.toLowerCase() === trimmedName.toLowerCase())) {
+      throw new Error('Project name already exists.');
+    }
+    const nextProjects = projects.map(p => {
+      if (p.id === projectId) {
+        return {
+          ...p,
+          name: trimmedName,
+          updatedAt: now()
+        };
+      }
+      return p;
+    });
+    await saveProjects(nextProjects);
+  }
+
   async function createClip(input) {
     const text = typeof input.text === 'string' ? input.text : '';
     if (text.length > MAX_CLIP_TEXT_LENGTH) {
@@ -175,6 +197,7 @@ const GrowthVaultStorage = (() => {
       title: typeof input.title === 'string' ? input.title : '',
       url: typeof input.url === 'string' ? input.url : '',
       domain: normalizeDomain(input.domain, input.url),
+      tags: Array.isArray(input.tags) ? input.tags.map(t => normalizeText(t)).filter(Boolean) : [],
       createdAt: timestamp,
       updatedAt: timestamp
     };
@@ -209,6 +232,10 @@ const GrowthVaultStorage = (() => {
         next.domain = normalizeDomain(next.domain, next.url);
       }
 
+      if (updates.tags !== undefined) {
+        next.tags = Array.isArray(updates.tags) ? updates.tags.map(t => normalizeText(t)).filter(Boolean) : [];
+      }
+
       updatedClip = next;
       return next;
     });
@@ -230,8 +257,13 @@ const GrowthVaultStorage = (() => {
       .filter((clip) => !filters.projectId || clip.projectId === filters.projectId)
       .filter((clip) => !filters.type || clip.type === filters.type)
       .filter((clip) => {
+        if (!filters.tag) return true;
+        return Array.isArray(clip.tags) && clip.tags.includes(filters.tag);
+      })
+      .filter((clip) => {
         if (!query) return true;
-        return [clip.text, clip.note, clip.title, clip.url, clip.domain]
+        const tagHaystack = Array.isArray(clip.tags) ? clip.tags.join(' ') : '';
+        return [clip.text, clip.note, clip.title, clip.url, clip.domain, tagHaystack]
           .some((value) => String(value || '').toLowerCase().includes(query));
       })
       .sort(compareNewestFirst);
@@ -272,6 +304,7 @@ const GrowthVaultStorage = (() => {
     listProjects,
     ensureInboxProject,
     createProject,
+    renameProject,
     deleteProject,
     createClip,
     updateClip,

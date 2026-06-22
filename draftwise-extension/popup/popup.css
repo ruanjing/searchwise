@@ -173,3 +173,14 @@ button.danger {
   font-size: 12px;
   text-align: center;
 }
+
+button.primary {
+  grid-column: span 2;
+  background: #1a73e8;
+  color: #fff;
+  border-color: #1a73e8;
+}
+
+button.primary:hover {
+  background: #1557b0;
+}

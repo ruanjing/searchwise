@@ -57,6 +57,11 @@
 
                 <div class="sw-add-domain">
                     <input type="text" id="new-domain" placeholder="e.g. pinterest.com">
+                    <select id="new-domain-type" class="sw-select" style="margin-right: 8px; width: auto; min-width: 100px;">
+                        <option value="block" data-i18n="domainTypeBlock">Block</option>
+                        <option value="allow" data-i18n="domainTypeAllow">Allow</option>
+                        <option value="trust" data-i18n="domainTypeTrust">Trust</option>
+                    </select>
                     <button id="add-domain-btn" class="sw-btn sw-btn-primary" data-i18n="add">Add</button>
                 </div>
                 <p id="domain-limit-text" class="sw-limit-text"></p>
@@ -70,6 +75,12 @@
                     <h3 data-i18n="allowedDomainsTitle">Allowed sites</h3>
                     <p class="sw-rule-group-desc" data-i18n="allowedDomainsDesc">Sites restored from hidden results will not be blocked by built-in cleanup rules.</p>
                     <div id="allowed-domain-list" class="sw-domain-list"></div>
+                </div>
+
+                <div class="sw-rule-group">
+                    <h3 data-i18n="trustedDomainsTitle">Trusted sites</h3>
+                    <p class="sw-rule-group-desc" data-i18n="trustedDomainsDesc">Custom trusted domains will be highlighted with a special badge in search results.</p>
+                    <div id="trusted-domain-list" class="sw-domain-list"></div>
                 </div>
 
                 <div class="sw-rule-group">
@@ -138,6 +149,53 @@
                         <div style="display: flex; gap: 8px;">
                             <button id="btn-export-config" class="sw-btn sw-btn-secondary" data-i18n="exportRules">Export</button>
                             <button id="btn-import-config" class="sw-btn sw-btn-primary" data-i18n="importRules">Import</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sw-setting-group" style="margin-top: 24px;">
+                    <h3 data-i18n="customAiTitle">Custom AI Summary Channel</h3>
+                    <p class="sw-rule-group-desc" data-i18n="customAiDesc">Use your own OpenAI-compatible or Ollama service instead of default backend quota.</p>
+                    
+                    <div class="sw-setting-row">
+                        <div>
+                            <div class="sw-setting-label" data-i18n="enableCustomAi">Enable Custom AI</div>
+                            <div class="sw-setting-desc" data-i18n="enableCustomAiDesc">Bypass cloud backend limits using custom endpoint</div>
+                        </div>
+                        <label class="sw-switch">
+                            <input type="checkbox" id="opt-custom-ai-enabled">
+                            <span class="sw-slider"></span>
+                        </label>
+                    </div>
+
+                    <div id="custom-ai-fields" style="display: none; margin-top: 16px;">
+                        <div class="sw-setting-row" style="flex-direction: column; align-items: stretch; gap: 6px; border-bottom: none; padding: 8px 0;">
+                            <label class="sw-setting-label" style="font-size: 13px;" data-i18n="customAiType">AI Service Type</label>
+                            <select id="opt-custom-ai-type" class="sw-select" style="width: 100%;">
+                                <option value="openai">OpenAI / API-Compatible</option>
+                                <option value="ollama">Ollama (Local LLM)</option>
+                            </select>
+                        </div>
+
+                        <div class="sw-setting-row" style="flex-direction: column; align-items: stretch; gap: 6px; border-bottom: none; padding: 8px 0;">
+                            <label class="sw-setting-label" style="font-size: 13px;" data-i18n="customAiEndpoint">API Endpoint / Service URL</label>
+                            <input type="text" id="opt-custom-ai-endpoint" class="sw-input" style="width: 100%; box-sizing: border-box; padding: 8px; background: #222831; border: 1px solid #393e46; color: #fff; border-radius: 4px;" placeholder="e.g. https://api.openai.com/v1 or http://localhost:11434">
+                        </div>
+
+                        <div id="custom-ai-key-container" class="sw-setting-row" style="flex-direction: column; align-items: stretch; gap: 6px; border-bottom: none; padding: 8px 0;">
+                            <label class="sw-setting-label" style="font-size: 13px;" data-i18n="customAiApiKey">API Key</label>
+                            <input type="password" id="opt-custom-ai-api-key" class="sw-input" style="width: 100%; box-sizing: border-box; padding: 8px; background: #222831; border: 1px solid #393e46; color: #fff; border-radius: 4px;" placeholder="sk-...">
+                        </div>
+
+                        <div class="sw-setting-row" style="flex-direction: column; align-items: stretch; gap: 6px; border-bottom: none; padding: 8px 0;">
+                            <label class="sw-setting-label" style="font-size: 13px;" data-i18n="customAiModel">Model Name</label>
+                            <input type="text" id="opt-custom-ai-model" class="sw-input" style="width: 100%; box-sizing: border-box; padding: 8px; background: #222831; border: 1px solid #393e46; color: #fff; border-radius: 4px;" placeholder="e.g. gpt-4o-mini or llama3">
+                        </div>
+
+                        <div class="sw-setting-row" style="align-items: center; justify-content: flex-end; gap: 12px; padding-top: 16px; border-top: 1px solid #393e46; margin-top: 12px;">
+                            <span id="test-ai-status" style="font-size: 13px; font-weight: 500;"></span>
+                            <button id="btn-test-ai" class="sw-btn sw-btn-secondary" style="margin-top: 0;" data-i18n="testConnection">Test Connection</button>
+                            <button id="btn-save-ai" class="sw-btn sw-btn-primary" style="margin-top: 0;" data-i18n="saveSettings">Save Settings</button>
                         </div>
                     </div>
                 </div>

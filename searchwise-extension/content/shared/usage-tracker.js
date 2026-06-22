@@ -50,10 +50,14 @@ const UsageTracker = {
     },
 
     async hasCloudAccess() {
+        const settings = await chrome.storage.sync.get({ custom_ai_enabled: false });
+        if (settings.custom_ai_enabled) return true;
         return !!(await this._getToken());
     },
 
     async canUseSummary() {
+        const settings = await chrome.storage.sync.get({ custom_ai_enabled: false });
+        if (settings.custom_ai_enabled) return true;
         const [usage, limits] = await Promise.all([
             this.getUsage(),
             this.getLimits(),

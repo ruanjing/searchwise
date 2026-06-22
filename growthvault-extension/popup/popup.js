@@ -52,7 +52,7 @@ document.querySelector('#create-project-btn').addEventListener('click', async ()
     const project = await sendMessage({ type: 'CREATE_PROJECT', name: newProjectName.value });
     newProjectName.value = '';
     await loadProjects(project.id);
-    setStatus(`Created project: ${project.name}`);
+    setStatus(GrowthVaultI18n.getMessage('popupStatusCreatedProject', [project.name]) || `Created project: ${project.name}`);
   } catch (error) {
     setStatus(error.message);
   }
@@ -61,7 +61,7 @@ document.querySelector('#create-project-btn').addEventListener('click', async ()
 document.querySelector('#save-page-btn').addEventListener('click', async () => {
   try {
     if (!activeTab?.url || activeTab.url.startsWith('chrome://')) {
-      setStatus('This page cannot be saved. Copy text manually into the library.');
+      setStatus(GrowthVaultI18n.getMessage('popupStatusPageCannotSave') || 'This page cannot be saved. Copy text manually into the library.');
       return;
     }
 
@@ -83,7 +83,9 @@ document.querySelector('#save-page-btn').addEventListener('click', async () => {
       }
     });
 
-    setStatus(isDuplicate ? 'Saved. This URL was already in the project.' : 'Saved current page.');
+    setStatus(isDuplicate 
+      ? (GrowthVaultI18n.getMessage('popupStatusSavedDuplicate') || 'Saved. This URL was already in the project.') 
+      : (GrowthVaultI18n.getMessage('popupStatusSavedSuccess') || 'Saved current page.'));
   } catch (error) {
     setStatus(error.message);
   }
@@ -95,4 +97,7 @@ async function init() {
   await loadActiveTab();
 }
 
-init();
+GrowthVaultI18n.initPromise.then(() => {
+  init();
+  GrowthVaultI18n.renderLanguageSwitcher('.gv-popup');
+});

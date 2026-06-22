@@ -9,23 +9,38 @@
 <body>
   <main class="gv-app">
     <aside>
-      <h1>GrowthVault</h1>
-      <a href="../export/export.html">Export</a>
+      <h1 data-i18n="appName">GrowthVault</h1>
+      <nav>
+        <a href="library.html" class="active" data-i18n="navLibrary">Library</a>
+        <a href="../export/export.html" data-i18n="navExport">Export</a>
+        <a href="../guide/guide.html" data-i18n="navGuide">Guide</a>
+        <a href="../settings/settings.html" data-i18n="navSettings">Settings</a>
+      </nav>
+
+      <div class="project-mgr" style="margin-top: 30px; border-top: 1px solid #23584f; padding-top: 20px;">
+        <h3 style="font-size: 14px; margin-bottom: 10px; color: #a3e2cf;">项目管理</h3>
+        <div id="project-mgr-list" style="display:flex; flex-direction:column; gap:8px; max-height:200px; overflow-y:auto; margin-bottom:10px;"></div>
+        <div style="display:flex; gap:4px;">
+          <input id="new-project-sidebar-name" type="text" placeholder="新建项目..." style="width:100%; font-size:12px; padding:6px 4px; background:#1e4c44; border:1px solid #2c6e62; color:#fff; border-radius:4px;" />
+          <button id="new-project-sidebar-btn" style="padding:4px 8px; font-size:12px; background:#1d6f5f; border-radius:4px; border:none; color:#fff; cursor:pointer;">+</button>
+        </div>
+      </div>
     </aside>
 
     <section class="content">
       <header>
         <div>
-          <h2>Library</h2>
-          <p>Search, filter, edit, copy, and delete saved clips.</p>
+          <h2 data-i18n="libraryTitle">Library</h2>
+          <p data-i18n="librarySubtitle">Search, filter, edit, copy, and delete saved clips.</p>
         </div>
       </header>
 
       <div class="filters">
         <select id="project-filter"></select>
         <select id="type-filter"></select>
+        <select id="tag-filter"></select>
         <select id="domain-filter"></select>
-        <input id="search-input" type="search" placeholder="Search clips">
+        <input id="search-input" type="search" placeholder="Search clips" data-i18n="searchPlaceholder">
       </div>
 
       <div id="clip-list" class="clip-list"></div>
@@ -34,6 +49,7 @@
   </main>
 
   <script src="../shared/constants.js"></script>
+  <script src="../shared/i18n.js"></script>
   <script src="library.js"></script>
 </body>
 </html>

@@ -9,43 +9,44 @@
 <body>
   <main class="gv-save">
     <header>
-      <h1>Save to GrowthVault</h1>
-      <p id="source-label">Review this clip before saving it.</p>
+      <h1 data-i18n="saveHeaderTitle">Save to GrowthVault</h1>
+      <p id="source-label" data-i18n="saveSourceLabel">Review this clip before saving it.</p>
     </header>
 
     <label>
-      Project
+      <span data-i18n="popupLabelProject">Project</span>
       <select id="project-select"></select>
     </label>
 
     <div class="inline-create">
-      <input id="new-project-name" type="text" placeholder="New project name">
-      <button id="create-project-btn" type="button">Create</button>
+      <input id="new-project-name" type="text" placeholder="New project name" data-i18n="savePlaceholderNewProject">
+      <button id="create-project-btn" type="button" data-i18n="popupBtnCreate">Create</button>
     </div>
 
     <label>
-      Type
+      <span data-i18n="popupLabelType">Type</span>
       <select id="type-select"></select>
     </label>
 
     <label>
-      Clip
+      <span data-i18n="saveLabelClip">Clip</span>
       <textarea id="clip-text" maxlength="10000"></textarea>
     </label>
 
     <label>
-      Note
-      <textarea id="clip-note" maxlength="1000" placeholder="Optional note"></textarea>
+      <span data-i18n="popupLabelNote">Note</span>
+      <textarea id="clip-note" maxlength="1000" placeholder="Optional note" data-i18n="popupLabelNote"></textarea>
     </label>
 
     <p id="status" role="status"></p>
     <div class="actions">
-      <button id="save-btn" type="button">Save clip</button>
-      <a href="../library/library.html">Open library</a>
+      <button id="save-btn" type="button" data-i18n="saveBtnSaveClip">Save clip</button>
+      <a href="../library/library.html" data-i18n="saveLinkOpenLibrary">Open library</a>
     </div>
   </main>
 
   <script src="../shared/constants.js"></script>
+  <script src="../shared/i18n.js"></script>
   <script src="save.js"></script>
 </body>
 </html>

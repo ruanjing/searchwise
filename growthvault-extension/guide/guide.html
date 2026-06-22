@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="guideTitle">User Guide</title>
+  <link rel="stylesheet" href="../library/library.css">
+  <style>
+    .guide-steps {
+      display: grid;
+      gap: 20px;
+      margin-top: 10px;
+    }
+    .step-card {
+      background: #fff;
+      border: 1px solid #dce2e8;
+      border-radius: 8px;
+      padding: 20px;
+      display: grid;
+      gap: 12px;
+    }
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .step-number {
+      background: #1d6f5f;
+      color: #fff;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .step-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #163b35;
+    }
+    .step-content {
+      color: #3f4e4b;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <main class="gv-app">
+    <aside>
+      <h1 data-i18n="appName">GrowthVault</h1>
+      <nav>
+        <a href="../library/library.html" data-i18n="navLibrary">Library</a>
+        <a href="../export/export.html" data-i18n="navExport">Export</a>
+        <a href="../guide/guide.html" class="active" data-i18n="navGuide">Guide</a>
+        <a href="../settings/settings.html" data-i18n="navSettings">Settings</a>
+      </nav>
+    </aside>
+
+    <section class="content">
+      <header>
+        <div>
+          <h2 data-i18n="guideTitle">User Guide</h2>
+          <p data-i18n="guideSubtitle">Learn how to capture growth ideas and turn them into copywriting or competitor analysis notes.</p>
+        </div>
+      </header>
+
+      <div class="guide-steps">
+        <article class="step-card">
+          <div class="step-header">
+            <span class="step-number">1</span>
+            <div class="step-title" data-i18n="guideHeading1">1. Save Web Clips (Selection)</div>
+          </div>
+          <div class="step-content" data-i18n="guideText1">
+            Simply highlight any text on a web page, right-click, and select "Save to GrowthVault" from the context menu. This will save the text clipping to your default project (Inbox).
+          </div>
+        </article>
+
+        <article class="step-card">
+          <div class="step-header">
+            <span class="step-number">2</span>
+            <div class="step-title" data-i18n="guideHeading2">2. Save Entire Page (Popup)</div>
+          </div>
+          <div class="step-content" data-i18n="guideText2">
+            Click the extension icon in your browser toolbar to open the popup interface. Here you can select a project and category (e.g. Value Proposition, Pain Point), type a quick note, and click "Save current page".
+          </div>
+        </article>
+
+        <article class="step-card">
+          <div class="step-header">
+            <span class="step-number">3</span>
+            <div class="step-title" data-i18n="guideHeading3">3. Search & Manage Clips (Library)</div>
+          </div>
+          <div class="step-content" data-i18n="guideText3">
+            Open the Library to search, filter by project/type/domain, edit the text/note directly, and save changes or copy/delete them.
+          </div>
+        </article>
+
+        <article class="step-card">
+          <div class="step-header">
+            <span class="step-number">4</span>
+            <div class="step-title" data-i18n="guideHeading4">4. Structure & Export to Markdown</div>
+          </div>
+          <div class="step-content" data-i18n="guideText4">
+            Click the "Export" navigation link, select a project and a markdown template (e.g., Competitor Analysis, Launch Post Draft), and copy the structured Markdown structure directly to your workspace.
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script src="../shared/i18n.js"></script>
+  <script>
+    GrowthVaultI18n.initPromise.then(() => {
+      GrowthVaultI18n.renderLanguageSwitcher('aside');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="dashboardTitle">DraftWise Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <main class="gv-app">
+    <aside>
+      <div class="brand">
+        <div class="brand-icon">D</div>
+        <h1 data-i18n="appName">DraftWise</h1>
+      </div>
+      <nav>
+        <button id="nav-drafts-btn" class="nav-btn active" type="button">
+          <span data-i18n="tabDrafts">Drafts</span>
+        </button>
+        <button id="nav-settings-btn" class="nav-btn" type="button">
+          <span data-i18n="tabSettings">Settings</span>
+        </button>
+      </nav>
+    </aside>
+
+    <section class="content">
+      <header>
+        <div>
+          <h2 id="page-title" data-i18n="dashboardTitle">DraftWise Dashboard</h2>
+          <p id="page-subtitle" data-i18n="dashboardSubtitle">Manage your autosave drafts, domain rules, and data backups.</p>
+        </div>
+      </header>
+
+      <!-- View 1: Drafts Management -->
+      <div id="view-drafts" class="tab-view active">
+        <div class="drafts-layout">
+          <!-- Left side: Draft list grouped by host -->
+          <div class="drafts-sidebar">
+            <div class="search-box">
+              <input id="search-input" type="search" placeholder="Search drafts..." data-i18n="[placeholder]searchPlaceholder">
+            </div>
+            <div id="draft-tree" class="draft-tree"></div>
+          </div>
+
+          <!-- Right side: Draft details & preview -->
+          <div class="draft-detail-pane">
+            <div id="no-draft-selected" class="empty-state">
+              <p data-i18n="noDraftsFound">No saved drafts found.</p>
+            </div>
+            
+            <div id="draft-details" class="draft-details" style="display: none;">
+              <div class="detail-header">
+                <h3 id="detail-label">Field Label</h3>
+                <div class="detail-meta" style="display:flex; align-items:center; gap:12px;">
+                  <span id="detail-word-count" style="color: #5f6368; font-size: 13px;">字数: 0</span>
+                  <span id="detail-field-type" class="badge">Type</span>
+                  <a id="detail-url" href="#" target="_blank">URL</a>
+                </div>
+              </div>
+
+              <div class="version-bar">
+                <label>
+                  <span data-i18n="lastSaved">Version:</span>
+                  <select id="version-select"></select>
+                </label>
+                <div class="version-actions">
+                  <button id="copy-btn" class="btn-success" type="button" data-i18n="copyContent">Copy Content</button>
+                  <button id="export-md-btn" class="btn-success secondary" type="button">导出 MD</button>
+                  <button id="export-txt-btn" class="btn-success secondary" type="button">导出 TXT</button>
+                  <button id="delete-ver-btn" class="btn-danger" type="button" data-i18n="deleteVersion">Delete Version</button>
+                  <button id="delete-draft-btn" class="btn-danger secondary" type="button" data-i18n="deleteDraft">Delete Draft</button>
+                </div>
+              </div>
+
+              <div class="preview-container">
+                <div id="preview-area" class="preview-content"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- View 2: Settings Configuration -->
+      <div id="view-settings" class="tab-view" style="display: none;">
+        <form id="settings-form" class="settings-form">
+          <!-- Cleanup Settings -->
+          <div class="settings-section">
+            <h3 data-i18n="cleanupSettingsTitle">Auto Cleanup Rules</h3>
+            <div class="form-row">
+              <label>
+                <span data-i18n="maxDraftsLabel">Max Drafts to Keep</span>
+                <input id="setting-max-drafts" type="number" min="1" max="1000" required>
+              </label>
+              <label>
+                <span data-i18n="retentionDaysLabel">Draft Retention Days</span>
+                <input id="setting-retention-days" type="number" min="1" max="365" required>
+              </label>
+            </div>
+          </div>
+
+          <!-- URL Matching Rules -->
+          <div class="settings-section">
+            <h3 data-i18n="urlRulesTitle">Granular Site Rules (one pattern per line)</h3>
+            <div class="patterns-container">
+              <label>
+                <span data-i18n="blacklistPlaceholder">Blacklist (disabled sites)</span>
+                <textarea id="setting-blacklist" rows="5" placeholder="e.g. *://*.sensitive-site.com/*" data-i18n="[placeholder]blacklistPlaceholder"></textarea>
+              </label>
+              <label>
+                <span data-i18n="whitelistPlaceholder">Whitelist (strictly enabled sites)</span>
+                <textarea id="setting-whitelist" rows="5" placeholder="Leave empty to run everywhere except blacklist" data-i18n="[placeholder]whitelistPlaceholder"></textarea>
+              </label>
+            </div>
+          </div>
+
+          <!-- Custom Sensitive Keywords -->
+          <div class="settings-section">
+            <h3>自定义敏感词过滤 (Custom Sensitive Keywords)</h3>
+            <label>
+              <span>敏感词正则列表（每行一个，例如 password、token 等，留空使用默认安全正则）</span>
+              <textarea id="setting-sensitive" rows="4" placeholder="e.g. password&#10;private_key&#10;credit_card"></textarea>
+            </label>
+          </div>
+
+          <!-- WebDAV Cloud Sync -->
+          <div class="settings-section">
+            <h3>WebDAV 云端同步 (WebDAV Sync)</h3>
+            <p class="section-desc">将您的草稿和设置同步到坚果云、Nextcloud 等 WebDAV 网盘。</p>
+            <div class="form-row">
+              <label style="flex:1;">
+                <span>WebDAV 服务器地址 (Server URL)</span>
+                <input id="setting-webdav-url" type="url" placeholder="https://dav.jianguoyun.com/dav/">
+              </label>
+            </div>
+            <div class="form-row" style="display:flex; gap:10px; margin-top:10px;">
+              <label style="flex:1;">
+                <span>WebDAV 账户 (Account)</span>
+                <input id="setting-webdav-account" type="text" placeholder="example@email.com">
+              </label>
+              <label style="flex:1;">
+                <span>WebDAV 应用密码 (App Password)</span>
+                <input id="setting-webdav-password" type="password" placeholder="••••••••••••">
+              </label>
+            </div>
+            <div class="backup-actions" style="margin-top:15px; display:flex; gap:10px; align-items:center;">
+              <button id="webdav-upload-btn" class="btn-secondary" type="button">备份到 WebDAV</button>
+              <button id="webdav-download-btn" class="btn-secondary" type="button">从 WebDAV 恢复</button>
+              <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer; color:#3c4043; font-size:13px;">
+                <input id="setting-webdav-autosync" type="checkbox"> 开启自动同步 (Auto Sync)
+              </label>
+            </div>
+          </div>
+
+          <!-- Data Backup & Restore -->
+          <div class="settings-section">
+            <h3 data-i18n="settingsSectionBackup">Data Backup & Restore</h3>
+            <p class="section-desc" data-i18n="settingsBackupText">Export all your drafts and configurations, or restore from a JSON file.</p>
+            <div class="backup-actions">
+              <button id="export-btn" class="btn-secondary" type="button" data-i18n="exportBackup">Export JSON Backup</button>
+              <label class="file-label">
+                <span data-i18n="importRestore">Import JSON Restore</span>
+                <input id="import-file" type="file" accept=".json" style="display: none;">
+              </label>
+            </div>
+          </div>
+
+          <div class="form-submit">
+            <button id="save-settings-btn" type="submit" class="btn-primary" data-i18n="btnSaveSettings">Save Settings</button>
+          </div>
+        </form>
+      </div>
+
+      <p id="status" class="status" role="status"></p>
+    </section>
+  </main>
+
+  <script src="../shared/i18n.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

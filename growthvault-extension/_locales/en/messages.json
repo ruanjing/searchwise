@@ -7,5 +7,273 @@
   },
   "contextMenuSaveSelection": {
     "message": "Save to GrowthVault"
+  },
+  "navLibrary": {
+    "message": "Library"
+  },
+  "navExport": {
+    "message": "Export"
+  },
+  "navGuide": {
+    "message": "Guide"
+  },
+  "libraryTitle": {
+    "message": "Library"
+  },
+  "librarySubtitle": {
+    "message": "Search, filter, edit, copy, and delete saved clips."
+  },
+  "searchPlaceholder": {
+    "message": "Search clips..."
+  },
+  "searchBtn": {
+    "message": "Search"
+  },
+  "allProjects": {
+    "message": "All projects"
+  },
+  "allTypes": {
+    "message": "All types"
+  },
+  "allDomains": {
+    "message": "All domains"
+  },
+  "exportTitle": {
+    "message": "Export"
+  },
+  "exportSubtitle": {
+    "message": "Generate Markdown from saved project clips."
+  },
+  "backToLibrary": {
+    "message": "Back to library"
+  },
+  "copyMarkdown": {
+    "message": "Copy Markdown"
+  },
+  "noProjectSelected": {
+    "message": "No project selected."
+  },
+  "noProjectPlaceholder": {
+    "message": "Create a project and save clips before exporting."
+  },
+  "markdownCopied": {
+    "message": "Markdown copied."
+  },
+  "saveChanges": {
+    "message": "Save changes"
+  },
+  "copy": {
+    "message": "Copy"
+  },
+  "delete": {
+    "message": "Delete"
+  },
+  "notePlaceholder": {
+    "message": "Note"
+  },
+  "savedChanges": {
+    "message": "Saved changes."
+  },
+  "copied": {
+    "message": "Copied."
+  },
+  "deleteConfirmation": {
+    "message": "Delete this clip?"
+  },
+  "unknownProject": {
+    "message": "Unknown project"
+  },
+  "popupLabelProject": {
+    "message": "Project"
+  },
+  "popupLabelType": {
+    "message": "Type"
+  },
+  "popupLabelNote": {
+    "message": "Note"
+  },
+  "popupPlaceholderNewProject": {
+    "message": "New project"
+  },
+  "popupBtnCreate": {
+    "message": "Create"
+  },
+  "popupBtnSavePage": {
+    "message": "Save current page"
+  },
+  "popupStatusPageCannotSave": {
+    "message": "This page cannot be saved. Copy text manually into the library."
+  },
+  "popupStatusSavedDuplicate": {
+    "message": "Saved. This URL was already in the project."
+  },
+  "popupStatusSavedSuccess": {
+    "message": "Saved current page."
+  },
+  "popupStatusCreatedProject": {
+    "message": "Created project: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "guideTitle": {
+    "message": "User Guide"
+  },
+  "guideSubtitle": {
+    "message": "Learn how to capture growth ideas and turn them into copywriting or competitor analysis notes."
+  },
+  "guideHeading1": {
+    "message": "1. Save Web Clips (Selection)"
+  },
+  "guideText1": {
+    "message": "Simply highlight any text on a web page, right-click, and select \"Save to GrowthVault\" from the context menu. This will save the text clipping to your default project (Inbox)."
+  },
+  "guideHeading2": {
+    "message": "2. Save Entire Page (Popup)"
+  },
+  "guideText2": {
+    "message": "Click the extension icon in your browser toolbar to open the popup interface. Here you can select a project and category (e.g. Value Proposition, Pain Point), type a quick note, and click \"Save current page\"."
+  },
+  "guideHeading3": {
+    "message": "3. Search & Manage Clips (Library)"
+  },
+  "guideText3": {
+    "message": "Open the Library to search, filter by project/type/domain, edit the text/note directly, and save changes or copy/delete them."
+  },
+  "guideHeading4": {
+    "message": "4. Structure & Export to Markdown"
+  },
+  "guideText4": {
+    "message": "Click the \"Export\" navigation link, select a project and a markdown template (e.g., Competitor Analysis, Launch Post Draft), and copy the structured Markdown structure directly to your workspace."
+  },
+  "typeCompetitor": {
+    "message": "Competitor"
+  },
+  "typeValueProposition": {
+    "message": "Value Proposition"
+  },
+  "typePainPoint": {
+    "message": "Pain Point"
+  },
+  "typeUserComment": {
+    "message": "User Comment"
+  },
+  "typePricing": {
+    "message": "Pricing"
+  },
+  "typeTitle": {
+    "message": "Title"
+  },
+  "typeChannelExample": {
+    "message": "Channel Example"
+  },
+  "typeIdea": {
+    "message": "Idea"
+  },
+  "templateCompetitorAnalysis": {
+    "message": "Competitor analysis summary"
+  },
+  "templateLaunchPost": {
+    "message": "Launch post draft"
+  },
+  "templateLandingPage": {
+    "message": "Landing page value proposition list"
+  },
+  "templatePainPointList": {
+    "message": "User pain point list"
+  },
+  "savePageTitle": {
+    "message": "Save to GrowthVault"
+  },
+  "saveHeaderTitle": {
+    "message": "Save to GrowthVault"
+  },
+  "saveSourceLabel": {
+    "message": "Review this clip before saving it."
+  },
+  "savePlaceholderNewProject": {
+    "message": "New project name"
+  },
+  "saveLabelClip": {
+    "message": "Clip"
+  },
+  "saveBtnSaveClip": {
+    "message": "Save clip"
+  },
+  "saveLinkOpenLibrary": {
+    "message": "Open library"
+  },
+  "saveStatusNoPending": {
+    "message": "No pending clip found. You can paste text manually."
+  },
+  "saveStatusCreatedProject": {
+    "message": "Created project: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "saveStatusSaved": {
+    "message": "Saved."
+  },
+  "navSettings": {
+    "message": "Settings"
+  },
+  "settingsTitle": {
+    "message": "Settings"
+  },
+  "settingsSubtitle": {
+    "message": "Manage your custom Markdown templates and data backup & restore."
+  },
+  "settingsSectionBackup": {
+    "message": "Data Backup & Restore"
+  },
+  "settingsBackupText": {
+    "message": "Export all your projects, clips, and custom templates into a JSON file, or restore from a file."
+  },
+  "btnExportBackup": {
+    "message": "Export JSON Backup"
+  },
+  "btnImportBackup": {
+    "message": "Import JSON Restore"
+  },
+  "settingsSectionTemplates": {
+    "message": "Custom Markdown Templates"
+  },
+  "settingsTemplatesText": {
+    "message": "Create and design your custom export layouts. Supported placeholders: {{projectName}} (Project Name), {{allClips}} (All Project Clips), or specific material types like {{competitor}}, {{idea}}, {{pain_point}} etc."
+  },
+  "labelTemplateName": {
+    "message": "Template Name"
+  },
+  "labelTemplateContent": {
+    "message": "Template Markdown Content"
+  },
+  "placeholderTemplateName": {
+    "message": "e.g., Weekly Summary Template"
+  },
+  "placeholderTemplateContent": {
+    "message": "# Summary of {{projectName}}\n\n## Ideas\n{{idea}}\n\n## Competitors\n{{competitor}}"
+  },
+  "btnSaveTemplate": {
+    "message": "Save Template"
+  },
+  "backupExportSuccess": {
+    "message": "Backup export complete! Download has started."
+  },
+  "backupImportSuccess": {
+    "message": "Data imported and merged successfully!"
+  },
+  "backupImportError": {
+    "message": "Import failed. The file is not a valid GrowthVault backup JSON."
+  },
+  "templateSaveSuccess": {
+    "message": "Custom template saved successfully."
+  },
+  "templateDeleteConfirm": {
+    "message": "Are you sure you want to delete this custom template?"
   }
 }

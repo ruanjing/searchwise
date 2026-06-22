@@ -202,6 +202,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         IMPORT_DOMAINS: handleImportDomains,
         CHECKOUT: handleCheckout,
         BILLING_PORTAL: handleBillingPortal,
+        REPORT_SPAM: handleReportSpam,
+        ADD_TRUSTED_DOMAIN: handleAddTrustedDomain,
+        REMOVE_TRUSTED_DOMAIN: handleRemoveTrustedDomain,
+        TEST_AI_CONNECTION: handleTestAiConnection,
     };
 
     const handler = handlers[message.type];
@@ -214,6 +218,23 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     return true; // Keep channel open for async response
 });
+
+async function handleReportSpam(data) {
+    if (!SEARCHWISE_CONFIG.API_BASE) {
+        return { ok: true };
+    }
+    const domain = normalizeDomain(data.domain);
+    try {
+        await apiFetch('/blacklist/report', {
+            method: 'POST',
+            body: JSON.stringify({ domain })
+        });
+        return { ok: true };
+    } catch (e) {
+        console.warn('SearchWise background: Failed to report spam domain', e);
+        return { ok: false, error: e.message };
+    }
+}
 
 async function handleLogin(data) {
     const result = await apiFetch('/auth/login', {
@@ -275,11 +296,14 @@ async function handleFetchBlacklist() {
     const customDomains = await getLocalCustomDomains();
     const allowedDomains = await getLocalAllowedDomains();
     const allowed = new Set(allowedDomains.map(d => d.domain));
+    const dataObj = await chrome.storage.local.get('trusted_domains');
+    const trustedDomains = dataObj['trusted_domains'] || [];
     const localResponse = {
         all_domains: [...new Set([...customDomains.map(d => d.domain), ...SEARCHWISE_CONFIG.DEFAULT_BLACKLIST])]
             .filter(domain => !allowed.has(domain)),
         user_domains: customDomains,
         allowed_domains: allowedDomains,
+        trusted_domains: trustedDomains,
         default_domains: SEARCHWISE_CONFIG.DEFAULT_RULES.map(rule => ({
             domain: rule.domain,
             category: rule.category,
@@ -301,6 +325,7 @@ async function handleFetchBlacklist() {
             ...remoteResponse,
             all_domains: remoteAllDomains.filter(domain => !allowed.has(domain)),
             allowed_domains: allowedDomains,
+            trusted_domains: trustedDomains,
         };
     } catch (e) {
         return localResponse;
@@ -450,6 +475,19 @@ chrome.runtime.onConnect.addListener((port) => {
         port.onMessage.addListener(async (msg) => {
             if (msg.type === 'AI_SUMMARY_STREAM') {
                 try {
+                    const syncSettings = await chrome.storage.sync.get({
+                        custom_ai_enabled: false,
+                        custom_ai_type: 'openai',
+                        custom_ai_api_key: '',
+                        custom_ai_endpoint: 'https://api.openai.com/v1',
+                        custom_ai_model: 'gpt-4o-mini',
+                    });
+
+                    if (syncSettings.custom_ai_enabled) {
+                        await handleCustomAiStream(syncSettings, msg.data.query, msg.data.results, port);
+                        return;
+                    }
+
                     if (!SEARCHWISE_CONFIG.API_BASE) {
                         port.postMessage({
                             type: 'error',
@@ -669,5 +707,217 @@ async function handleImportDomains(data) {
     }
 
     return { addedCount, totalCount: nextDomains.length };
+}
+
+async function handleAddTrustedDomain(data) {
+    const domain = normalizeDomain(data.domain);
+    if (!domain) throw new Error('Invalid domain');
+
+    const dataObj = await chrome.storage.local.get('trusted_domains');
+    const trustedDomains = dataObj['trusted_domains'] || [];
+    
+    if (trustedDomains.some(d => String(d.domain || d).toLowerCase() === domain)) {
+        throw new Error('Domain already in trusted list');
+    }
+
+    const item = { id: `trust-local-${Date.now()}`, domain, local: true };
+    const newList = [...trustedDomains, item];
+    await chrome.storage.local.set({ ['trusted_domains']: newList });
+    return item;
+}
+
+async function handleRemoveTrustedDomain(data) {
+    const dataObj = await chrome.storage.local.get('trusted_domains');
+    const trustedDomains = dataObj['trusted_domains'] || [];
+    const id = String(data.id || '');
+    const domain = normalizeDomain(data.domain);
+    const newList = trustedDomains.filter(d => {
+        if (id) return String(d.id) !== id;
+        return String(d.domain || d).toLowerCase() !== domain;
+    });
+    await chrome.storage.local.set({ ['trusted_domains']: newList });
+    return { success: true };
+}
+
+async function handleTestAiConnection(data) {
+    const type = data.custom_ai_type || 'openai';
+    const apiKey = data.custom_ai_api_key || '';
+    let endpoint = data.custom_ai_endpoint || '';
+    const model = data.custom_ai_model || 'gpt-4o-mini';
+
+    let url = '';
+    let body = {};
+    let headers = {
+        'Content-Type': 'application/json'
+    };
+
+    if (type === 'openai') {
+        let baseUrl = endpoint.trim();
+        if (!baseUrl.endsWith('/chat/completions')) {
+            baseUrl = baseUrl.replace(/\/$/, '') + '/chat/completions';
+        }
+        url = baseUrl;
+        if (apiKey) {
+            headers['Authorization'] = `Bearer ${apiKey}`;
+        }
+        body = {
+            model: model,
+            messages: [
+                { role: 'user', content: 'Ping' }
+            ],
+            max_tokens: 5
+        };
+    } else if (type === 'ollama') {
+        let baseUrl = endpoint.trim();
+        if (!baseUrl.endsWith('/api/chat')) {
+            baseUrl = baseUrl.replace(/\/$/, '') + '/api/chat';
+        }
+        url = baseUrl;
+        body = {
+            model: model,
+            messages: [
+                { role: 'user', content: 'Ping' }
+            ],
+            stream: false,
+            options: {
+                num_predict: 5
+            }
+        };
+    } else {
+        throw new Error('Unsupported AI service type');
+    }
+
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(body)
+    });
+
+    if (!response.ok) {
+        let errorText = '';
+        try {
+            errorText = await response.text();
+        } catch (_) {}
+        throw new Error(`Connection failed (${response.status}): ${errorText || response.statusText}`);
+    }
+
+    return { success: true };
+}
+
+async function handleCustomAiStream(syncSettings, query, results, port) {
+    const type = syncSettings.custom_ai_type || 'openai';
+    const apiKey = syncSettings.custom_ai_api_key || '';
+    let endpoint = syncSettings.custom_ai_endpoint || '';
+    const model = syncSettings.custom_ai_model || 'gpt-4o-mini';
+
+    const systemPrompt = `你是一个智能技术搜索助手。请针对用户的搜索查询，结合以下给出的前几个搜索结果的标题、链接和摘要，生成一份结构清晰、客观准确的中文技术总结。不要虚构事实，优先使用 Markdown 格式输出。`;
+    const userPrompt = `查询: ${query}\n\n搜索结果:\n${results.map((r, i) => `[${i+1}] 标题: ${r.title}\n链接: ${r.url}\n摘要: ${r.snippet || ''}`).join('\n\n')}\n\n总结报告：`;
+
+    let url = '';
+    let body = {};
+    let headers = {
+        'Content-Type': 'application/json'
+    };
+
+    if (type === 'openai') {
+        let baseUrl = endpoint.trim();
+        if (!baseUrl.endsWith('/chat/completions')) {
+            baseUrl = baseUrl.replace(/\/$/, '') + '/chat/completions';
+        }
+        url = baseUrl;
+        if (apiKey) {
+            headers['Authorization'] = `Bearer ${apiKey}`;
+        }
+        body = {
+            model: model,
+            messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: userPrompt }
+            ],
+            stream: true
+        };
+    } else if (type === 'ollama') {
+        let baseUrl = endpoint.trim();
+        if (!baseUrl.endsWith('/api/chat')) {
+            baseUrl = baseUrl.replace(/\/$/, '') + '/api/chat';
+        }
+        url = baseUrl;
+        body = {
+            model: model,
+            messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: userPrompt }
+            ],
+            stream: true
+        };
+    } else {
+        throw new Error('Unsupported AI service type');
+    }
+
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(body)
+    });
+
+    if (!response.ok) {
+        let errorText = '';
+        try {
+            errorText = await response.text();
+        } catch (_) {}
+        throw new Error(`AI service error (${response.status}): ${errorText || response.statusText}`);
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        
+        if (type === 'openai') {
+            const lines = buffer.split('\n');
+            buffer = lines.pop();
+
+            for (const line of lines) {
+                const cleanedLine = line.trim();
+                if (!cleanedLine) continue;
+                if (cleanedLine === 'data: [DONE]') continue;
+                if (cleanedLine.startsWith('data: ')) {
+                    try {
+                        const json = JSON.parse(cleanedLine.substring(6));
+                        const content = json.choices?.[0]?.delta?.content || '';
+                        if (content) {
+                            port.postMessage({ type: 'chunk', content });
+                        }
+                    } catch (e) {
+                        console.warn('Error parsing OpenAI stream chunk:', e, cleanedLine);
+                    }
+                }
+            }
+        } else if (type === 'ollama') {
+            const lines = buffer.split('\n');
+            buffer = lines.pop();
+
+            for (const line of lines) {
+                const cleanedLine = line.trim();
+                if (!cleanedLine) continue;
+                try {
+                    const json = JSON.parse(cleanedLine);
+                    const content = json.message?.content || '';
+                    if (content) {
+                        port.postMessage({ type: 'chunk', content });
+                    }
+                } catch (e) {
+                    console.warn('Error parsing Ollama stream chunk:', e, cleanedLine);
+                }
+            }
+        }
+    }
+
+    port.postMessage({ type: 'done' });
 }
 

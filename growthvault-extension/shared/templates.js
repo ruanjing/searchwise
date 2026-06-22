@@ -1,9 +1,9 @@
 const GrowthVaultTemplates = (() => {
   const TEMPLATES = [
-    { id: 'competitor_analysis', name: 'Competitor analysis summary' },
-    { id: 'launch_post', name: 'Launch post draft' },
-    { id: 'landing_page_value_props', name: 'Landing page value proposition list' },
-    { id: 'pain_point_list', name: 'User pain point list' }
+    { id: 'competitor_analysis', name: (typeof chrome !== 'undefined' && chrome.i18n) ? chrome.i18n.getMessage('templateCompetitorAnalysis') || 'Competitor analysis summary' : 'Competitor analysis summary' },
+    { id: 'launch_post', name: (typeof chrome !== 'undefined' && chrome.i18n) ? chrome.i18n.getMessage('templateLaunchPost') || 'Launch post draft' : 'Launch post draft' },
+    { id: 'landing_page_value_props', name: (typeof chrome !== 'undefined' && chrome.i18n) ? chrome.i18n.getMessage('templateLandingPage') || 'Landing page value proposition list' : 'Landing page value proposition list' },
+    { id: 'pain_point_list', name: (typeof chrome !== 'undefined' && chrome.i18n) ? chrome.i18n.getMessage('templatePainPointList') || 'User pain point list' : 'User pain point list' }
   ];
 
   function clipLine(clip) {
@@ -61,14 +61,50 @@ const GrowthVaultTemplates = (() => {
     ].join('\n');
   }
 
+  function renderCustomTemplate(content, projectName, clips) {
+    let output = content || '';
+    // Replace {{projectName}}
+    output = output.replace(/\{\{\s*projectName\s*\}\}/g, projectName);
+
+    // Find and replace all placeholders of format {{placeholder}}
+    const matches = output.match(/\{\{\s*[a-zA-Z0-9_-]+\s*\}\}/g) || [];
+    const replaced = new Set();
+
+    for (const match of matches) {
+      if (replaced.has(match)) continue;
+      replaced.add(match);
+      
+      const typeId = match.replace(/\{\{\s*/, '').replace(/\s*\}\}/, '');
+      if (typeId === 'projectName') continue;
+      
+      if (typeId === 'allClips') {
+        const lines = clips.map(clipLine).join('\n');
+        output = output.replaceAll(match, lines || '- No saved material yet.');
+      } else {
+        const filtered = clipsOf(clips, [typeId]);
+        const lines = filtered.map(clipLine).join('\n');
+        output = output.replaceAll(match, lines || '- No saved material yet.');
+      }
+    }
+    return output;
+  }
+
   function renderTemplate(templateId, options = {}) {
-    const { projectName, clips } = options || {};
+    const { projectName, clips, customTemplates } = options || {};
     const safeName = projectName || 'Untitled Project';
     const safeClips = Array.isArray(clips) ? clips : [];
     if (templateId === 'competitor_analysis') return renderCompetitorAnalysis(safeName, safeClips);
     if (templateId === 'launch_post') return renderLaunchPost(safeName, safeClips);
     if (templateId === 'landing_page_value_props') return renderLandingPage(safeName, safeClips);
     if (templateId === 'pain_point_list') return renderPainPoints(safeName, safeClips);
+    
+    // Check if it's a custom template
+    if (Array.isArray(customTemplates)) {
+      const found = customTemplates.find(t => t.id === templateId);
+      if (found) {
+        return renderCustomTemplate(found.content, safeName, safeClips);
+      }
+    }
     throw new Error(`Unknown template: ${templateId}`);
   }
 

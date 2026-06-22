@@ -11,7 +11,8 @@ const SidebarInjector = {
     async init(layout, query, results) {
         await SWI18n.init();
 
-        if (!SW.API_BASE) return;
+        const customAiSettings = await chrome.storage.sync.get({ custom_ai_enabled: false });
+        if (!SW.API_BASE && !customAiSettings.custom_ai_enabled) return;
 
         // Skip if already fetched for this query
         if (this._fetched && this._lastQuery === query) return;
@@ -35,6 +36,13 @@ const SidebarInjector = {
             this._shadow = this._container.attachShadow({ mode: 'open' });
             this._injectStyles();
             this._injectHTML(query);
+        }
+
+        // Apply dark mode class to host
+        if (this._isDarkMode()) {
+            this._shadow.host.classList.add('sw-dark');
+        } else {
+            this._shadow.host.classList.remove('sw-dark');
         }
 
         // Update query display
@@ -123,16 +131,55 @@ const SidebarInjector = {
             :host {
                 all: initial;
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                --sw-bg: #ffffff;
+                --sw-color: #333333;
+                --sw-border: #e0e0e0;
+                --sw-header-border: #eee;
+                --sw-query-bg: #f8f9fa;
+                --sw-query-color: #666666;
+                --sw-query-span: #111111;
+                --sw-code-bg: #f1f3f4;
+                --sw-code-color: #d01716;
+                --sw-card-bg: #f8f9fa;
+                --sw-card-border: #e0e0e0;
+                --sw-spinner-border: #e0e0e0;
+                --sw-source-num-bg: #eee;
+                --sw-source-num-color: #666;
+                --sw-glass-blur: 0px;
+                --sw-text-h: #111111;
+                --sw-text-p: #444444;
+            }
+
+            :host(.sw-dark) {
+                --sw-bg: rgba(26, 26, 46, 0.85);
+                --sw-color: #e0e0e0;
+                --sw-border: rgba(255, 255, 255, 0.08);
+                --sw-header-border: rgba(255, 255, 255, 0.08);
+                --sw-query-bg: #16213e;
+                --sw-query-color: #a0a0c0;
+                --sw-query-span: #e0e0e0;
+                --sw-code-bg: #16213e;
+                --sw-code-color: #ff7675;
+                --sw-card-bg: rgba(255, 255, 255, 0.03);
+                --sw-card-border: rgba(255, 255, 255, 0.05);
+                --sw-spinner-border: #2a2a4a;
+                --sw-source-num-bg: #16213e;
+                --sw-source-num-color: #a0a0c0;
+                --sw-glass-blur: 16px;
+                --sw-text-h: #ffffff;
+                --sw-text-p: #d0d0e0;
             }
 
             .sw-sidebar {
-                background: #1a1a2e;
-                color: #e0e0e0;
+                background: var(--sw-bg) !important;
+                color: var(--sw-color) !important;
                 height: 100vh;
                 overflow-y: auto;
                 padding: 20px;
                 box-sizing: border-box;
-                border-left: 1px solid #2a2a4a;
+                border-left: 1px solid var(--sw-border) !important;
+                backdrop-filter: blur(var(--sw-glass-blur)) !important;
+                -webkit-backdrop-filter: blur(var(--sw-glass-blur)) !important;
             }
 
             .sw-header {
@@ -141,7 +188,7 @@ const SidebarInjector = {
                 justify-content: space-between;
                 margin-bottom: 16px;
                 padding-bottom: 12px;
-                border-bottom: 1px solid #2a2a4a;
+                border-bottom: 1px solid var(--sw-header-border) !important;
             }
 
             .sw-logo {
@@ -172,7 +219,7 @@ const SidebarInjector = {
             .sw-close-btn {
                 background: none;
                 border: none;
-                color: #888;
+                color: var(--sw-query-color) !important;
                 font-size: 20px;
                 cursor: pointer;
                 padding: 4px 8px;
@@ -180,22 +227,22 @@ const SidebarInjector = {
             }
 
             .sw-close-btn:hover {
-                background: #2a2a4a;
-                color: #fff;
+                background: var(--sw-query-bg) !important;
+                color: var(--sw-query-span) !important;
             }
 
             .sw-query-bar {
-                background: #16213e;
+                background: var(--sw-query-bg) !important;
                 padding: 10px 14px;
                 border-radius: 8px;
                 margin-bottom: 16px;
                 font-size: 13px;
-                color: #a0a0c0;
+                color: var(--sw-query-color) !important;
                 word-break: break-word;
             }
 
             .sw-query-bar span {
-                color: #e0e0e0;
+                color: var(--sw-query-span) !important;
             }
 
             .sw-loading {
@@ -206,8 +253,8 @@ const SidebarInjector = {
             .sw-spinner {
                 width: 36px;
                 height: 36px;
-                border: 3px solid #2a2a4a;
-                border-top-color: #4ecca3;
+                border: 3px solid var(--sw-spinner-border) !important;
+                border-top-color: #4ecca3 !important;
                 border-radius: 50%;
                 animation: sw-spin 0.8s linear infinite;
                 margin: 0 auto 16px;
@@ -218,7 +265,7 @@ const SidebarInjector = {
             }
 
             .sw-loading p {
-                color: #a0a0c0;
+                color: var(--sw-query-color) !important;
                 font-size: 14px;
                 margin: 0;
             }
@@ -226,13 +273,13 @@ const SidebarInjector = {
             .sw-summary-content {
                 font-size: 14px;
                 line-height: 1.7;
-                color: #d0d0e0;
+                color: var(--sw-text-p) !important;
             }
 
             .sw-summary-content h1,
             .sw-summary-content h2,
             .sw-summary-content h3 {
-                color: #fff;
+                color: var(--sw-text-h) !important;
                 margin: 16px 0 8px;
                 font-size: 15px;
             }
@@ -254,7 +301,8 @@ const SidebarInjector = {
             }
 
             .sw-summary-content code {
-                background: #16213e;
+                background: var(--sw-code-bg) !important;
+                color: var(--sw-code-color) !important;
                 padding: 2px 6px;
                 border-radius: 3px;
                 font-size: 13px;
@@ -272,11 +320,11 @@ const SidebarInjector = {
             .sw-sources {
                 margin-top: 20px;
                 padding-top: 16px;
-                border-top: 1px solid #2a2a4a;
+                border-top: 1px solid var(--sw-header-border) !important;
             }
 
             .sw-sources h4 {
-                color: #a0a0c0;
+                color: var(--sw-query-color) !important;
                 font-size: 12px;
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
@@ -287,19 +335,20 @@ const SidebarInjector = {
                 display: block;
                 padding: 8px 10px;
                 margin: 4px 0;
-                background: #16213e;
+                background: var(--sw-card-bg) !important;
+                border: 1px solid var(--sw-card-border) !important;
                 border-radius: 6px;
                 text-decoration: none;
                 transition: background 0.2s;
             }
 
             .sw-source-item:hover {
-                background: #1a2744;
+                background: var(--sw-query-bg) !important;
             }
 
             .sw-source-title {
                 font-size: 13px;
-                color: #e0e0e0;
+                color: var(--sw-query-span) !important;
                 display: block;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -308,7 +357,7 @@ const SidebarInjector = {
 
             .sw-source-url {
                 font-size: 11px;
-                color: #666;
+                color: var(--sw-query-color) !important;
                 display: block;
                 margin-top: 2px;
                 overflow: hidden;
@@ -939,5 +988,33 @@ const SidebarInjector = {
         if (lastIndex < text.length) {
             parent.appendChild(document.createTextNode(text.slice(lastIndex)));
         }
+    },
+
+    _isDarkMode() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            return true;
+        }
+        if (document.body && (document.body.getAttribute('data-dark') === 'true' || document.body.classList.contains('b_dark'))) {
+            return true;
+        }
+        if (document.documentElement && document.documentElement.getAttribute('data-dark') === 'true') {
+            return true;
+        }
+        if (document.body) {
+            const bg = window.getComputedStyle(document.body).backgroundColor;
+            if (bg) {
+                const rgb = bg.match(/\d+/g);
+                if (rgb && rgb.length >= 3) {
+                    const r = parseInt(rgb[0], 10);
+                    const g = parseInt(rgb[1], 10);
+                    const b = parseInt(rgb[2], 10);
+                    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+                    if (brightness < 128) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     },
 };

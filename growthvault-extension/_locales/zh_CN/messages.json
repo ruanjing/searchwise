@@ -1,11 +1,279 @@
 {
   "appName": {
-    "message": "GrowthVault"
+    "message": "GrowthVault 增长宝库"
   },
   "appDescription": {
     "message": "保存网页上的增长素材，并整理成发布文案、竞品笔记、落地页卖点和用户痛点列表。"
   },
   "contextMenuSaveSelection": {
     "message": "保存到 GrowthVault"
+  },
+  "navLibrary": {
+    "message": "素材库"
+  },
+  "navExport": {
+    "message": "导出"
+  },
+  "navGuide": {
+    "message": "使用说明"
+  },
+  "libraryTitle": {
+    "message": "我的素材库"
+  },
+  "librarySubtitle": {
+    "message": "搜索、筛选、编辑、复制和删除已保存的素材片段。"
+  },
+  "searchPlaceholder": {
+    "message": "搜索素材..."
+  },
+  "searchBtn": {
+    "message": "搜索"
+  },
+  "allProjects": {
+    "message": "所有项目"
+  },
+  "allTypes": {
+    "message": "所有类型"
+  },
+  "allDomains": {
+    "message": "所有域名"
+  },
+  "exportTitle": {
+    "message": "导出素材"
+  },
+  "exportSubtitle": {
+    "message": "将已保存的项目素材生成 Markdown 格式的文档。"
+  },
+  "backToLibrary": {
+    "message": "返回素材库"
+  },
+  "copyMarkdown": {
+    "message": "复制 Markdown"
+  },
+  "noProjectSelected": {
+    "message": "未选择项目。"
+  },
+  "noProjectPlaceholder": {
+    "message": "请先创建项目并保存素材，然后再进行导出。"
+  },
+  "markdownCopied": {
+    "message": "Markdown 已复制到剪贴板。"
+  },
+  "saveChanges": {
+    "message": "保存修改"
+  },
+  "copy": {
+    "message": "复制"
+  },
+  "delete": {
+    "message": "删除"
+  },
+  "notePlaceholder": {
+    "message": "添加备注..."
+  },
+  "savedChanges": {
+    "message": "修改已保存。"
+  },
+  "copied": {
+    "message": "已复制。"
+  },
+  "deleteConfirmation": {
+    "message": "确定要删除这条素材吗？"
+  },
+  "unknownProject": {
+    "message": "未命名项目"
+  },
+  "popupLabelProject": {
+    "message": "项目"
+  },
+  "popupLabelType": {
+    "message": "类型"
+  },
+  "popupLabelNote": {
+    "message": "备注"
+  },
+  "popupPlaceholderNewProject": {
+    "message": "新建项目"
+  },
+  "popupBtnCreate": {
+    "message": "创建"
+  },
+  "popupBtnSavePage": {
+    "message": "保存当前网页"
+  },
+  "popupStatusPageCannotSave": {
+    "message": "此网页无法保存，请手动复制文本并存入素材库。"
+  },
+  "popupStatusSavedDuplicate": {
+    "message": "已保存。该链接此前已存在于项目中。"
+  },
+  "popupStatusSavedSuccess": {
+    "message": "当前网页已成功保存。"
+  },
+  "popupStatusCreatedProject": {
+    "message": "已创建项目：$NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "guideTitle": {
+    "message": "使用说明"
+  },
+  "guideSubtitle": {
+    "message": "学习如何捕获增长素材，并将其整理转化为文案或竞品分析笔记。"
+  },
+  "guideHeading1": {
+    "message": "1. 网页右键快捷保存 (选中文本)"
+  },
+  "guideText1": {
+    "message": "在任意网页上选中你想保存的文本，点击鼠标右键，并在上下文菜单中选择“保存到 GrowthVault”。该文本片段将被自动保存到您的默认项目 (Inbox) 中。"
+  },
+  "guideHeading2": {
+    "message": "2. 保存整页链接 (弹出卡片)"
+  },
+  "guideText2": {
+    "message": "点击浏览器工具栏中的插件图标打开弹窗。在这里，您可以选择归属的项目与分类 (例如：落地页卖点、用户痛点)，输入备注，然后点击“保存当前网页”。"
+  },
+  "guideHeading3": {
+    "message": "3. 素材搜索与管理 (素材库)"
+  },
+  "guideText3": {
+    "message": "打开“素材库”页面，可通过项目、类型或来源网站进行筛选，支持全文搜索。您还可以直接在页面中双击编辑文本 and 备注，或执行复制、删除操作。"
+  },
+  "guideHeading4": {
+    "message": "4. 智能排版并导出 Markdown"
+  },
+  "guideText4": {
+    "message": "点击侧边栏的“导出”链接，选择一个项目和 Markdown 模板 (如竞品分析摘要、发布文案草稿等)，即可一键复制排版好的 Markdown 结构到您的工作区。"
+  },
+  "typeCompetitor": {
+    "message": "竞品分析"
+  },
+  "typeValueProposition": {
+    "message": "价值主张/卖点"
+  },
+  "typePainPoint": {
+    "message": "用户痛点"
+  },
+  "typeUserComment": {
+    "message": "用户评价"
+  },
+  "typePricing": {
+    "message": "定价策略"
+  },
+  "typeTitle": {
+    "message": "标题/文案"
+  },
+  "typeChannelExample": {
+    "message": "渠道案例"
+  },
+  "typeIdea": {
+    "message": "灵感/想法"
+  },
+  "templateCompetitorAnalysis": {
+    "message": "竞品分析摘要"
+  },
+  "templateLaunchPost": {
+    "message": "新品发布草稿"
+  },
+  "templateLandingPage": {
+    "message": "落地页卖点清单"
+  },
+  "templatePainPointList": {
+    "message": "用户痛点列表"
+  },
+  "savePageTitle": {
+    "message": "保存到 GrowthVault"
+  },
+  "saveHeaderTitle": {
+    "message": "保存到 GrowthVault"
+  },
+  "saveSourceLabel": {
+    "message": "保存前请确认此素材内容。"
+  },
+  "savePlaceholderNewProject": {
+    "message": "输入新项目名称"
+  },
+  "saveLabelClip": {
+    "message": "素材内容"
+  },
+  "saveBtnSaveClip": {
+    "message": "保存素材"
+  },
+  "saveLinkOpenLibrary": {
+    "message": "打开素材库"
+  },
+  "saveStatusNoPending": {
+    "message": "未找到待保存内容，您可以手动粘贴文本。"
+  },
+  "saveStatusCreatedProject": {
+    "message": "已创建项目：$NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "saveStatusSaved": {
+    "message": "已保存。"
+  },
+  "navSettings": {
+    "message": "设置"
+  },
+  "settingsTitle": {
+    "message": "设置"
+  },
+  "settingsSubtitle": {
+    "message": "管理您的自定义 Markdown 模板以及素材库的数据备份与恢复。"
+  },
+  "settingsSectionBackup": {
+    "message": "数据备份与恢复"
+  },
+  "settingsBackupText": {
+    "message": "将您的所有项目、素材和自定义模板导出为 JSON 备份文件，或从文件中恢复。"
+  },
+  "btnExportBackup": {
+    "message": "导出 JSON 备份"
+  },
+  "btnImportBackup": {
+    "message": "导入 JSON 恢复"
+  },
+  "settingsSectionTemplates": {
+    "message": "自定义 Markdown 模板"
+  },
+  "settingsTemplatesText": {
+    "message": "创建并设计用于导出的 Markdown 模板。可使用占位符：{{projectName}} (项目名)、{{allClips}} (所有素材)，或素材类型占位符如 {{competitor}}、{{idea}}、{{pain_point}} 等。"
+  },
+  "labelTemplateName": {
+    "message": "模板名称"
+  },
+  "labelTemplateContent": {
+    "message": "模板 Markdown 内容"
+  },
+  "placeholderTemplateName": {
+    "message": "例如：周报整理模板"
+  },
+  "placeholderTemplateContent": {
+    "message": "# {{projectName}} 总结\n\n## 我的灵感想法\n{{idea}}\n\n## 竞品信息\n{{competitor}}"
+  },
+  "btnSaveTemplate": {
+    "message": "保存模板"
+  },
+  "backupExportSuccess": {
+    "message": "备份成功！文件已开始下载。"
+  },
+  "backupImportSuccess": {
+    "message": "数据导入并合并成功！"
+  },
+  "backupImportError": {
+    "message": "导入失败，所选文件并非有效的 GrowthVault 备份格式。"
+  },
+  "templateSaveSuccess": {
+    "message": "自定义模板已保存。"
+  },
+  "templateDeleteConfirm": {
+    "message": "确定要删除该模板吗？"
   }
 }

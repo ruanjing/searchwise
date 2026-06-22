@@ -109,6 +109,22 @@ const ApiClient = {
         return this.sendMessage(SW.MSG.REMOVE_ALLOWED_DOMAIN, { id });
     },
 
+    async reportSpam(domain) {
+        return this.sendMessage(SW.MSG.REPORT_SPAM, { domain });
+    },
+
+    async addTrustedDomain(domain) {
+        return this.sendMessage(SW.MSG.ADD_TRUSTED_DOMAIN, { domain });
+    },
+
+    async removeTrustedDomain(id) {
+        return this.sendMessage(SW.MSG.REMOVE_TRUSTED_DOMAIN, { id });
+    },
+
+    async testAiConnection(config) {
+        return this.sendMessage(SW.MSG.TEST_AI_CONNECTION, config);
+    },
+
     async reportBlockedCount(count) {
         chrome.runtime.sendMessage({ type: SW.MSG.BLOCKED_COUNT, count }, () => {
             if (chrome.runtime.lastError) { /* ignore */ }

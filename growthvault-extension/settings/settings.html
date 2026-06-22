@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="settingsTitle">Settings</title>
+  <link rel="stylesheet" href="../library/library.css">
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <main class="gv-app">
+    <aside>
+      <h1 data-i18n="appName">GrowthVault</h1>
+      <nav>
+        <a href="../library/library.html" data-i18n="navLibrary">Library</a>
+        <a href="../export/export.html" data-i18n="navExport">Export</a>
+        <a href="../guide/guide.html" data-i18n="navGuide">Guide</a>
+        <a href="settings.html" class="active" data-i18n="navSettings">Settings</a>
+      </nav>
+    </aside>
+
+    <section class="content">
+      <header>
+        <div>
+          <h2 data-i18n="settingsTitle">Settings</h2>
+          <p data-i18n="settingsSubtitle">Manage your custom Markdown templates and data backup & restore.</p>
+        </div>
+      </header>
+
+      <!-- Backup and Restore Section -->
+      <section class="settings-card">
+        <h3 data-i18n="settingsSectionBackup">Data Backup & Restore</h3>
+        <p class="desc" data-i18n="settingsBackupText">Export all your projects, clips, and custom templates into a JSON file, or restore from a file.</p>
+        <div class="actions-row">
+          <button id="export-backup-btn" type="button" data-i18n="btnExportBackup">Export JSON Backup</button>
+          
+          <label class="file-upload-btn">
+            <span data-i18n="btnImportBackup">Import JSON Restore</span>
+            <input id="import-backup-file" type="file" accept=".json" style="display: none;">
+          </label>
+        </div>
+      </section>
+
+      <!-- Custom Templates Section -->
+      <section class="settings-card">
+        <h3 data-i18n="settingsSectionTemplates">Custom Markdown Templates</h3>
+        <p class="desc" data-i18n="settingsTemplatesText">Create and design your custom export layouts. Supported placeholders: {{projectName}} (Project Name), {{allClips}} (All Project Clips), or specific material types like {{competitor}}, {{idea}}, {{pain_point}} etc.</p>
+        
+        <div class="template-layout">
+          <!-- Template list -->
+          <div class="template-list-container">
+            <div id="template-list" class="template-list"></div>
+          </div>
+
+          <!-- Add / Edit Form -->
+          <form id="template-form" class="template-form">
+            <input type="hidden" id="template-id">
+            
+            <label>
+              <span data-i18n="labelTemplateName">Template Name</span>
+              <input id="template-name" type="text" required placeholder="e.g., Weekly Summary Template" data-i18n="[placeholder]placeholderTemplateName">
+            </label>
+
+            <label>
+              <span data-i18n="labelTemplateContent">Template Markdown Content</span>
+              <textarea id="template-content" rows="12" required placeholder="# Summary of {{projectName}}..." data-i18n="[placeholder]placeholderTemplateContent"></textarea>
+            </label>
+
+            <div class="form-actions">
+              <button id="save-template-btn" type="submit" data-i18n="btnSaveTemplate">Save Template</button>
+              <button id="cancel-template-btn" type="button" class="secondary" style="display: none;">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <p id="status" role="status"></p>
+    </section>
+  </main>
+
+  <script src="../shared/i18n.js"></script>
+  <script src="settings.js"></script>
+</body>
+</html>

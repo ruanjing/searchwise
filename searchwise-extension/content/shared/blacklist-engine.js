@@ -3,15 +3,18 @@
 const BlacklistEngine = {
     _domains: new Set(),
     _allowedDomains: new Set(),
+    _trustedDomains: new Set(),
     _domainSources: new Map(),
 
     async init() {
-        const data = await chrome.storage.local.get([SW.STORAGE.BLACKLIST, SW.STORAGE.CUSTOM_BLACKLIST, SW.STORAGE.ALLOWLIST]);
+        const data = await chrome.storage.local.get([SW.STORAGE.BLACKLIST, SW.STORAGE.CUSTOM_BLACKLIST, SW.STORAGE.ALLOWLIST, SW.STORAGE.TRUSTED_DOMAINS]);
         const customDomains = data[SW.STORAGE.CUSTOM_BLACKLIST] || [];
         const allowedDomains = data[SW.STORAGE.ALLOWLIST] || [];
+        const trustedDomains = data[SW.STORAGE.TRUSTED_DOMAINS] || [];
         const customList = customDomains.map(d => d.domain).filter(Boolean);
         const allowedList = allowedDomains.map(d => d.domain).filter(Boolean);
         this._allowedDomains = new Set(allowedList.map(d => d.toLowerCase()));
+        this._trustedDomains = new Set(trustedDomains.map(d => String(d.domain || d).toLowerCase()).filter(Boolean));
         const defaultRules = SW.DEFAULT_RULES || (SW.DEFAULT_BLACKLIST || []).map(domain => ({
             domain,
             category: 'developer_rule',
@@ -130,5 +133,28 @@ const BlacklistEngine = {
 
     getDomains() {
         return Array.from(this._domains);
+    },
+
+    isTrusted(url) {
+        if (!url) return false;
+        try {
+            const normalized = this._normalizeUrlCandidate(url);
+            const hostname = new URL(normalized).hostname.toLowerCase();
+            let parts = hostname.split('.');
+            while (parts.length >= 2) {
+                const candidate = parts.join('.');
+                if (this._trustedDomains.has(candidate)) {
+                    return true;
+                }
+                // Built-in defaults
+                if (['github.com', 'stackoverflow.com', 'npm.im', 'npmjs.com', 'w3schools.com', 'developer.mozilla.org'].includes(candidate)) {
+                    return true;
+                }
+                parts.shift();
+            }
+            return false;
+        } catch {
+            return false;
+        }
     },
 };

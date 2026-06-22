@@ -18,6 +18,10 @@ const SW = {
         REMOVE_ALLOWED_DOMAIN: 'REMOVE_ALLOWED_DOMAIN',
         CHECKOUT: 'CHECKOUT',
         BILLING_PORTAL: 'BILLING_PORTAL',
+        REPORT_SPAM: 'REPORT_SPAM',
+        ADD_TRUSTED_DOMAIN: 'ADD_TRUSTED_DOMAIN',
+        REMOVE_TRUSTED_DOMAIN: 'REMOVE_TRUSTED_DOMAIN',
+        TEST_AI_CONNECTION: 'TEST_AI_CONNECTION',
     },
 
     // Storage keys
@@ -29,6 +33,7 @@ const SW = {
         USER_INFO: 'user_info',
         SETTINGS: 'sw_settings',
         LANGUAGE: 'language',
+        TRUSTED_DOMAINS: 'trusted_domains',
     },
 
     // Plans

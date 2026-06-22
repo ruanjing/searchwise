@@ -9,37 +9,38 @@
 <body>
   <main class="gv-popup">
     <header>
-      <strong>GrowthVault</strong>
-      <a href="../library/library.html" target="_blank">Library</a>
+      <strong data-i18n="appName">GrowthVault</strong>
+      <a href="../library/library.html" target="_blank" data-i18n="navLibrary">Library</a>
     </header>
 
     <p id="page-title">Loading page...</p>
 
     <label>
-      Project
+      <span data-i18n="popupLabelProject">Project</span>
       <select id="project-select"></select>
     </label>
 
     <div class="inline-create">
-      <input id="new-project-name" type="text" placeholder="New project">
-      <button id="create-project-btn" type="button">Create</button>
+      <input id="new-project-name" type="text" placeholder="New project" data-i18n="popupPlaceholderNewProject">
+      <button id="create-project-btn" type="button" data-i18n="popupBtnCreate">Create</button>
     </div>
 
     <label>
-      Type
+      <span data-i18n="popupLabelType">Type</span>
       <select id="type-select"></select>
     </label>
 
     <label>
-      Note
-      <textarea id="clip-note" placeholder="Optional note"></textarea>
+      <span data-i18n="popupLabelNote">Note</span>
+      <textarea id="clip-note" placeholder="Optional note" data-i18n="popupLabelNote"></textarea>
     </label>
 
     <p id="status" role="status"></p>
-    <button id="save-page-btn" type="button">Save current page</button>
+    <button id="save-page-btn" type="button" data-i18n="popupBtnSavePage">Save current page</button>
   </main>
 
   <script src="../shared/constants.js"></script>
+  <script src="../shared/i18n.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

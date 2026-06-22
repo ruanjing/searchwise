@@ -49,6 +49,10 @@
   }
 
   function bindEvents() {
+    $('open-dashboard').addEventListener('click', () => {
+      chrome.runtime.openOptionsPage();
+    });
+
     $('global-toggle').addEventListener('change', async event => {
       state.settings.globalEnabled = event.target.checked;
       await saveSettings();
@@ -114,7 +118,7 @@
     if (!state.tab?.id || !isWebPage(state.tab.url)) return false;
     try {
       await chrome.scripting.executeScript({
-        target: { tabId: state.tab.id },
+        target: { tabId: state.tab.id, allFrames: true },
         files: ['content/draftwise.js'],
       });
       return true;

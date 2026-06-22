@@ -5,6 +5,7 @@
     const $ = id => document.getElementById(id);
     let userDomains = [];
     let allowedDomains = [];
+    let trustedDomains = [];
     let defaultDomains = [];
     let sharingBonusUnlocked = false;
 
@@ -36,6 +37,11 @@
             language: 'auto',
             filter_mode: 'hide',
             sharing_bonus_unlocked: false,
+            custom_ai_enabled: false,
+            custom_ai_type: 'openai',
+            custom_ai_endpoint: 'https://api.openai.com/v1',
+            custom_ai_api_key: '',
+            custom_ai_model: 'gpt-4o-mini',
         });
 
         sharingBonusUnlocked = settings.sharing_bonus_unlocked;
@@ -43,6 +49,15 @@
         $('opt-highlight').checked = settings.highlight_enabled;
         $('opt-language').value = settings.language || 'auto';
         $('opt-filter-mode').value = settings.filter_mode || 'hide';
+
+        $('opt-custom-ai-enabled').checked = settings.custom_ai_enabled;
+        $('opt-custom-ai-type').value = settings.custom_ai_type || 'openai';
+        $('opt-custom-ai-endpoint').value = settings.custom_ai_endpoint || 'https://api.openai.com/v1';
+        $('opt-custom-ai-api-key').value = settings.custom_ai_api_key || '';
+        $('opt-custom-ai-model').value = settings.custom_ai_model || 'gpt-4o-mini';
+
+        toggleCustomAiFields(settings.custom_ai_enabled);
+        updateCustomAiTypeUI(settings.custom_ai_type);
 
         await loadStats();
         await loadBlacklist();
@@ -84,6 +99,7 @@
             if (response) {
                 userDomains = response.user_domains || [];
                 allowedDomains = response.allowed_domains || [];
+                trustedDomains = response.trusted_domains || [];
                 defaultDomains = response.default_domains || [];
                 renderBlacklist();
             }
@@ -93,6 +109,7 @@
                 domain: d, source: 'default',
             }));
             allowedDomains = [];
+            trustedDomains = [];
             renderBlacklist();
         }
     }
@@ -111,6 +128,12 @@
             sourceLabel: () => SWI18n.t('allowedLabel'),
             removable: true,
             removeMessage: 'REMOVE_ALLOWED_DOMAIN',
+        });
+        renderDomainList('trusted-domain-list', trustedDomains, {
+            emptyText: SWI18n.t('noTrustedDomains'),
+            sourceLabel: () => SWI18n.t('trustedLabel'),
+            removable: true,
+            removeMessage: 'REMOVE_TRUSTED_DOMAIN',
         });
         renderDomainList('default-domain-list', defaultDomains, {
             emptyText: SWI18n.t('noBuiltInRules'),
@@ -177,11 +200,16 @@
 
         if (!domain) return;
 
+        const type = $('new-domain-type').value;
+        let action = 'ADD_DOMAIN';
+        if (type === 'allow') action = 'ADD_ALLOWED_DOMAIN';
+        else if (type === 'trust') action = 'ADD_TRUSTED_DOMAIN';
+
         $('add-domain-btn').disabled = true;
         $('add-domain-btn').textContent = SWI18n.t('adding');
 
         try {
-            await sendMessage('ADD_DOMAIN', { domain });
+            await sendMessage(action, { domain });
             input.value = '';
             await loadBlacklist();
         } catch (e) {
@@ -273,6 +301,77 @@
             alert((SWI18n.t('importSuccess') || '导入成功！已成功导入 $COUNT$ 个网站规则。').replace('$COUNT$', result.addedCount));
         } catch (e) {
             alert((SWI18n.t('importFailed') || '导入失败，请检查分享代码是否完整或正确。') + ' (' + e.message + ')');
+        }
+    });
+
+    // ===== Custom AI Settings =====
+    function toggleCustomAiFields(enabled) {
+        $('custom-ai-fields').style.display = enabled ? 'block' : 'none';
+    }
+
+    function updateCustomAiTypeUI(type) {
+        $('custom-ai-key-container').style.display = type === 'ollama' ? 'none' : 'flex';
+    }
+
+    $('opt-custom-ai-enabled').addEventListener('change', (e) => {
+        const enabled = e.target.checked;
+        toggleCustomAiFields(enabled);
+        chrome.storage.sync.set({ custom_ai_enabled: enabled });
+    });
+
+    $('opt-custom-ai-type').addEventListener('change', (e) => {
+        const type = e.target.value;
+        updateCustomAiTypeUI(type);
+    });
+
+    $('btn-test-ai').addEventListener('click', async () => {
+        const type = $('opt-custom-ai-type').value;
+        const endpoint = $('opt-custom-ai-endpoint').value;
+        const apiKey = $('opt-custom-ai-api-key').value;
+        const model = $('opt-custom-ai-model').value;
+
+        const statusEl = $('test-ai-status');
+        statusEl.textContent = SWI18n.t('testingConnection');
+        statusEl.style.color = '#e0e0e0';
+
+        try {
+            await sendMessage('TEST_AI_CONNECTION', {
+                custom_ai_type: type,
+                custom_ai_endpoint: endpoint,
+                custom_ai_api_key: apiKey,
+                custom_ai_model: model,
+            });
+            statusEl.textContent = SWI18n.t('connectionSuccess');
+            statusEl.style.color = '#4ecca3';
+        } catch (e) {
+            statusEl.textContent = SWI18n.t('connectionFailed', [e.message]);
+            statusEl.style.color = '#ff6b6b';
+        }
+    });
+
+    $('btn-save-ai').addEventListener('click', async () => {
+        const type = $('opt-custom-ai-type').value;
+        const endpoint = $('opt-custom-ai-endpoint').value;
+        const apiKey = $('opt-custom-ai-api-key').value;
+        const model = $('opt-custom-ai-model').value;
+
+        const btn = $('btn-save-ai');
+        btn.disabled = true;
+        btn.textContent = SWI18n.t('saving');
+
+        try {
+            await chrome.storage.sync.set({
+                custom_ai_type: type,
+                custom_ai_endpoint: endpoint,
+                custom_ai_api_key: apiKey,
+                custom_ai_model: model,
+            });
+            alert(SWI18n.t('settingsSaved'));
+        } catch (e) {
+            alert('保存失败: ' + e.message);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = SWI18n.t('saveSettings');
         }
     });
 

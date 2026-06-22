@@ -37,6 +37,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   const handlers = {
     CREATE_PROJECT: async () => GrowthVaultStorage.createProject(message.name),
+    RENAME_PROJECT: async () => GrowthVaultStorage.renameProject(message.projectId, message.name),
     LIST_PROJECTS: async () => listProjectsWithInbox(),
     DELETE_PROJECT: async () => GrowthVaultStorage.deleteProject(message.projectId),
     CREATE_CLIP: async () => GrowthVaultStorage.createClip(message.clip),

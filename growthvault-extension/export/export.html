@@ -10,16 +10,16 @@
   <main class="gv-export">
     <header>
       <div>
-        <h1>Export</h1>
-        <p>Generate Markdown from saved project clips.</p>
+        <h1 data-i18n="exportTitle">Export</h1>
+        <p data-i18n="exportSubtitle">Generate Markdown from saved project clips.</p>
       </div>
-      <a href="../library/library.html">Back to library</a>
+      <a href="../library/library.html" data-i18n="backToLibrary">Back to library</a>
     </header>
 
     <div class="controls">
       <select id="project-select"></select>
       <select id="template-select"></select>
-      <button id="copy-btn" type="button">Copy Markdown</button>
+      <button id="copy-btn" type="button" data-i18n="copyMarkdown">Copy Markdown</button>
     </div>
 
     <textarea id="output" readonly></textarea>
@@ -28,6 +28,7 @@
 
   <script src="../shared/constants.js"></script>
   <script src="../shared/templates.js"></script>
+  <script src="../shared/i18n.js"></script>
   <script src="export.js"></script>
 </body>
 </html>
