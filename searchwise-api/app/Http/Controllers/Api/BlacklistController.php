@@ -11,9 +11,12 @@ use Illuminate\Http\Request;
 
 class BlacklistController extends Controller
 {
-    public function __construct(
-        private UsageTrackingService $usageService
-    ) {}
+    protected $usageService;
+
+    public function __construct(UsageTrackingService $usageService)
+    {
+        $this->usageService = $usageService;
+    }
 
     public function index(Request $request): JsonResponse
     {
@@ -83,6 +86,30 @@ class BlacklistController extends Controller
         return response()->json(
             DefaultBlacklist::active()->get(['domain', 'category', 'label'])
         );
+    }
+
+    public function report(Request $request): JsonResponse
+    {
+        $request->validate([
+            'domain' => 'required|string|max:255',
+        ]);
+
+        $domain = $this->normalizeDomain($request->domain);
+        if (empty($domain)) {
+            return response()->json(['error' => 'Invalid domain'], 400);
+        }
+
+        $reported = \App\Models\ReportedDomain::firstOrCreate(
+            ['domain' => $domain],
+            ['report_count' => 0]
+        );
+        $reported->increment('report_count');
+
+        return response()->json([
+            'success' => true,
+            'domain' => $domain,
+            'report_count' => $reported->report_count,
+        ], 200);
     }
 
     private function normalizeDomain(string $domain): string

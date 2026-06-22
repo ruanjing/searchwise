@@ -21,6 +21,7 @@ Route::prefix('v1')->group(function () {
 
     // Public blacklist defaults (no auth needed)
     Route::get('blacklist/defaults', [BlacklistController::class, 'defaults']);
+    Route::post('blacklist/report', [BlacklistController::class, 'report']);
 
     // Authenticated routes
     Route::middleware('auth:sanctum')->group(function () {
